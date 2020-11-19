@@ -108,8 +108,8 @@ struct MusicTweet: View {
 }
 
 struct ButtonBackground: ButtonStyle {
-    @State private var firstGradientColor = Color("DarkGreen")
-    @State private var secondGradientColor = Color("LightGreen")
+    @State private var firstGradientColor = Color.orange
+    @State private var secondGradientColor = Color.red
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .padding(10)

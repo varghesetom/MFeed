@@ -38,7 +38,7 @@ struct ContentView: View {
 //        TestSpotifyView()
 //        MusicTweet()
 //        NewsFeedView(selection: $selection)
-        UserBox()
+        ProfileView()
 //        CoreDataExampleView()
     }
 }

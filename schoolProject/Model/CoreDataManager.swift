@@ -22,7 +22,7 @@ class CoreDataManager {
                u0.userID = UUID()
                u0.name = "Tom"
                u0.avatar = "northern_lights"
-               u0.bio = "student"
+               u0.bio = "student who likes all kinds of music. No favorite song -- Different songs for different moods."
         return u0
     }
         
