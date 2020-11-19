@@ -13,18 +13,23 @@ import CoreData
 class CoreDataManager {
     
     static var context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
+      // will act as our main user for demo purposes -- e.g. the user profile will reflect user u0
+    static var mainUser = CoreDataManager.createMainUser()
+    
+    static func createMainUser() -> UserEntity {
+        let u0 = NSEntityDescription.insertNewObject(forEntityName: "UserEntity", into: CoreDataManager.context) as! UserEntity
+               u0.userID = UUID()
+               u0.name = "Tom"
+               u0.avatar = "northern_lights"
+               u0.bio = "student"
+        return u0
+    }
         
     static func saveFakeData() {
         
         let appDelegate = (UIApplication.shared.delegate as! AppDelegate)
-        
-        // will act as our main user for demo purposes -- e.g. the user profile will reflect user u0
-        let u0 = NSEntityDescription.insertNewObject(forEntityName: "UserEntity",
-                                                     into: CoreDataManager.context) as! UserEntity
-        u0.userID = UUID()
-        u0.name = "Tom"
-        u0.avatar = "northern_lights"
-        u0.bio = "student"
+    
         
         let u1 = NSEntityDescription.insertNewObject(forEntityName: "UserEntity", into: CoreDataManager.context) as! UserEntity
         u1.userID = UUID()
@@ -79,16 +84,13 @@ class CoreDataManager {
         i3.instance_id = UUID()
         i3.instance_of = s3
         i3.played_by = u2
-//        s3.played_by = u2.userID
         
-//        s1.addToHas_interactions(s1Interactions)
-//        s1.addToPlayed_by(u1)  // 1-way flow no need to do the same the other way
-//        s1.addToPlayed_by(u2)  // same s1 as being played by >1 person
-//        u1.addToListened_to(s2) // 1 user listening to more than 1 song
+        let i4 = NSEntityDescription.insertNewObject(forEntityName: "SongInstanceEntity", into: CoreDataManager.context) as! SongInstanceEntity
         
-//        CoreDataManager.userListenedToSong(user: u1, song: s1)
-//        CoreDataManager.userListenedToSong(user: u1, song: s2)
-//        CoreDataManager.userListenedToSong(user: u2, song: s1)
+        i4.instance_id = UUID()
+        i4.instance_of = s1
+        i4.played_by = CoreDataManager.mainUser
+
         appDelegate.saveContext()
     }
     

@@ -18,6 +18,7 @@
 		93FE781E25666C84009D8C4F /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FE781D25666C84009D8C4F /* CoreDataManager.swift */; };
 		93FE782025666CD3009D8C4F /* NewsFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FE781F25666CD3009D8C4F /* NewsFeedView.swift */; };
 		93FE782225666CF9009D8C4F /* TestSpotifyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FE782125666CF9009D8C4F /* TestSpotifyView.swift */; };
+		93FE78262566F51D009D8C4F /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FE78252566F51D009D8C4F /* ProfileView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +35,7 @@
 		93FE781D25666C84009D8C4F /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		93FE781F25666CD3009D8C4F /* NewsFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsFeedView.swift; sourceTree = "<group>"; };
 		93FE782125666CF9009D8C4F /* TestSpotifyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSpotifyView.swift; sourceTree = "<group>"; };
+		93FE78252566F51D009D8C4F /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +73,7 @@
 				93FE780525666A60009D8C4F /* SceneDelegate.swift */,
 				93FE780A25666A60009D8C4F /* ContentView.swift */,
 				93FE781F25666CD3009D8C4F /* NewsFeedView.swift */,
+				93FE78252566F51D009D8C4F /* ProfileView.swift */,
 				93FE782125666CF9009D8C4F /* TestSpotifyView.swift */,
 				93FE780C25666A69009D8C4F /* Assets.xcassets */,
 				93FE781125666A69009D8C4F /* LaunchScreen.storyboard */,
@@ -170,6 +173,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				93FE781E25666C84009D8C4F /* CoreDataManager.swift in Sources */,
+				93FE78262566F51D009D8C4F /* ProfileView.swift in Sources */,
 				93FE782225666CF9009D8C4F /* TestSpotifyView.swift in Sources */,
 				93FE780925666A60009D8C4F /* schoolProject.xcdatamodeld in Sources */,
 				93FE780425666A60009D8C4F /* AppDelegate.swift in Sources */,

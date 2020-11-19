@@ -12,7 +12,7 @@ struct NewsFeedView: View {
     var body: some View {
         TabView(selection: $selection) {
             ScrollTweets().tabItem { Text("Feed")}.tag(1)
-            Text("Profile").tabItem{ Text("Profile")}.tag(2)
+            ProfileView().tabItem{ Text("Profile")}.tag(2)
         }.onAppear(perform: {
             CoreDataManager.emptyDB()
             CoreDataManager.saveFakeData()
@@ -44,13 +44,7 @@ struct ScrollTweets: View {
     }
 }
 
-/*
- Don't need Zstack with rectangle (orange) and Vstack because can use frame modifiers and then apply the color modifier afterwards.
- 
- Hard to work with Zstack
- 
- create separate class with static methods to work with the CoreData (e.g. addToStash, addLike)
- */
+
 
 struct MusicTweet: View {
     @State var songInstance: SongInstance

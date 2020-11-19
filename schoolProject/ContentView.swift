@@ -25,25 +25,26 @@ struct Start: PreviewProvider {
     
     static var previews: some View {
 //        MusicTweet()
-//        NewsFeed(selection: .constant(1))
-        Text("")
+        NewsFeedView(selection: .constant(2))
+//        Text("")
     }
 }
 #endif
 
 struct ContentView: View {
-    @State private var selection = 1
+    @State private var selection = 2
     var body: some View {
         
 //        TestSpotifyView()
 //        MusicTweet()
-        NewsFeedView(selection: $selection)
-//        CoreDataView()
+//        NewsFeedView(selection: $selection)
+        UserBox()
+//        CoreDataExampleView()
     }
 }
 
 
-struct CoreDataView: View {
+struct CoreDataExampleView: View {
     
     @Environment(\.managedObjectContext) var managedObjectContext
     @FetchRequest(entity: UserEntity.entity(), sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)],
