@@ -28,24 +28,35 @@ struct ProfileView: View {
 struct BottomHalfOfProfile: View {
     @FetchRequest(fetchRequest: CoreDataManager.getRecentlyListenedSongFromMainUser) var mostRecentSong: FetchedResults<SongInstanceEntity>
     
+    @State var isPresented = false
+    
     var body: some View {
+        
         guard mostRecentSong.count > 0 else {
             return AnyView(Text("No Song Listens").foregroundColor(.white))
         }
-        let songInstance = SongInstance(instanceEntity: mostRecentSong.first!)
+        let mostRecentSongInstance = SongInstance(instanceEntity: mostRecentSong.first!)
+        
+        let mainUserStashedSongs = CoreDataManager.getStashFromUser(CoreDataManager.mainUser) ?? [SongInstance]()
         return AnyView(
             VStack {
                 Text("Recent Song")
                     .foregroundColor(.white)
                     .font(.headline)
                     .underline()
-                MusicTweet(songInstance: songInstance, alignment: Alignment.bottomLeading).scaleEffect(0.85)
+                MusicTweet(songInstance: mostRecentSongInstance, alignment: Alignment.bottomLeading).scaleEffect(0.85)
                 HStack {
                     Spacer()
                     Button(action: {
-                        
+                        self.isPresented.toggle()
                     }) {
                         Text("Stash")
+                    }.sheet(isPresented: $isPresented) {
+                        List {
+                            ForEach(mainUserStashedSongs, id: \.self) {
+                                Text("Song: \($0.songName)")
+                            }
+                        }
                     }
                     Spacer()
                     Button(action: {

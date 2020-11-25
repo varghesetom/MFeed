@@ -164,7 +164,7 @@ class CoreDataManager {
             )
             return instances
         }
-        print("Error getting songs for user")
+        print("No song listens for user")
         return nil
     }
     
@@ -178,7 +178,16 @@ class CoreDataManager {
     }
     
     // try out the STASH
-    
+    static func getStashFromUser(_ user: UserEntity) -> [SongInstance]? {
+        if let songs: [SongInstanceEntity] = user.stashes_this?.allObjects as? [SongInstanceEntity] {
+            let instances = songs.map {
+                SongInstance(instanceEntity: $0)
+            }
+            return instances
+        }
+        print("No song stashes for user")
+        return nil
+    }
     
     
     /* RELATIONSHIP ASSIGNMENTS -- all relationships have an inverse so no need
