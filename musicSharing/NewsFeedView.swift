@@ -17,13 +17,12 @@ struct NewsFeedView: View {
             CoreDataManager.emptyDB()
             CoreDataManager.saveFakeData()
         })
-        
     }
 }
 
 struct ScrollTweets: View {
     let colors: [Color] = [.red, .green, .blue]
-    @FetchRequest(entity: SongInstanceEntity.entity(), sortDescriptors: [NSSortDescriptor(key: "instance_id", ascending: true)]) var fetchedSongInstances: FetchedResults<SongInstanceEntity>
+    @FetchRequest(entity: SongInstanceEntity.entity(), sortDescriptors: [NSSortDescriptor(key: "song_name", ascending: true)]) var fetchedSongInstances: FetchedResults<SongInstanceEntity>
 
     var body: some View {
         let songInstances = fetchedSongInstances.map( {
@@ -37,7 +36,7 @@ struct ScrollTweets: View {
                     }
                 }
             }
-            .background(Color.gray)
+            .background(Color.black)
             .navigationBarTitle("OnTheSpot")
         }
         
@@ -45,9 +44,11 @@ struct ScrollTweets: View {
 }
 
 
-
 struct MusicTweet: View {
     @State var songInstance: SongInstance
+    @State var width = CGFloat(370)
+    @State var height = CGFloat(180)
+    @State var alignment = Alignment.center
     
     var body: some View {
         let image = UIImage(named: songInstance.instanceOf.image ?? "northern_lights") ?? UIImage(named: "northern_lights")  // if the image in songInstance can't be found in Assets, then provide a default image
@@ -56,53 +57,83 @@ struct MusicTweet: View {
             Text("\(songInstance.playedBy.name)")
                 .font(.system(.headline, design: .monospaced))
                 .font(.largeTitle)
+                .minimumScaleFactor(0.6)
+                .allowsTightening(true)
                 .frame(width: 370, height: 50, alignment: .center) // red rectangle gets its own frame -- easier than ZStack
                 .background(Color.red)
             HStack(alignment: .center, spacing: 15) {
-//                Image("northern_lights")
                 Image(uiImage: image!)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 100, height: 80, alignment: .center)
-                    .padding(.leading, 20)   // is affected by the padding as well with the buttons
+                    .padding(.leading, 20)   // affected by padding with the buttons
                 VStack(alignment: .leading) {
-//                    Text("Adagio for Strings").underline()
                     Text("\(songInstance.instanceOf.name)")
+                        .foregroundColor(.black)
                         .underline()
-//                    Text("Tiesto")
+                        .minimumScaleFactor(0.5)
+                        .allowsTightening(true)
                     Text("\(songInstance.instanceOf.artist ?? "Unknown")")
+                        .foregroundColor(.black)
                         .italic()
                         .bold()
+                        .minimumScaleFactor(0.5)
+                        .allowsTightening(true)
                     Text("\(songInstance.instanceOf.genre ?? "Unknown")")
-//                    Text("Trance")
+                        .foregroundColor(.black)
                         .fontWeight(.medium)
                         .italic()
+                        .minimumScaleFactor(0.5)
+                        .allowsTightening(true)
                     HStack(spacing: 10) {
-                        Button(action: {
-                            print("Stash clicked")  // add to stash action
-                        }) {
-                            Text("Stash")
-                        }
-                            .buttonStyle(ButtonBackground())
-                        Button(action: {
-                            print("Convo clicked")  // open Conversation stored so far
-                        }) {
-                            Text("Convo")
-                        }
-                            .buttonStyle(ButtonBackground())
-                        Button(action: {
-                            print("Like clicked")
-                        }) {
-                            Text("Like")       // "like" the musical share/tweet
-                        }
-                            .buttonStyle(ButtonBackground())
+                        TweetButton("Stash", songInstance)
+                        TweetButton("Convo", songInstance)
+                        TweetButton("Like", songInstance)
                     }
                     .padding(.top, 30)
                     .padding(.trailing, 10)
                 }.padding(.leading, 30)
             }
-            .frame(width: 370, height: 180, alignment: .center)  // the orange rectangle will have its own frame to avoid ZStack
+            .frame(width: width, height: height, alignment: alignment)  // the orange rectangle will have its own frame to avoid ZStack
             .background(Color.orange)
+        }
+    }
+}
+
+struct TweetButton: View {
+    @State var action: String
+    @State var songInstance: SongInstance
+    
+    init(_ action: String, _ songInstance: SongInstance) {
+        // initialize State variables so can use them after initialization in Button
+        _action = .init(initialValue: action)
+        _songInstance = .init(initialValue: songInstance)
+    }
+    
+    var body: some View {
+        Button(action: {
+            print("\(self.action) clicked")  // add to stash action
+            self.buttonFunctionality()
+        }) {
+            Text("\(action)")
+                .font(.caption)
+        }
+            .buttonStyle(ButtonBackground())
+    }
+    
+    func buttonFunctionality() -> Void {
+        switch self.action {
+        case "Stash":
+            print("Stashed")
+            CoreDataManager.userStashesSong(songInstance: self.songInstance.convertToManagedObject())
+        case "Convo":
+            print("Convoed")
+            CoreDataManager.userCommentsOnSong(songInstance: self.songInstance.convertToManagedObject())
+        case "Like":
+            print("Liked")
+            CoreDataManager.userLikesSong(songInstance: self.songInstance.convertToManagedObject())
+        default:
+            fatalError("Need proper action argument for TweetButton functionality")
         }
     }
 }
@@ -116,6 +147,9 @@ struct ButtonBackground: ButtonStyle {
             .foregroundColor(.white)
             .background(Color.red)
             .cornerRadius(5)
+            .compositingGroup()
+            .opacity(configuration.isPressed ? 0.5 : 1.0)
+            .scaleEffect(configuration.isPressed ? 0.9 : 1.0)
             .scaledToFit()
     }
 }

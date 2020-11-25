@@ -9,7 +9,7 @@ import CoreData
     3. Create Like Button Functionality -- and display Likes on tweet
     4. Create Convo Button Functionality -> collect all the comments and display them in order
     5. Add Date as a variable in SongEntity so can use a sortDescriptor to have them sorted by date when user listened to song
-    6. Restructure the CoreData Model to have an explicit SongInstance vs CoreSong. Currently every song instance that appears is treated uniquely which means a song can appear repeatedly with the same name, artist, and genre but will be treated uniquely because it will have its own UUID. This means the Stash button would be able to add both instances even though they are the same song. Either implement a check for duplicates with the Stash functionality or add another entity
+            - This also means fixing the FetchRequest for getting the most recent song for user.
     7. UserProfile needs to have a working view
             -> differentiate between personal and others. Only the personal view can have an editable stash. All other stashes on other people's profiles will be read-only.
     8. Add systemImages for the TabItems
@@ -32,18 +32,22 @@ struct Start: PreviewProvider {
 #endif
 
 struct ContentView: View {
+    
     @State private var selection = 2
+    
     var body: some View {
         
 //        TestSpotifyView()
 //        MusicTweet()
-//        NewsFeedView(selection: $selection)
-        ProfileView()
+        NewsFeedView(selection: $selection)
+//        ProfileView()
 //        CoreDataExampleView()
+        
     }
 }
 
 
+// below is only used for testing purposes to gather data 
 struct CoreDataExampleView: View {
     
     @Environment(\.managedObjectContext) var managedObjectContext
@@ -73,8 +77,7 @@ struct CoreDataExampleView: View {
                     }
                     print("Bob listens to the following songs:")
                     bobSongInstanceEntities.forEach({
-                        let songInstance = SongInstance(instanceEntity: $0)
-                        print("\(songInstance.instanceOf.name)")
+                        print("\($0.instanceOf.name)")
                         })
                 }) {
                     Text("Test Delete/Create/Read")
@@ -86,7 +89,7 @@ struct CoreDataExampleView: View {
                     if let songInstanceEntities = CoreDataManager.getSongInstancesFromUser(bobEntity) {
                         print("Got first song from User Bob")
                         let first = songInstanceEntities.first!
-                        CoreDataManager.userLikesSong(user: bobEntity, songInstance: first)
+                        CoreDataManager.userLikesSong(user: bobEntity, songInstance: first.convertToManagedObject())
                     }
                 }) {
                     Text("Add Like")
@@ -106,3 +109,32 @@ struct CoreDataExampleView: View {
 }
     
 
+// HACK with SWIFT example of orienting views
+struct ExampleOrientationView: View {
+    
+    @State private var layoutVertically = false
+    
+    var body: some View {
+        Group {
+            if layoutVertically {
+                VStack {
+                    Group {
+                        Text("Name: Paul")
+                        Text("Country: England")
+                        Text("Pets: Luna, Arya, and Toby")
+                    }
+                }
+            } else {
+                HStack {
+                    Group {
+                        Text("Name: Paul")
+                        Text("Country: England")
+                        Text("Pets: Luna, Arya, and Toby")
+                    }
+                }
+            }
+        }.onTapGesture {
+            self.layoutVertically.toggle()
+        }
+    }
+}

@@ -19,7 +19,7 @@ struct User: Codable, Identifiable, Hashable {
         userEntity.name = self.name
         userEntity.bio = self.user_bio
         userEntity.avatar = self.avatar
-        userEntity.listened_to = NSSet(object: self.listenedTo)
+        userEntity.listened_to = NSSet()
         return userEntity
     }
 }
@@ -53,18 +53,10 @@ struct Song: Codable, Identifiable, Hashable {
     
     public var id: UUID = UUID()
     let name: String
-//    var playedBy: UUID!
     let artist: String?
     let genre: String?
     let image: String?
     let songLength: Decimal?
-//    var likers = [User]()
-//    // add convo property
-//    // add stash relationship
-//
-//    var numLikes: Int {
-//        return likers.count
-//    }
     
     func convertToManagedObject() -> SongEntity {
         let songEntity = SongEntity(context: CoreDataManager.context)
@@ -74,7 +66,6 @@ struct Song: Codable, Identifiable, Hashable {
         songEntity.genre = self.genre
         songEntity.song_image = self.image
         songEntity.song_length = self.songLength as NSDecimalNumber?
-//        songEntity.liked_by = NSSet(object: self.likers)
         return songEntity
     }
 }
@@ -88,40 +79,29 @@ extension Song {
         self.genre = songEntity.genre ?? "Unknown"
         self.image = songEntity.song_image ?? "northern-lights"
         self.songLength = songEntity.song_length?.decimalValue ?? 0.00
-//        self.likers = self.getPeopleLikes(songEntity: songEntity)
-//        self.playedBy = User(userEntity: songEntity.played_by!)
     }
-    
-//    func getPeopleLikes(songEntity: SongEntity) -> [User] {
-//        var likers = [User]()
-//        if songEntity.liked_by?.allObjects as? [UserEntity] == nil {
-//            return likers
-//        }
-//        for liker in songEntity.liked_by!.allObjects as! [UserEntity]{
-//            let user = User(userEntity: liker)
-//            likers.append(user)
-//        }
-//        return likers
-//    }
 }
 
 struct SongInstance: Identifiable, Hashable {
+    
     public var id: UUID = UUID()
+    let songName: String  // need additional attribute so can use NSSortDescriptor--using the id leads to an Obj-C thread exception
     let instanceOf: Song
     let playedBy: User
     var likers = [User]()
     // add convo property
     // add stash relationship
     
-    var numLikes: Int {
-        return likers.count
-    }
+//    var numLikes: Int {
+//        return likers.count
+//    }
     
     func convertToManagedObject() -> SongInstanceEntity {
         let instanceEntity = SongInstanceEntity(context: CoreDataManager.context)
         instanceEntity.instance_id = self.id
+        instanceEntity.song_name = self.songName
         instanceEntity.instance_of = self.instanceOf.convertToManagedObject()
-        instanceEntity.liked_by = NSSet(object: self.likers)
+        instanceEntity.liked_by = NSSet()
         instanceEntity.played_by = self.playedBy.convertToManagedObject()
         
         return instanceEntity
@@ -131,12 +111,14 @@ struct SongInstance: Identifiable, Hashable {
 extension SongInstance {
     init(instanceEntity: SongInstanceEntity) {
         self.id = instanceEntity.instance_id!
+        self.songName = instanceEntity.song_name!
         self.instanceOf = Song(songEntity: instanceEntity.instance_of!)
         self.playedBy = User(userEntity: instanceEntity.played_by!)
         self.likers = self.getPeopleLikes(instanceEntity: instanceEntity)
     }
     
     func getPeopleLikes(instanceEntity: SongInstanceEntity) -> [User] {
+        // for each SongInstanceEntity, get all the people who liked the song
         var likers = [User]()
         if instanceEntity.liked_by?.allObjects as? [UserEntity] == nil {
             return likers

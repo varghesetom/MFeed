@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		93FE780425666A60009D8C4F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FE780325666A60009D8C4F /* AppDelegate.swift */; };
 		93FE780625666A60009D8C4F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FE780525666A60009D8C4F /* SceneDelegate.swift */; };
-		93FE780925666A60009D8C4F /* schoolProject.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 93FE780725666A60009D8C4F /* schoolProject.xcdatamodeld */; };
+		93FE780925666A60009D8C4F /* musicSharing.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 93FE780725666A60009D8C4F /* musicSharing.xcdatamodeld */; };
 		93FE780B25666A60009D8C4F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FE780A25666A60009D8C4F /* ContentView.swift */; };
 		93FE780D25666A69009D8C4F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 93FE780C25666A69009D8C4F /* Assets.xcassets */; };
 		93FE781025666A69009D8C4F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 93FE780F25666A69009D8C4F /* Preview Assets.xcassets */; };
@@ -22,7 +22,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		93FE780025666A60009D8C4F /* schoolProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = schoolProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		93FE780025666A60009D8C4F /* musicSharing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = musicSharing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		93FE780325666A60009D8C4F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		93FE780525666A60009D8C4F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		93FE780825666A60009D8C4F /* schoolProject.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = schoolProject.xcdatamodel; sourceTree = "<group>"; };
@@ -52,7 +52,7 @@
 		93FE77F725666A60009D8C4F = {
 			isa = PBXGroup;
 			children = (
-				93FE780225666A60009D8C4F /* schoolProject */,
+				93FE780225666A60009D8C4F /* musicSharing */,
 				93FE780125666A60009D8C4F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -60,12 +60,12 @@
 		93FE780125666A60009D8C4F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				93FE780025666A60009D8C4F /* schoolProject.app */,
+				93FE780025666A60009D8C4F /* musicSharing.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		93FE780225666A60009D8C4F /* schoolProject */ = {
+		93FE780225666A60009D8C4F /* musicSharing */ = {
 			isa = PBXGroup;
 			children = (
 				93FE781A25666C4D009D8C4F /* Model */,
@@ -78,10 +78,10 @@
 				93FE780C25666A69009D8C4F /* Assets.xcassets */,
 				93FE781125666A69009D8C4F /* LaunchScreen.storyboard */,
 				93FE781425666A69009D8C4F /* Info.plist */,
-				93FE780725666A60009D8C4F /* schoolProject.xcdatamodeld */,
+				93FE780725666A60009D8C4F /* musicSharing.xcdatamodeld */,
 				93FE780E25666A69009D8C4F /* Preview Content */,
 			);
-			path = schoolProject;
+			path = musicSharing;
 			sourceTree = "<group>";
 		};
 		93FE780E25666A69009D8C4F /* Preview Content */ = {
@@ -104,9 +104,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		93FE77FF25666A60009D8C4F /* schoolProject */ = {
+		93FE77FF25666A60009D8C4F /* musicSharing */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 93FE781725666A69009D8C4F /* Build configuration list for PBXNativeTarget "schoolProject" */;
+			buildConfigurationList = 93FE781725666A69009D8C4F /* Build configuration list for PBXNativeTarget "musicSharing" */;
 			buildPhases = (
 				93FE77FC25666A60009D8C4F /* Sources */,
 				93FE77FD25666A60009D8C4F /* Frameworks */,
@@ -116,9 +116,9 @@
 			);
 			dependencies = (
 			);
-			name = schoolProject;
+			name = musicSharing;
 			productName = schoolProject;
-			productReference = 93FE780025666A60009D8C4F /* schoolProject.app */;
+			productReference = 93FE780025666A60009D8C4F /* musicSharing.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -136,7 +136,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 93FE77FB25666A60009D8C4F /* Build configuration list for PBXProject "schoolProject" */;
+			buildConfigurationList = 93FE77FB25666A60009D8C4F /* Build configuration list for PBXProject "musicSharing" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -149,7 +149,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				93FE77FF25666A60009D8C4F /* schoolProject */,
+				93FE77FF25666A60009D8C4F /* musicSharing */,
 			);
 		};
 /* End PBXProject section */
@@ -175,7 +175,7 @@
 				93FE781E25666C84009D8C4F /* CoreDataManager.swift in Sources */,
 				93FE78262566F51D009D8C4F /* ProfileView.swift in Sources */,
 				93FE782225666CF9009D8C4F /* TestSpotifyView.swift in Sources */,
-				93FE780925666A60009D8C4F /* schoolProject.xcdatamodeld in Sources */,
+				93FE780925666A60009D8C4F /* musicSharing.xcdatamodeld in Sources */,
 				93FE780425666A60009D8C4F /* AppDelegate.swift in Sources */,
 				93FE780B25666A60009D8C4F /* ContentView.swift in Sources */,
 				93FE782025666CD3009D8C4F /* NewsFeedView.swift in Sources */,
@@ -317,14 +317,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"schoolProject/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"musicSharing/Preview Content\"";
+				DEVELOPMENT_TEAM = TQ7AR27YAG;
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = schoolProject/Info.plist;
+				INFOPLIST_FILE = musicSharing/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.schoolProject;
+				PRODUCT_BUNDLE_IDENTIFIER = com.musicSharing;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -336,14 +337,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"schoolProject/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"musicSharing/Preview Content\"";
+				DEVELOPMENT_TEAM = TQ7AR27YAG;
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = schoolProject/Info.plist;
+				INFOPLIST_FILE = musicSharing/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.schoolProject;
+				PRODUCT_BUNDLE_IDENTIFIER = com.musicSharing;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -353,7 +355,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		93FE77FB25666A60009D8C4F /* Build configuration list for PBXProject "schoolProject" */ = {
+		93FE77FB25666A60009D8C4F /* Build configuration list for PBXProject "musicSharing" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				93FE781525666A69009D8C4F /* Debug */,
@@ -362,7 +364,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		93FE781725666A69009D8C4F /* Build configuration list for PBXNativeTarget "schoolProject" */ = {
+		93FE781725666A69009D8C4F /* Build configuration list for PBXNativeTarget "musicSharing" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				93FE781825666A69009D8C4F /* Debug */,
@@ -374,13 +376,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		93FE780725666A60009D8C4F /* schoolProject.xcdatamodeld */ = {
+		93FE780725666A60009D8C4F /* musicSharing.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
 				93FE780825666A60009D8C4F /* schoolProject.xcdatamodel */,
 			);
 			currentVersion = 93FE780825666A60009D8C4F /* schoolProject.xcdatamodel */;
-			path = schoolProject.xcdatamodeld;
+			path = musicSharing.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

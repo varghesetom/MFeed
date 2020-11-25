@@ -1,6 +1,5 @@
 //
 //  SceneDelegate.swift
-//  schoolProject
 //
 //  Created by Varghese Thomas on 19/11/2020.
 //  Copyright © 2020 Varghese Thomas. All rights reserved.

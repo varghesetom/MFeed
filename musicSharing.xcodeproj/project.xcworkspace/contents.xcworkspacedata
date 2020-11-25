@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:schoolProject.xcodeproj">
+      location = "self:/Users/tomtom/mobile_ios/school_mobile_ios/schoolProject/musicSharing.xcodeproj">
    </FileRef>
 </Workspace>
