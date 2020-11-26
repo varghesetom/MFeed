@@ -25,7 +25,7 @@ struct Start: PreviewProvider {
     
     static var previews: some View {
 //        MusicTweet()
-        NewsFeedView(selection: .constant(2))
+        NewsFeedView(selection: .constant(1))
 //        Text("")
     }
 }
@@ -33,15 +33,16 @@ struct Start: PreviewProvider {
 
 struct ContentView: View {
     
-    @State private var selection = 2
+    @State private var selection = 1
     
     var body: some View {
         
 //        TestSpotifyView()
 //        MusicTweet()
-        NewsFeedView(selection: $selection)
 //        ProfileView()
 //        CoreDataExampleView()
+        NewsFeedView(selection: $selection)
+
         
     }
 }
@@ -65,13 +66,13 @@ struct CoreDataExampleView: View {
         return VStack {
             VStack {
                 Button(action: {
-                    CoreDataManager.emptyDB()
-                    CoreDataManager.saveFakeData()
-                    guard let bob = CoreDataManager.getUserWithName("Bob") else {
+                    TestDataManager.emptyDB()
+                    TestDataManager.saveFakeData()
+                    guard let bob = CoreDataRetrievalManager.getUserWithName("Bob") else {
                         print("No bob was found")
                         return
                     }
-                    guard let bobSongInstanceEntities = CoreDataManager.getSongInstancesFromUser(bob) else {
+                    guard let bobSongInstanceEntities = CoreDataRetrievalManager.getSongInstancesFromUser(bob) else {
                         print("No bob songs were found")
                         return
                     }
@@ -86,10 +87,10 @@ struct CoreDataExampleView: View {
                 Button(action: {
                     guard !self.fetchedBobEntity.isEmpty else { return }
                     let bobEntity = self.fetchedBobEntity.first!
-                    if let songInstanceEntities = CoreDataManager.getSongInstancesFromUser(bobEntity) {
+                    if let songInstanceEntities = CoreDataRetrievalManager.getSongInstancesFromUser(bobEntity) {
                         print("Got first song from User Bob")
                         let first = songInstanceEntities.first!
-                        CoreDataManager.userLikesSong(user: bobEntity, songInstance: first.convertToManagedObject())
+                        CoreRelationshipDataManager.userLikesSong(user: bobEntity, songInstance: first.convertToManagedObject())
                     }
                 }) {
                     Text("Add Like")

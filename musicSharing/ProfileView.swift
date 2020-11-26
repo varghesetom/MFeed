@@ -26,18 +26,32 @@ struct ProfileView: View {
 
 // will contain the most recent music tweet (which also means including a date attribute...) and Stash, Friends, and Edit buttons
 struct BottomHalfOfProfile: View {
-    @FetchRequest(fetchRequest: CoreDataManager.getRecentlyListenedSongFromMainUser) var mostRecentSong: FetchedResults<SongInstanceEntity>
+    @FetchRequest(fetchRequest: CoreDataRetrievalManager.getRecentlyListenedSongFromMainUser) var mostRecentSong: FetchedResults<SongInstanceEntity>
+    @FetchRequest(fetchRequest: CoreDataRetrievalManager.getStashFromMainUser) var userStashedSongs: FetchedResults<SongInstanceEntity>
+    @FetchRequest(fetchRequest: CoreDataRetrievalManager.getMainUsersFriends) var userFriendEntities: FetchedResults<UserEntity>
+    @FetchRequest(fetchRequest: CoreDataRetrievalManager.getReceivedFollowRequestsForMainUser) var receivedEntities: FetchedResults<UserEntity>
+    @FetchRequest(fetchRequest: CoreDataRetrievalManager.getFollowRequestsSentByMainUser) var sentEntities: FetchedResults<UserEntity>
     
-    @State var isPresented = false
+    @State var isStashSheet = false
+    @State var isFriendSheet = false
+    @State var isFollowerSheet = false
     
     var body: some View {
         
-        guard mostRecentSong.count > 0 else {
-            return AnyView(Text("No Song Listens").foregroundColor(.white))
-        }
         let mostRecentSongInstance = SongInstance(instanceEntity: mostRecentSong.first!)
+        let stashedSongInstances = userStashedSongs.map {
+            SongInstance(instanceEntity: $0)
+        }
+        let userFriends = userFriendEntities.map {
+            User(userEntity: $0)
+        }
+        let followsRequestedFrom = receivedEntities.map {
+            User(userEntity: $0)
+        }
+        let usersRequestedToBeFriends = sentEntities.map {
+            User(userEntity: $0)
+        }
         
-        let mainUserStashedSongs = CoreDataManager.getStashFromUser(CoreDataManager.mainUser) ?? [SongInstance]()
         return AnyView(
             VStack {
                 Text("Recent Song")
@@ -48,27 +62,41 @@ struct BottomHalfOfProfile: View {
                 HStack {
                     Spacer()
                     Button(action: {
-                        self.isPresented.toggle()
+                        self.isStashSheet.toggle()
                     }) {
                         Text("Stash")
-                    }.sheet(isPresented: $isPresented) {
+                    }.sheet(isPresented: $isStashSheet) {
                         List {
-                            ForEach(mainUserStashedSongs, id: \.self) {
+                            ForEach(stashedSongInstances, id: \.self) {
                                 Text("Song: \($0.songName)")
                             }
                         }
                     }
                     Spacer()
                     Button(action: {
-                        
+                        self.isFriendSheet.toggle()
                     }) {
                         Text("Friends")
+                    }.sheet(isPresented: $isFriendSheet) {
+                        List {
+                            ForEach(userFriends, id: \.self) {
+                                Text("Friend: \($0.name)")
+                            }
+                        }
                     }
                     Spacer()
                     Button(action: {
-                    
+                        self.isFollowerSheet.toggle()
+                        print("The other fetched result was \(usersRequestedToBeFriends)")
                     }) {
                         Text("Follow Requests")
+                    }.sheet(isPresented: $isFollowerSheet) {
+                        List {
+                            ForEach(followsRequestedFrom, id: \.self) {
+                                Text("Request from: \($0.name)")
+                            }
+                            
+                        }
                     }
                     Spacer()
                 }
@@ -78,7 +106,7 @@ struct BottomHalfOfProfile: View {
 }
 
 struct UserBox: View {
-    @State private var user = User(userEntity: CoreDataManager.mainUser)
+    @State private var user = User(userEntity: TestDataManager.mainUser)
     
     var body: some View {
         VStack {

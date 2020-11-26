@@ -14,8 +14,8 @@ struct NewsFeedView: View {
             ScrollTweets().tabItem { Text("Feed")}.tag(1)
             ProfileView().tabItem{ Text("Profile")}.tag(2)
         }.onAppear(perform: {
-            CoreDataManager.emptyDB()
-            CoreDataManager.saveFakeData()
+            TestDataManager.emptyDB()
+            TestDataManager.saveFakeData()
         })
     }
 }
@@ -85,16 +85,22 @@ struct MusicTweet: View {
                         .italic()
                         .minimumScaleFactor(0.5)
                         .allowsTightening(true)
-                    HStack(spacing: 10) {
-                        TweetButton("Stash", songInstance)
-                        TweetButton("Convo", songInstance)
-                        TweetButton("Like", songInstance)
-                    }
-                    .padding(.top, 30)
-                    .padding(.trailing, 10)
                 }.padding(.leading, 30)
             }
             .frame(width: width, height: height, alignment: alignment)  // the orange rectangle will have its own frame to avoid ZStack
+            .background(Color.orange)
+            HStack(spacing: 10) {
+                Spacer()
+                TweetButton("Stash", songInstance)
+                Spacer()
+                TweetButton("Convo", songInstance)
+                Spacer()
+                TweetButton("Like", songInstance)
+                Spacer()
+            }
+//            .padding(.top, 30)
+//            .padding(.trailing, 10)
+            .frame(width: width, height: 70, alignment: alignment)
             .background(Color.orange)
         }
     }
@@ -117,6 +123,8 @@ struct TweetButton: View {
         }) {
             Text("\(action)")
                 .font(.caption)
+                .minimumScaleFactor(0.7)
+                .allowsTightening(true)
         }
             .buttonStyle(ButtonBackground())
     }
@@ -125,13 +133,13 @@ struct TweetButton: View {
         switch self.action {
         case "Stash":
             print("Stashed")
-            CoreDataManager.userStashesSong(songInstance: self.songInstance.convertToManagedObject())
+            CoreRelationshipDataManager.userStashesSong(songInstance: self.songInstance.convertToManagedObject())
         case "Convo":
             print("Convoed")
-            CoreDataManager.userCommentsOnSong(songInstance: self.songInstance.convertToManagedObject())
+            CoreRelationshipDataManager.userCommentsOnSong(songInstance: self.songInstance.convertToManagedObject())
         case "Like":
             print("Liked")
-            CoreDataManager.userLikesSong(songInstance: self.songInstance.convertToManagedObject())
+            CoreRelationshipDataManager.userLikesSong(songInstance: self.songInstance.convertToManagedObject())
         default:
             fatalError("Need proper action argument for TweetButton functionality")
         }

@@ -14,7 +14,7 @@ struct User: Codable, Identifiable, Hashable {
     // add stash property
     
     func convertToManagedObject() -> UserEntity {
-        let userEntity = UserEntity(context: CoreDataManager.context)
+        let userEntity = UserEntity(context: TestDataManager.context)
         userEntity.userID = self.id
         userEntity.name = self.name
         userEntity.bio = self.user_bio
@@ -59,7 +59,7 @@ struct Song: Codable, Identifiable, Hashable {
     let songLength: Decimal?
     
     func convertToManagedObject() -> SongEntity {
-        let songEntity = SongEntity(context: CoreDataManager.context)
+        let songEntity = SongEntity(context: TestDataManager.context)
         songEntity.song_id = self.id
         songEntity.song_name = self.name
         songEntity.artist_name = self.artist
@@ -97,7 +97,7 @@ struct SongInstance: Identifiable, Hashable {
 //    }
     
     func convertToManagedObject() -> SongInstanceEntity {
-        let instanceEntity = SongInstanceEntity(context: CoreDataManager.context)
+        let instanceEntity = SongInstanceEntity(context: TestDataManager.context)
         instanceEntity.instance_id = self.id
         instanceEntity.song_name = self.songName
         instanceEntity.instance_of = self.instanceOf.convertToManagedObject()
