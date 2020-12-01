@@ -16,23 +16,23 @@ class CoreRelationshipDataManager {
      */
     static var context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
-    static func userStashesSong(user: UserEntity = TestDataManager.mainUser, songInstance: SongInstanceEntity) {
+    static func userStashesSong(user: UserEntity = TestDataManager.mainUser!, songInstance: SongInstanceEntity) {
         user.addToStashes_this(songInstance)
     }
     
-    static func userListenedToSong(user: UserEntity = TestDataManager.mainUser, songInstance: SongInstanceEntity) {
+    static func userListenedToSong(user: UserEntity = TestDataManager.mainUser!, songInstance: SongInstanceEntity) {
         user.addToListened_to(songInstance)
     }
     
-    static func userLikesSong(user: UserEntity = TestDataManager.mainUser, songInstance: SongInstanceEntity) {
+    static func userLikesSong(user: UserEntity = TestDataManager.mainUser!, songInstance: SongInstanceEntity) {
         user.addToLikes_this(songInstance)
     }
     
-    static func userCommentsOnSong(user: UserEntity = TestDataManager.mainUser, songInstance: SongInstanceEntity) {
+    static func userCommentsOnSong(user: UserEntity = TestDataManager.mainUser!, songInstance: SongInstanceEntity) {
         user.addToCommented_on(songInstance)
     }
     
-    static func userIsFriends(user: UserEntity = TestDataManager.mainUser, friend: UserEntity) {
+    static func userIsFriends(user: UserEntity = TestDataManager.mainUser!, friend: UserEntity) {
         user.addToIs_friends_with(friend)
     }
     
@@ -52,6 +52,51 @@ class CoreRelationshipDataManager {
     
     static func userUnstashesSong(user: UserEntity, songInstance: SongInstanceEntity) {
         user.removeFromStashes_this(songInstance)
+    }
+    
+    // Initial relationship assignments for  TEST DATA
+    static func assignInitialFriendshipsToUser() {
+        let sarahFriendRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+        sarahFriendRequest.predicate = NSPredicate(format: "name == %@", "Sarah Connor")
+        let bobFriendRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+        bobFriendRequest.predicate = NSPredicate(format: "name == %@", "Bob LobLaw")
+        do {
+            let sarah = try TestDataManager.context.fetch(sarahFriendRequest).first!
+            CoreRelationshipDataManager.userIsFriends(user: TestDataManager.mainUser!, friend: sarah)
+            let bob = try TestDataManager.context.fetch(bobFriendRequest).first!
+            CoreRelationshipDataManager.userIsFriends(user: TestDataManager.mainUser!, friend: bob)
+            try TestDataManager.context.save()
+        } catch {
+            print("Could no assign friendship between test users and main user \(error.localizedDescription)")
+        }
+    }
+    
+    static func assignInitialFollowRequestsForMainUser() {
+        let sarahFriendRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+        sarahFriendRequest.predicate = NSPredicate(format: "name == %@", "Sarah Connor")
+        let peterRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+        peterRequest.predicate = NSPredicate(format: "name == %@", "Peter Parker")
+        do {
+            let peter = try TestDataManager.context.fetch(peterRequest).first!
+                CoreRelationshipDataManager.userSentFollowRequest(from: peter, to: TestDataManager.mainUser!)
+            try TestDataManager.context.save()
+        } catch {
+            print("Could not assign follow requests sent by test users to main user \(error.localizedDescription)")
+        }
+    }
+    
+    static func assignMainUsersSentFollowRequests() {
+        let sarahFriendRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+        sarahFriendRequest.predicate = NSPredicate(format: "name == %@", "Sarah Connor")
+        let cousinVinnyRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+        cousinVinnyRequest.predicate = NSPredicate(format: "name == %@", "Vinny Gambini")
+        do {
+            let myCousinVinny = try TestDataManager.context.fetch(cousinVinnyRequest).first!
+            CoreRelationshipDataManager.userSentFollowRequest(from: TestDataManager.mainUser!, to: myCousinVinny)
+            try TestDataManager.context.save()
+        } catch {
+            print("Could not assign follow requests sent to test users by main user \(error.localizedDescription)")
+        }
     }
 }
 

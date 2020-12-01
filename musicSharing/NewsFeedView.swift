@@ -39,7 +39,6 @@ struct ScrollTweets: View {
             .background(Color.black)
             .navigationBarTitle("OnTheSpot")
         }
-        
     }
 }
 
@@ -130,6 +129,7 @@ struct TweetButton: View {
     }
     
     func buttonFunctionality() -> Void {
+        // TODO - fix bug where duplicate tweets appear after clicking on a random user's stash button
         switch self.action {
         case "Stash":
             print("Stashed")

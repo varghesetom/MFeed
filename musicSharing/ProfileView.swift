@@ -106,7 +106,7 @@ struct BottomHalfOfProfile: View {
 }
 
 struct UserBox: View {
-    @State private var user = User(userEntity: TestDataManager.mainUser)
+    @State private var user = User(userEntity: TestDataManager.mainUser!)
     
     var body: some View {
         VStack {

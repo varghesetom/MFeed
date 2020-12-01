@@ -14,147 +14,101 @@ class TestDataManager {
     /*
       Class is responsible only for injecting test data into Core Data. Will be replaced with JSON loads instead once main functionality is done
      */
+    
+    var users = [User]()
+    var songs = [Song]()
+    var songInstances = [SongInstance]()
     static var context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-      
+    static let idMainUser = "947be968-e95d-4db4-b975-0e674c934c61"
+    static let testData = JSONTestData()
+    
     static var mainUser = TestDataManager.createMainUser() // will act as our main user for demo purposes -- e.g. the user profile will reflect user u0
     
-    static func createMainUser() -> UserEntity {
-        let u0 = NSEntityDescription.insertNewObject(forEntityName: "UserEntity", into: TestDataManager.context) as! UserEntity
-               u0.userID = UUID()
-               u0.name = "Tom"
-               u0.avatar = "northern_lights"
-               u0.bio = "student who likes all kinds of music. No favorite song -- Different songs for different moods."
-        return u0
+    static func createMainUser() -> UserEntity? {
+        let mainUserRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+        mainUserRequest.predicate = NSPredicate(format: "ANY %K == %@", "name", "Tom")
+        do {
+            let mainUser = try TestDataManager.context.fetch(mainUserRequest).first!
+            print("FOUND MAIN USER: \(mainUser)")
+            return mainUser
+        } catch {
+            print("Could not initialize main user \(error.localizedDescription)")
+        }
+        return nil
     }
     
     static func saveFakeData() {
-        let appDelegate = (UIApplication.shared.delegate as! AppDelegate)
+        TestDataManager.loadUsersFromJSON()
+        TestDataManager.loadSongsFromJSON()
+        TestDataManager.loadSongInstancesFromJSON()
+    }
+    
+    static func loadUsersFromJSON() {
+        guard let users = testData.users else {
+            print("Could not load users data")
+            return
+        }
+        users.forEach({ user in _ =
+            user.convertToManagedObject()
+        })
         
-        // USERS
-        let u1 = NSEntityDescription.insertNewObject(forEntityName: "UserEntity", into: TestDataManager.context) as! UserEntity
-        u1.userID = UUID()
-        u1.name = "Bob"
-        u1.avatar = "northern_lights"
-        u1.bio = "lawyer"
-        
-        let u2 = NSEntityDescription.insertNewObject(forEntityName: "UserEntity", into: TestDataManager.context) as! UserEntity
-        u2.userID = UUID()
-        u2.name = "Sally"
-        u2.avatar = "northern_lights"
-        u2.bio = "doctor"
-        
-        let u3 = NSEntityDescription.insertNewObject(forEntityName: "UserEntity", into: TestDataManager.context) as! UserEntity
-        u3.userID = UUID()
-        u3.name = "Peter"
-        u3.avatar = "northern_lights"
-        u3.bio = "has great power and recognizes great responsibilities come along with it"
-        
-        let u4 = NSEntityDescription.insertNewObject(forEntityName: "UserEntity", into: TestDataManager.context) as! UserEntity
-        u4.userID = UUID()
-        u4.name = "Vic"
-        u4.avatar = "northern_lights"
-        u4.bio = "uh what are we supposed to put here?"
-        
-        // SONGS
-        let s1 = NSEntityDescription.insertNewObject(forEntityName: "SongEntity", into: TestDataManager.context) as! SongEntity
-        
-        s1.song_id = UUID()
-        s1.artist_name = "Samuel Barber"
-        s1.genre = "Classical"
-        s1.song_image = "northern_lights"
-        s1.song_length = 4.23
-        s1.song_name = "Adagio For Strings"
-        
-        let s2 = NSEntityDescription.insertNewObject(forEntityName: "SongEntity", into: TestDataManager.context) as! SongEntity
-        s2.song_id = UUID()
-        s2.artist_name = "Joe Esposito"
-        s2.genre = "Rock"
-        s2.song_image = "northern_lights"
-        s2.song_length = 3.14
-        s2.song_name = "You're the Best Around"
-        
-        let s3 = NSEntityDescription.insertNewObject(forEntityName: "SongEntity", into: TestDataManager.context) as! SongEntity
-        s3.song_id = UUID()
-        s3.artist_name = "Jesper Kyd"
-        s3.genre = "Classical"
-        s3.song_image = "northern_lights"
-        s3.song_length = 4.15
-        s3.song_name = "Son of Fjord"
-        
-        let s4 = NSEntityDescription.insertNewObject(forEntityName: "SongEntity", into: TestDataManager.context) as! SongEntity
-        s4.song_id = UUID()
-        s4.song_name = "Tyler Herro"
-        s4.genre = "HipHop"
-        s4.song_length = 2.36
-        
-        let s5 = Song(id: UUID(), name: "The Devil Went Down to Georgia", artist: "The Charlie Daniels Band", genre: "Country", image: "", songLength: 3.34).convertToManagedObject()
-        
-        // INSTANCES
-        let i1 = NSEntityDescription.insertNewObject(forEntityName: "SongInstanceEntity", into: TestDataManager.context) as! SongInstanceEntity
-        i1.instance_id = UUID()
-        i1.song_name = s1.song_name
-        i1.instance_of = s1
-        i1.played_by = u1
-        
-        let i2 = NSEntityDescription.insertNewObject(forEntityName: "SongInstanceEntity", into: TestDataManager.context) as! SongInstanceEntity
-        
-        i2.instance_id = UUID()
-        i2.song_name = s2.song_name
-        i2.instance_of = s2
-        i2.played_by = u1
-        
-        let i3 = NSEntityDescription.insertNewObject(forEntityName: "SongInstanceEntity", into: TestDataManager.context) as! SongInstanceEntity
-        
-        i3.instance_id = UUID()
-        i3.song_name = s3.song_name
-        i3.instance_of = s3
-        i3.played_by = u2
-        
-        let i4 = NSEntityDescription.insertNewObject(forEntityName: "SongInstanceEntity", into: TestDataManager.context) as! SongInstanceEntity
-        
-        i4.instance_id = UUID()
-        i4.song_name = s1.song_name
-        i4.instance_of = s1
-        i4.played_by = TestDataManager.mainUser
-        
-        let i5 =  NSEntityDescription.insertNewObject(forEntityName: "SongInstanceEntity", into: TestDataManager.context) as! SongInstanceEntity
-        
-        i5.instance_id = UUID()
-        i5.song_name = s5.song_name
-        i5.instance_of = s5
-        i5.played_by = TestDataManager.mainUser
-        
-        let i6 =  NSEntityDescription.insertNewObject(forEntityName: "SongInstanceEntity", into: TestDataManager.context) as! SongInstanceEntity
-        
-        i6.instance_id = UUID()
-        i6.song_name = s2.song_name
-        i6.instance_of = s2
-        i6.played_by = TestDataManager.mainUser
+        do {
+            try TestDataManager.context.save()
+        } catch {
+            print("Error saving users to CoreData store \(error.localizedDescription)")
+        }
+    }
 
-//        let i6 = SongInstance(id: UUID(), instanceOf: Song(songEntity: s2), playedBy: User(userEntity: CoreDataManager.mainUser))
-//        _ = i6.convertToManagedObject()
-        
-        let i7 =  NSEntityDescription.insertNewObject(forEntityName: "SongInstanceEntity", into: TestDataManager.context) as! SongInstanceEntity
-        
-        i7.instance_id = UUID()
-        i7.song_name = s4.song_name
-        i7.instance_of = s4
-        i7.played_by = u3
-        
-        
+    static func loadSongsFromJSON() {
+        guard let songs = testData.songs else {
+            print("Could not load songs data")
+            return
+        }
+             songs.forEach({ song in _ =
+                 song.convertToManagedObject()
+             })
+             
+             do {
+                 try TestDataManager.context.save()
+             } catch {
+                 print("Error saving songs to CoreData store \(error.localizedDescription)")
+             }
+    }
+    
+    static func loadSongInstancesFromJSON() {
+        guard let songInstances = TestDataManager.testData.songInstances else {
+                print("Could not load song instances data")
+                return
+        }
+             songInstances.forEach({ songInstance in _ =
+                 songInstance.convertToManagedObject()
+             })
+             
+             do {
+                 try TestDataManager.context.save()
+             } catch {
+                 print("Error saving song instances to CoreData store \(error.localizedDescription)")
+             }
+    }
+    
+    
+    static func setInitialRelationships() {
         // assigning friendships
-        CoreRelationshipDataManager.userIsFriends(user: TestDataManager.mainUser, friend: u2)
-        CoreRelationshipDataManager.userIsFriends(user: TestDataManager.mainUser, friend: u3)
+//        CoreRelationshipDataManager.userIsFriends(user: TestDataManager.mainUser, friend: u2)
+//        CoreRelationshipDataManager.userIsFriends(user: TestDataManager.mainUser, friend: u3)
         
         // assigning follow request to Main User
-        CoreRelationshipDataManager.userSentFollowRequest(from: u1, to: TestDataManager.mainUser)
+//        CoreRelationshipDataManager.userSentFollowRequest(from: u1, to: TestDataManager.mainUser)
         
         // assigning follow request sent by Main User
-        CoreRelationshipDataManager.userSentFollowRequest(from: TestDataManager.mainUser, to: u4)
+//        CoreRelationshipDataManager.userSentFollowRequest(from: TestDataManager.mainUser, to: u4)
+        CoreRelationshipDataManager.assignInitialFriendshipsToUser()
+        CoreRelationshipDataManager.assignMainUsersSentFollowRequests()
+        CoreRelationshipDataManager.assignInitialFollowRequestsForMainUser()
         
         // need to assign stash relationships
-        appDelegate.saveContext()
     }
+    
     
     // Methods for clearing Core Data instances
     static func emptyDB() {
@@ -183,3 +137,51 @@ class TestDataManager {
     }
 }
 
+struct JSONTestData {
+    var users: [User]?
+    var songs: [Song]?
+    var songInstances: [SongInstance]?
+    
+    init() {
+        guard let usersPath = Bundle.main.path(forResource: "users", ofType: "json") else {
+            print("Yo! no users Path!")
+            return
+        }
+        do {
+            if let jsonData = try String(contentsOfFile: usersPath).data(using: .utf8) {
+                let decoder = JSONDecoder()
+                users = try decoder.decode([User].self, from: jsonData)
+                print("USERS -> \(users ?? [User]())")
+            }
+        } catch {
+               print("Error occurred for users decoding process \(error.localizedDescription)")
+        }
+        
+        guard let songsPath = Bundle.main.path(forResource: "songs", ofType: "json") else {
+            print("Yo! no songs Path!")
+            return
+        }
+        do {
+            if let jsonData = try String(contentsOfFile: songsPath).data(using: .utf8) {
+                let decoder = JSONDecoder()
+                songs = try decoder.decode([Song].self, from: jsonData)
+            }
+        } catch {
+          print("Error occurred for song decoding process \(error.localizedDescription)")
+       }
+                    
+        guard let songInstancesPath = Bundle.main.path(forResource: "song_instances", ofType: "json") else {
+                print("Yo! no songInstances Path!")
+                return
+        }
+        do {
+            if let jsonData = try String(contentsOfFile: songInstancesPath).data(using: .utf8) {
+            let decoder = JSONDecoder()
+            songInstances = try decoder.decode([SongInstance].self, from: jsonData)
+            print("SONGINSTANCES -> \(songInstances ?? [SongInstance]())")
+            }
+        } catch {
+            print("Error occurred for song instances decoding process \(error.localizedDescription)")
+        }
+    }
+}

@@ -10,6 +10,7 @@
         <relationship name="instance" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="SongInstanceEntity" inverseName="instance_of" inverseEntity="SongInstanceEntity"/>
     </entity>
     <entity name="SongInstanceEntity" representedClassName="SongInstanceEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="date_listened" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="instance_id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="song_name" optional="YES" attributeType="String"/>
         <relationship name="commented_by" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserEntity" inverseName="commented_on" inverseEntity="UserEntity"/>
@@ -33,7 +34,7 @@
     </entity>
     <elements>
         <element name="SongEntity" positionX="-54" positionY="-9" width="128" height="148"/>
-        <element name="SongInstanceEntity" positionX="-36" positionY="9" width="128" height="28"/>
+        <element name="SongInstanceEntity" positionX="-36" positionY="9" width="128" height="163"/>
         <element name="UserEntity" positionX="-18" positionY="27" width="128" height="28"/>
     </elements>
 </model>

@@ -10,7 +10,7 @@ struct User: Codable, Identifiable, Hashable {
     let name: String
     let user_bio: String?
     let avatar: String?
-    var listenedTo = [Song]()
+//    var listenedTo = [Song]()
     // add stash property
     
     func convertToManagedObject() -> UserEntity {
@@ -19,7 +19,7 @@ struct User: Codable, Identifiable, Hashable {
         userEntity.name = self.name
         userEntity.bio = self.user_bio
         userEntity.avatar = self.avatar
-        userEntity.listened_to = NSSet()
+//        userEntity.listened_to = NSSet()
         return userEntity
     }
 }
@@ -82,13 +82,17 @@ extension Song {
     }
 }
 
-struct SongInstance: Identifiable, Hashable {
+struct SongInstance: Codable, Identifiable, Hashable {
     
     public var id: UUID = UUID()
     let songName: String  // need additional attribute so can use NSSortDescriptor--using the id leads to an Obj-C thread exception
+    let dateListened: Date
     let instanceOf: Song
     let playedBy: User
+    
     var likers = [User]()
+    var commenters = [User]()
+    var stashers = [User]()
     // add convo property
     // add stash relationship
     
@@ -99,9 +103,12 @@ struct SongInstance: Identifiable, Hashable {
     func convertToManagedObject() -> SongInstanceEntity {
         let instanceEntity = SongInstanceEntity(context: TestDataManager.context)
         instanceEntity.instance_id = self.id
+        instanceEntity.date_listened = self.dateListened
         instanceEntity.song_name = self.songName
         instanceEntity.instance_of = self.instanceOf.convertToManagedObject()
         instanceEntity.liked_by = NSSet()
+        instanceEntity.commented_by = NSSet()
+        instanceEntity.stashed_by = NSSet()
         instanceEntity.played_by = self.playedBy.convertToManagedObject()
         
         return instanceEntity
@@ -112,9 +119,12 @@ extension SongInstance {
     init(instanceEntity: SongInstanceEntity) {
         self.id = instanceEntity.instance_id!
         self.songName = instanceEntity.song_name!
+        self.dateListened = instanceEntity.date_listened!
         self.instanceOf = Song(songEntity: instanceEntity.instance_of!)
         self.playedBy = User(userEntity: instanceEntity.played_by!)
         self.likers = self.getPeopleLikes(instanceEntity: instanceEntity)
+        self.commenters = self.getCommenters(instanceEntity: instanceEntity)
+        self.stashers = self.getStashers(instanceEntity: instanceEntity)
     }
     
     func getPeopleLikes(instanceEntity: SongInstanceEntity) -> [User] {
@@ -128,6 +138,30 @@ extension SongInstance {
             likers.append(user)
         }
         return likers
+    }
+    
+    func getCommenters(instanceEntity: SongInstanceEntity) -> [User] {
+        var commenters = [User]()
+        if instanceEntity.commented_by?.allObjects as? [UserEntity] == nil {
+            return commenters
+        }
+        for commenter in instanceEntity.commented_by!.allObjects as! [UserEntity] {
+            let user = User(userEntity: commenter)
+            commenters.append(user)
+        }
+        return commenters
+    }
+    
+    func getStashers(instanceEntity: SongInstanceEntity) -> [User] {
+        var stashers = [User]()
+        if instanceEntity.stashed_by?.allObjects as? [UserEntity] == nil {
+            return stashers
+        }
+        for stasher in instanceEntity.stashed_by!.allObjects as! [UserEntity] {
+            let user = User(userEntity: stasher)
+            stashers.append(user)
+        }
+        return stashers
     }
 }
 

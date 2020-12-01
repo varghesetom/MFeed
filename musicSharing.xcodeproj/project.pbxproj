@@ -10,6 +10,9 @@
 		93F2D777256F8722004FDDD3 /* CoreDataRetrievalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F2D776256F8722004FDDD3 /* CoreDataRetrievalManager.swift */; };
 		93F2D77B256F8782004FDDD3 /* CoreTestDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F2D77A256F8782004FDDD3 /* CoreTestDataManager.swift */; };
 		93F2D77D256F8887004FDDD3 /* CoreRelationshipDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F2D77C256F8887004FDDD3 /* CoreRelationshipDataManager.swift */; };
+		93F2D7802575F3DB004FDDD3 /* users.json in Resources */ = {isa = PBXBuildFile; fileRef = 93F2D77F2575F3DA004FDDD3 /* users.json */; };
+		93F2D7822575F6A1004FDDD3 /* songs.json in Resources */ = {isa = PBXBuildFile; fileRef = 93F2D7812575F6A1004FDDD3 /* songs.json */; };
+		93F2D78625761D38004FDDD3 /* song_instances.json in Resources */ = {isa = PBXBuildFile; fileRef = 93F2D78525761D38004FDDD3 /* song_instances.json */; };
 		93FE780425666A60009D8C4F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FE780325666A60009D8C4F /* AppDelegate.swift */; };
 		93FE780625666A60009D8C4F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FE780525666A60009D8C4F /* SceneDelegate.swift */; };
 		93FE780925666A60009D8C4F /* musicSharing.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 93FE780725666A60009D8C4F /* musicSharing.xcdatamodeld */; };
@@ -27,6 +30,9 @@
 		93F2D776256F8722004FDDD3 /* CoreDataRetrievalManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataRetrievalManager.swift; sourceTree = "<group>"; };
 		93F2D77A256F8782004FDDD3 /* CoreTestDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreTestDataManager.swift; sourceTree = "<group>"; };
 		93F2D77C256F8887004FDDD3 /* CoreRelationshipDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreRelationshipDataManager.swift; sourceTree = "<group>"; };
+		93F2D77F2575F3DA004FDDD3 /* users.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = users.json; sourceTree = "<group>"; };
+		93F2D7812575F6A1004FDDD3 /* songs.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = songs.json; sourceTree = SOURCE_ROOT; };
+		93F2D78525761D38004FDDD3 /* song_instances.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = song_instances.json; sourceTree = "<group>"; };
 		93FE780025666A60009D8C4F /* musicSharing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = musicSharing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		93FE780325666A60009D8C4F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		93FE780525666A60009D8C4F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -53,6 +59,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		93F2D77E2575F39E004FDDD3 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				93F2D78525761D38004FDDD3 /* song_instances.json */,
+				93F2D7812575F6A1004FDDD3 /* songs.json */,
+				93F2D77F2575F3DA004FDDD3 /* users.json */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		93FE77F725666A60009D8C4F = {
 			isa = PBXGroup;
 			children = (
@@ -79,6 +95,7 @@
 				93FE781F25666CD3009D8C4F /* NewsFeedView.swift */,
 				93FE78252566F51D009D8C4F /* ProfileView.swift */,
 				93FE780C25666A69009D8C4F /* Assets.xcassets */,
+				93F2D77E2575F39E004FDDD3 /* Resources */,
 				93FE782125666CF9009D8C4F /* TestSpotifyView.swift */,
 				93FE781125666A69009D8C4F /* LaunchScreen.storyboard */,
 				93FE781425666A69009D8C4F /* Info.plist */,
@@ -165,9 +182,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93F2D7802575F3DB004FDDD3 /* users.json in Resources */,
 				93FE781325666A69009D8C4F /* LaunchScreen.storyboard in Resources */,
 				93FE781025666A69009D8C4F /* Preview Assets.xcassets in Resources */,
 				93FE780D25666A69009D8C4F /* Assets.xcassets in Resources */,
+				93F2D7822575F6A1004FDDD3 /* songs.json in Resources */,
+				93F2D78625761D38004FDDD3 /* song_instances.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

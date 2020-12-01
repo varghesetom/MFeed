@@ -1,0 +1,32 @@
+[
+    {
+        "id" : "947be968-e95d-4db4-b975-0e674c934c61",
+        "name" : "Tom",
+        "user_bio": "student who likes all kinds of music. No favorite song -- Different songs for different moods.",
+        "avatar" : "northern_lights",
+    },
+    {
+        "id" : "93d95053-e625-4e60-a48c-fb04421f0d9f",
+        "name" : "Bob LobLaw",
+        "user_bio": "lawyer unfortunately representing the Bluth family",
+        "avatar" : "northern_lights",
+    },
+    {
+        "id" : "c8d28461-23ed-4b07-99b1-43d880a8d077",
+        "name" : "Sarah Connor",
+        "user_bio": "Judgment Day is coming.",
+        "avatar" : "northern_lights",
+    },
+    {
+        "id" : "6eb17b62-9cac-4f06-a3cc-edd9197b80a5",
+        "name" : "Peter Parker",
+        "user_bio": "college freshman studying biophysics at Empire State University and definitely not Spider-Man",
+        "avatar" : "northern_lights",
+    },
+    {
+        "id" : "5dfa765a-11ac-44b1-b66d-f6d48fe5cbe6",
+        "name" : "Vinny Gambini",
+        "user_bio": "recently minted lawyer who can clear any murder charges. Husband of Mona Lisa Vito a celebrated car mechanic",
+        "avatar" : "northern_lights",
+    }
+]

@@ -39,7 +39,7 @@ class CoreDataRetrievalManager {
     // also try to use ID instead of name for more accuracy--running into bug here.
     static var getRecentlyListenedSongFromMainUser: NSFetchRequest<SongInstanceEntity> {
         let request: NSFetchRequest<SongInstanceEntity> = SongInstanceEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "played_by.name = %@", User(userEntity: TestDataManager.mainUser).name)
+        request.predicate = NSPredicate(format: "played_by.name = %@", User(userEntity: TestDataManager.mainUser!).name)
         request.sortDescriptors = [NSSortDescriptor(key: "song_name", ascending: true)]
         return request
     }
@@ -47,7 +47,7 @@ class CoreDataRetrievalManager {
     // get main user's songs from their STASH
     static var getStashFromMainUser: NSFetchRequest<SongInstanceEntity> {
         let request: NSFetchRequest<SongInstanceEntity> = SongInstanceEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "ANY stashed_by.name = %@", User(userEntity: TestDataManager.mainUser).name) // comparing a collection of results(?) to a scalar value so need ANY
+        request.predicate = NSPredicate(format: "ANY stashed_by.name = %@", User(userEntity: TestDataManager.mainUser!).name) // comparing a collection of results(?) to a scalar value so need ANY
         request.sortDescriptors = [NSSortDescriptor(key: "song_name", ascending: true)]
         return request
     }
@@ -55,7 +55,7 @@ class CoreDataRetrievalManager {
     static var getMainUsersFriends:
         NSFetchRequest<UserEntity> {
         let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "ANY is_friends_with.name = %@", User(userEntity: TestDataManager.mainUser).name)
+        request.predicate = NSPredicate(format: "ANY is_friends_with.name = %@", User(userEntity: TestDataManager.mainUser!).name)
         request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
         return request
     }
@@ -63,7 +63,7 @@ class CoreDataRetrievalManager {
     static var getFollowRequestsSentByMainUser:
         NSFetchRequest<UserEntity> {
         let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "ANY received_follow_request.name = %@", User(userEntity: TestDataManager.mainUser).name)
+        request.predicate = NSPredicate(format: "ANY received_follow_request.name = %@", User(userEntity: TestDataManager.mainUser!).name)
         request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
         return request
     }
@@ -71,7 +71,7 @@ class CoreDataRetrievalManager {
     static var getReceivedFollowRequestsForMainUser:
         NSFetchRequest<UserEntity> {
         let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "ANY sent_follow_request.name = %@", User(userEntity: TestDataManager.mainUser).name)
+        request.predicate = NSPredicate(format: "ANY sent_follow_request.name = %@", User(userEntity: TestDataManager.mainUser!).name)
         request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
         return request
     }
