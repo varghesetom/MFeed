@@ -54,6 +54,12 @@ class CoreRelationshipDataManager {
         user.removeFromStashes_this(songInstance)
     }
     
+    static func assignAllInitialRelationships() {
+        CoreRelationshipDataManager.assignInitialFollowRequestsForMainUser()
+        CoreRelationshipDataManager.assignMainUsersSentFollowRequests()
+        CoreRelationshipDataManager.assignInitialFriendshipsToUser()
+    }
+    
     // Initial relationship assignments for  TEST DATA
     static func assignInitialFriendshipsToUser() {
         let sarahFriendRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()

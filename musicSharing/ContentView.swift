@@ -4,8 +4,6 @@ import SwiftUI
 import CoreData
 
 /* TODOS
-    1. Implement scroll View that has each Tweet populated with User's songs that they have listened to
-    2. Create Stash Button Functionality -> add a song shown on Feed to User's stash
     3. Create Like Button Functionality -- and display Likes on tweet
     4. Create Convo Button Functionality -> collect all the comments and display them in order
     5. Add Date as a variable in SongEntity so can use a sortDescriptor to have them sorted by date when user listened to song
@@ -25,7 +23,7 @@ struct Start: PreviewProvider {
     
     static var previews: some View {
 //        MusicTweet()
-        NewsFeedView(selection: .constant(1))
+        AppView(selection: .constant(1))
 //        Text("")
     }
 }
@@ -41,9 +39,35 @@ struct ContentView: View {
 //        MusicTweet()
 //        ProfileView()
 //        CoreDataExampleView()
-        NewsFeedView(selection: $selection)
+        AppView(selection: $selection)  // set separately so can test whole view when building. If need to tinker solely with other views, can uncomment and isolate above to reduce build time
+    }
+}
 
-        
+struct AppView: View {
+    /*
+     NavigationView that sets up tab bar with the ScrollTweets()
+     and Profile view
+     */
+    @Binding var selection: Int
+    var body: some View {
+        TabView(selection: $selection) {
+            ScrollTweets().tabItem {
+                Image(systemName: "house")
+                Text("Feed")
+            }.tag(1)
+            ProfileView().tabItem{
+                Image(systemName: "person")
+                Text("Profile")
+            }.tag(2)
+        }.onAppear(
+            perform: {
+                TestDataManager.emptyDB()
+                TestDataManager.saveFakeData()
+        })
+        .onAppear() {
+                UITabBar.appearance().barTintColor = .black
+        }
+        .accentColor(.white)
     }
 }
 

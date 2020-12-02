@@ -41,6 +41,7 @@ class TestDataManager {
         TestDataManager.loadUsersFromJSON()
         TestDataManager.loadSongsFromJSON()
         TestDataManager.loadSongInstancesFromJSON()
+        CoreRelationshipDataManager.assignAllInitialRelationships()
     }
     
     static func loadUsersFromJSON() {

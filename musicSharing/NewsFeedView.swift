@@ -3,42 +3,34 @@ import SwiftUI
 import UIKit
 import CoreData
 
-struct NewsFeedView: View {
-    /*
-     NavigationView that sets up tab bar with the ScrollTweets()
-     and Profile view
-     */
-    @Binding var selection: Int
-    var body: some View {
-        TabView(selection: $selection) {
-            ScrollTweets().tabItem { Text("Feed")}.tag(1)
-            ProfileView().tabItem{ Text("Profile")}.tag(2)
-        }.onAppear(perform: {
-            TestDataManager.emptyDB()
-            TestDataManager.saveFakeData()
-        })
-    }
-}
-
 struct ScrollTweets: View {
-    let colors: [Color] = [.red, .green, .blue]
-    @FetchRequest(entity: SongInstanceEntity.entity(), sortDescriptors: [NSSortDescriptor(key: "song_name", ascending: true)]) var fetchedSongInstances: FetchedResults<SongInstanceEntity>
 
+    @FetchRequest(entity: SongInstanceEntity.entity(), sortDescriptors: [NSSortDescriptor(key: "song_name", ascending: true)]) var fetchedSongInstances: FetchedResults<SongInstanceEntity>
+    @State var isShareViewShown = false
+    
     var body: some View {
         let songInstances = fetchedSongInstances.map( {
             SongInstance(instanceEntity: $0)
         })
         return NavigationView {
-            ScrollView(.vertical) {
-                VStack(spacing: 50) {
-                    ForEach(songInstances, id: \.self) {
-                        MusicTweet(songInstance: $0)
+            ZStack {
+                Color.green.edgesIgnoringSafeArea(.all)
+                ScrollView(.vertical) {
+                    VStack(spacing: 50) {
+                        ForEach(songInstances, id: \.self) {
+                            MusicTweet(songInstance: $0)
+                        }
                     }
                 }
+                .padding(.top, 1) // prevents scrollview from going under navbar
             }
             .background(Color.black)
-            .navigationBarTitle("OnTheSpot")
+            .navigationBarTitle("MusicSharing")
+            .navigationBarItems(trailing: Button("Share") {
+                self.isShareViewShown.toggle()
+            })
         }
+    .
     }
 }
 
@@ -53,13 +45,25 @@ struct MusicTweet: View {
         let image = UIImage(named: songInstance.instanceOf.image ?? "northern_lights") ?? UIImage(named: "northern_lights")  // if the image in songInstance can't be found in Assets, then provide a default image
         return VStack(alignment: .center, spacing: 0) {
 //            Text("Gabagool")
-            Text("\(songInstance.playedBy.name)")
-                .font(.system(.headline, design: .monospaced))
-                .font(.largeTitle)
-                .minimumScaleFactor(0.6)
-                .allowsTightening(true)
-                .frame(width: 370, height: 50, alignment: .center) // red rectangle gets its own frame -- easier than ZStack
-                .background(Color.red)
+            HStack() {
+                Spacer()
+                Text("\(songInstance.playedBy.name)")
+                    .font(.system(.headline, design: .monospaced))
+                    .font(.largeTitle)
+                    .minimumScaleFactor(0.6)
+                    .allowsTightening(true)
+                    .alignmentGuide(.center) { d in d[.leading] }
+                Spacer()
+                Spacer()
+                Text("\(getFormattedDateStampForTweet(songInstance.dateListened))")
+                    .font(.system(.subheadline, design: .monospaced))
+                    .minimumScaleFactor(0.6)
+                    .allowsTightening(true)
+                    .alignmentGuide(.center) { d in d[.trailing]}
+                Spacer()
+            }
+            .frame(width: 370, height: 50, alignment: .center) // red rectangle gets its own frame -- easier than ZStack
+            .background(Color.red)
             HStack(alignment: .center, spacing: 15) {
                 Image(uiImage: image!)
                     .resizable()
@@ -163,8 +167,26 @@ struct ButtonBackground: ButtonStyle {
 }
 
 
+//func getDateFormatter() -> DateFormatter{
+//    let formatter = DateFormatter()
+//    formatter.dateStyle = .short
+//    formatter.timeStyle = .short
+//    return formatter
+//}
+
+// helper function for formatting dates
+func getFormattedDateStampForTweet(_ date: Date) -> String{
+    let components = Calendar.current.dateComponents([.month, .day,.hour, .minute], from: date)
+    let month = components.month ?? 1
+    let day = components.day ?? 1
+    let hour = components.hour ?? 0
+    let minute = components.minute ?? 0
+//    print("ORIGINAL: \(date)\n(FORMATTED: \(month)/\(day)@\(hour):\(minute)")
+    return "\(month)/\(day)@\(hour):\(minute)"
+}
+
 struct NewsFeedView_Previews: PreviewProvider {
     static var previews: some View {
-        NewsFeedView(selection: .constant(1))
+        AppView(selection: .constant(1))
     }
 }
