@@ -26,7 +26,7 @@ class TestDataManager {
     
     static func createMainUser() -> UserEntity? {
         let mainUserRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
-        mainUserRequest.predicate = NSPredicate(format: "ANY %K == %@", "name", "Tom")
+        mainUserRequest.predicate = NSPredicate(format: "ANY %K == %@", "userID", idMainUser as CVarArg)
         do {
             let mainUser = try TestDataManager.context.fetch(mainUserRequest).first!
             print("FOUND MAIN USER: \(mainUser)")
@@ -42,6 +42,17 @@ class TestDataManager {
         TestDataManager.loadSongsFromJSON()
         TestDataManager.loadSongInstancesFromJSON()
         CoreRelationshipDataManager.assignAllInitialRelationships()
+    }
+    
+    static func saveSongInstance(songName: String, instanceOf: Song, playedBy: UserEntity = TestDataManager.mainUser!, artist: String = "", genre: String = "", songLength: Decimal?) {
+        let song = Song(id: UUID(), name: songName, artist: artist, genre: genre, image: "", songLength: songLength ?? 0.0)
+        let newSongInstance = SongInstance(id: UUID(), songName: songName, dateListened: Date(), instanceOf: song, playedBy: User(userEntity: playedBy))
+        do {
+            newSongInstance.convertToManagedObject()
+            try TestDataManager.context.save()
+        } catch {
+            print("Couldn't save new song instance: \(error.localizedDescription)")
+        }
     }
     
     static func loadUsersFromJSON() {
@@ -179,7 +190,7 @@ struct JSONTestData {
             if let jsonData = try String(contentsOfFile: songInstancesPath).data(using: .utf8) {
             let decoder = JSONDecoder()
             songInstances = try decoder.decode([SongInstance].self, from: jsonData)
-            print("SONGINSTANCES -> \(songInstances ?? [SongInstance]())")
+//            print("SONGINSTANCES -> \(songInstances ?? [SongInstance]())")
             }
         } catch {
             print("Error occurred for song instances decoding process \(error.localizedDescription)")

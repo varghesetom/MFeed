@@ -38,7 +38,7 @@ struct BottomHalfOfProfile: View {
     
     var body: some View {
         
-        let mostRecentSongInstance = SongInstance(instanceEntity: mostRecentSong.first!)
+        let mostRecentSongInstanceEntity = mostRecentSong[0]
         let stashedSongInstances = userStashedSongs.map {
             SongInstance(instanceEntity: $0)
         }
@@ -58,7 +58,7 @@ struct BottomHalfOfProfile: View {
                     .foregroundColor(.white)
                     .font(.headline)
                     .underline()
-                MusicTweet(songInstance: mostRecentSongInstance, alignment: Alignment.bottomLeading).scaleEffect(0.85)
+                MusicTweet(songInstance: mostRecentSongInstanceEntity, alignment: Alignment.bottomLeading).scaleEffect(0.85)
                 HStack {
                     Spacer()
                     Button(action: {

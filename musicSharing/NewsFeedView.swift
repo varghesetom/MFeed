@@ -5,13 +5,17 @@ import CoreData
 
 struct ScrollTweets: View {
 
-    @FetchRequest(entity: SongInstanceEntity.entity(), sortDescriptors: [NSSortDescriptor(key: "song_name", ascending: true)]) var fetchedSongInstances: FetchedResults<SongInstanceEntity>
+    @FetchRequest(entity: SongInstanceEntity.entity(), sortDescriptors: [NSSortDescriptor(key: "date_listened", ascending: true)]) var fetchedSongInstances: FetchedResults<SongInstanceEntity>
     @State var isShareViewShown = false
     
     var body: some View {
+//        let songInstances = filterForUniques(fetchedSongInstances.map( {
+//            SongInstance(instanceEntity: $0)
+//        }))
         let songInstances = fetchedSongInstances.map( {
-            SongInstance(instanceEntity: $0)
+            $0
         })
+        
         return NavigationView {
             ZStack {
                 Color.green.edgesIgnoringSafeArea(.all)
@@ -30,24 +34,26 @@ struct ScrollTweets: View {
                 self.isShareViewShown.toggle()
             })
         }
-    .
+        .sheet(isPresented: $isShareViewShown) {
+            Text("hi")
+        }
     }
 }
 
-
 struct MusicTweet: View {
-    @State var songInstance: SongInstance
+    @State var songInstance: SongInstanceEntity
     @State var width = CGFloat(370)
     @State var height = CGFloat(180)
     @State var alignment = Alignment.center
     
     var body: some View {
-        let image = UIImage(named: songInstance.instanceOf.image ?? "northern_lights") ?? UIImage(named: "northern_lights")  // if the image in songInstance can't be found in Assets, then provide a default image
+        let songInst = SongInstance(instanceEntity: songInstance)
+        let image = UIImage(named: songInst.instanceOf.image ?? "northern_lights") ?? UIImage(named: "northern_lights")  // if the image in songInstance can't be found in Assets, then provide a default image
         return VStack(alignment: .center, spacing: 0) {
 //            Text("Gabagool")
             HStack() {
                 Spacer()
-                Text("\(songInstance.playedBy.name)")
+                Text("\(songInst.playedBy.name)")
                     .font(.system(.headline, design: .monospaced))
                     .font(.largeTitle)
                     .minimumScaleFactor(0.6)
@@ -55,7 +61,7 @@ struct MusicTweet: View {
                     .alignmentGuide(.center) { d in d[.leading] }
                 Spacer()
                 Spacer()
-                Text("\(getFormattedDateStampForTweet(songInstance.dateListened))")
+                Text("\(getFormattedDateStampForTweet(songInst.dateListened))")
                     .font(.system(.subheadline, design: .monospaced))
                     .minimumScaleFactor(0.6)
                     .allowsTightening(true)
@@ -71,18 +77,18 @@ struct MusicTweet: View {
                     .frame(width: 100, height: 80, alignment: .center)
                     .padding(.leading, 20)   // affected by padding with the buttons
                 VStack(alignment: .leading) {
-                    Text("\(songInstance.instanceOf.name)")
+                    Text("\(songInst.instanceOf.name)")
                         .foregroundColor(.black)
                         .underline()
                         .minimumScaleFactor(0.5)
                         .allowsTightening(true)
-                    Text("\(songInstance.instanceOf.artist ?? "Unknown")")
+                    Text("\(songInst.instanceOf.artist ?? "Unknown")")
                         .foregroundColor(.black)
                         .italic()
                         .bold()
                         .minimumScaleFactor(0.5)
                         .allowsTightening(true)
-                    Text("\(songInstance.instanceOf.genre ?? "Unknown")")
+                    Text("\(songInst.instanceOf.genre ?? "Unknown")")
                         .foregroundColor(.black)
                         .fontWeight(.medium)
                         .italic()
@@ -111,9 +117,9 @@ struct MusicTweet: View {
 
 struct TweetButton: View {
     @State var action: String
-    @State var songInstance: SongInstance
+    @State var songInstance: SongInstanceEntity
     
-    init(_ action: String, _ songInstance: SongInstance) {
+    init(_ action: String, _ songInstance: SongInstanceEntity) {
         // initialize State variables so can use them after initialization in Button
         _action = .init(initialValue: action)
         _songInstance = .init(initialValue: songInstance)
@@ -134,16 +140,18 @@ struct TweetButton: View {
     
     func buttonFunctionality() -> Void {
         // TODO - fix bug where duplicate tweets appear after clicking on a random user's stash button
+        
+
         switch self.action {
         case "Stash":
             print("Stashed")
-            CoreRelationshipDataManager.userStashesSong(songInstance: self.songInstance.convertToManagedObject())
+            CoreRelationshipDataManager.userStashesSong(songInstance: songInstance)
         case "Convo":
             print("Convoed")
-            CoreRelationshipDataManager.userCommentsOnSong(songInstance: self.songInstance.convertToManagedObject())
+            CoreRelationshipDataManager.userCommentsOnSong(songInstance: songInstance)
         case "Like":
             print("Liked")
-            CoreRelationshipDataManager.userLikesSong(songInstance: self.songInstance.convertToManagedObject())
+            CoreRelationshipDataManager.userLikesSong(songInstance: songInstance)
         default:
             fatalError("Need proper action argument for TweetButton functionality")
         }
@@ -181,7 +189,7 @@ func getFormattedDateStampForTweet(_ date: Date) -> String{
     let day = components.day ?? 1
     let hour = components.hour ?? 0
     let minute = components.minute ?? 0
-//    print("ORIGINAL: \(date)\n(FORMATTED: \(month)/\(day)@\(hour):\(minute)")
+    print("ORIGINAL: \(date)\n(FORMATTED: \(month)/\(day)@\(hour):\(minute)")
     return "\(month)/\(day)@\(hour):\(minute)"
 }
 

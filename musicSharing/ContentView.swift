@@ -10,7 +10,6 @@ import CoreData
             - This also means fixing the FetchRequest for getting the most recent song for user.
     7. UserProfile needs to have a working view
             -> differentiate between personal and others. Only the personal view can have an editable stash. All other stashes on other people's profiles will be read-only.
-    8. Add systemImages for the TabItems
     9. Include "default" image if song doesn't have an image
     10. Include "default" image for user avatar if not set
     11. Add Search bar in Feed view -> would require using a UIView, not built-in with SwiftUI
@@ -40,7 +39,20 @@ struct ContentView: View {
 //        ProfileView()
 //        CoreDataExampleView()
         AppView(selection: $selection)  // set separately so can test whole view when building. If need to tinker solely with other views, can uncomment and isolate above to reduce build time
+//        SharedInstanceView()
     }
+}
+
+func getCoreDataDBPath() {
+    let path = FileManager
+        .default
+        .urls(for: .applicationSupportDirectory, in: .userDomainMask)
+        .last?
+        .absoluteString
+        .replacingOccurrences(of: "file://", with: "")
+        .removingPercentEncoding
+
+    print("Core Data DB Path :: \(path ?? "Not found")")
 }
 
 struct AppView: View {
