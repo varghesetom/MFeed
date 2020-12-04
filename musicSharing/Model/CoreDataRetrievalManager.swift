@@ -41,9 +41,12 @@ class CoreDataRetrievalManager {
     
     // get main user's songs from their STASH
     
-    func getStashFromMainUser()->[SongInstanceEntity]? {
+    func getStashFromUser(_ id: String = MainUser.idMainUser)->[SongInstanceEntity]? {
+        let request: NSFetchRequest<SongInstanceEntity> = SongInstanceEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "ANY stashed_by.userID = %@", id as CVarArg) // comparing a collection of results(?) to a scalar value so need ANY
+        request.sortDescriptors = [NSSortDescriptor(key: "song_name", ascending: true)]
         do {
-            let stashSongs = try self.context?.fetch(self.getRequestForStashFromMainUser)
+            let stashSongs = try self.context?.fetch(request)
             return stashSongs
         } catch {
             print("Couldn't return stashed songs for Main User")
@@ -51,13 +54,63 @@ class CoreDataRetrievalManager {
         }
     }
     
-    var getRequestForStashFromMainUser: NSFetchRequest<SongInstanceEntity> {
-        let request: NSFetchRequest<SongInstanceEntity> = SongInstanceEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "ANY stashed_by.userID = %@", MainUser.idMainUser as CVarArg) // comparing a collection of results(?) to a scalar value so need ANY
-        request.sortDescriptors = [NSSortDescriptor(key: "song_name", ascending: true)]
-        return request
+    // get main user's friends
+    
+    func getUsersFriends(_ id: String = MainUser.idMainUser) -> [UserEntity]? {
+        let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "ANY is_friends_with.userID = %@", id as CVarArg)
+        request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        do {
+            let userEntities = try self.context?.fetch(request)
+            return userEntities
+        } catch {
+            print("Couldn't return main user's friends")
+            return nil
+        }
     }
     
+    // get people who requested to follow main user
+    
+    func getReceivedFollowRequestsForUser(_ id: String = MainUser.idMainUser) -> [UserEntity]? {
+        let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+               request.predicate = NSPredicate(format: "ANY received_follow_request.userID = %@", id as CVarArg)
+               request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        do {
+            let userEntities = try self.context?.fetch(request)
+            return userEntities
+        } catch {
+            print("Couldn't return main user's follower requests")
+            return nil
+        }
+    }
+    
+    // get follow requests sent by main users
+    
+    func getFollowRequestsSentByUser(_ id: String = MainUser.idMainUser) -> [UserEntity]? {
+        let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "ANY sent_follow_request.userID = %@", id as CVarArg)
+        request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        do {
+            let userEntities = try self.context?.fetch(request)
+            return userEntities
+        } catch {
+            print("Could not get requests sent BY main user")
+            return nil
+        }
+    }
+    
+    func getRecentlyListenedSongFromUser(_ id: String = MainUser.idMainUser) -> [SongInstanceEntity]? {
+        let request: NSFetchRequest<SongInstanceEntity> = SongInstanceEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "played_by.userID = %@", id as CVarArg)
+        request.sortDescriptors = [NSSortDescriptor(key: "date_listened", ascending: false)]
+        do {
+            let songInstEnt = try self.context?.fetch(request)
+            return songInstEnt
+        } catch {
+            print("Couldn't get the most recently listened to song for Main User")
+            return nil
+        }
+    }
     
     func getSongInstancesFromUser(_ user: UserEntity) -> [SongInstance]? {
         if let songs:[SongInstanceEntity] = user.listened_to?.allObjects as? [SongInstanceEntity] {
@@ -71,39 +124,7 @@ class CoreDataRetrievalManager {
         return nil
     }
     
-    // will need to be modified to use a Date as part of the Sort
-    // also try to use ID instead of name for more accuracy--running into bug here.
-    var getRecentlyListenedSongFromMainUser: NSFetchRequest<SongInstanceEntity> {
-        let request: NSFetchRequest<SongInstanceEntity> = SongInstanceEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "played_by.userID = %@", MainUser.idMainUser as CVarArg)
-        request.sortDescriptors = [NSSortDescriptor(key: "song_name", ascending: true)]
-        return request
-    }
-    
-    var getMainUsersFriends:
-        NSFetchRequest<UserEntity> {
-        let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "ANY is_friends_with.userID = %@", MainUser.idMainUser as CVarArg)
-        request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-        return request
-    }
-    
-    var getFollowRequestsSentByMainUser:
-        NSFetchRequest<UserEntity> {
-        let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "ANY received_follow_request.userID = %@", MainUser.idMainUser as CVarArg)
-        request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-        return request
-    }
-    
-    var getReceivedFollowRequestsForMainUser:
-        NSFetchRequest<UserEntity> {
-        let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "ANY sent_follow_request.userID = %@", MainUser.idMainUser as CVarArg)
-        request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-        return request
-    }
-    
+
     func checkIfSongExists(_ songName: String) -> Bool? {
         let request: NSFetchRequest<SongEntity> = SongEntity.fetchRequest()
         let regularMatchPredicate = NSPredicate(format: "ANY song_name = %@", songName)

@@ -31,45 +31,30 @@ struct BottomHalfOfProfile: View {
     @State var isFriendSheet = false
     @State var isFollowerSheet = false
     @State var stashedSongInstances = [SongInstance]()
-    @State var userFriendEntities = [User]()
-    @State var receivedEntities = [User]()
-    @State var sentEntities = [User]()
+    @State var userFriends = [User]()
+    @State var followsRequestedFrom = [User]()
+    @State var usersRequestedToBeFriends = [User]()
+    @State var mostRecentSong = [SongInstance]()
+//    @State var stashedSongInstances: [SongInstance]
+//    @State var userFriends: [User]
+//    @State var followsRequestedFrom: [User]
+//    @State var usersRequestedToBeFriends: [User]
+//    @State var mostRecentSong: [SongInstance]
     var CDataRetManager = CoreDataRetrievalManager()
     
-    init() {
-//        _mostRecentSong = .init(fetchRequest: CDataRetManager.getRecentlyListenedSongFromMainUser)
-////        _userStashedSongs = .init(fetchRequest: CDataRetManager.getStashFromMainUser)
-//        _userFriendEntities = .init(fetchRequest: CDataRetManager.getMainUsersFriends)
-//        _receivedEntities = .init(fetchRequest: CDataRetManager.getReceivedFollowRequestsForMainUser)
-//        _sentEntities = .init(fetchRequest: CDataRetManager.getFollowRequestsSentByMainUser)
-    }
-    
     var body: some View {
-        if let userStashedSongEntities = CDataRetManager.getStashFromMainUser() {
-            stashedSongInstances = userStashedSongEntities.map {
-                SongInstance(instanceEntity: $0)
-            }
-        }
 
-//        let mostRecentSongInstanceEntity = mostRecentSong[0]
-//
-//        let userFriends = userFriendEntities.map {
-//            User(userEntity: $0)
-//        }
-//        let followsRequestedFrom = receivedEntities.map {
-//            User(userEntity: $0)
-//        }
-//        let usersRequestedToBeFriends = sentEntities.map {
-//            User(userEntity: $0)
-//        }
-        
         return AnyView(
             VStack {
                 Text("Recent Song")
                     .foregroundColor(.white)
                     .font(.headline)
                     .underline()
-                MusicTweet(songInstance: mostRecentSongInstanceEntity, alignment: Alignment.bottomLeading).scaleEffect(0.85)
+                if mostRecentSong.count == 0 {
+                    Text("No recently listened to song")
+                } else {
+                    MusicTweet(songInstance: mostRecentSong[0].convertToManagedObject(), alignment: Alignment.bottomLeading).scaleEffect(0.85)
+                }
                 HStack {
                     Spacer()
                     Button(action: {
@@ -78,7 +63,7 @@ struct BottomHalfOfProfile: View {
                         Text("Stash")
                     }.sheet(isPresented: $isStashSheet) {
                         List {
-                            ForEach(stashedSongInstances, id: \.self) {
+                            ForEach(self.stashedSongInstances, id: \.self) {
                                 Text("Song: \($0.songName)")
                             }
                         }
@@ -90,7 +75,7 @@ struct BottomHalfOfProfile: View {
                         Text("Friends")
                     }.sheet(isPresented: $isFriendSheet) {
                         List {
-                            ForEach(userFriends, id: \.self) {
+                            ForEach(self.userFriends, id: \.self) {
                                 Text("Friend: \($0.name)")
                             }
                         }
@@ -98,17 +83,44 @@ struct BottomHalfOfProfile: View {
                     Spacer()
                     Button(action: {
                         self.isFollowerSheet.toggle()
-                        print("The other fetched result was \(usersRequestedToBeFriends)")
+                        print("The other fetched result was \(self.usersRequestedToBeFriends)")
                     }) {
                         Text("Follow Requests")
                     }.sheet(isPresented: $isFollowerSheet) {
                         List {
-                            ForEach(followsRequestedFrom, id: \.self) {
+                            ForEach(self.followsRequestedFrom, id: \.self) {
                                 Text("Request from: \($0.name)")
                             }
                         }
                     }
                     Spacer()
+                }
+            }
+            .onAppear {
+                if let mostRecentSongInstanceEntity = self.CDataRetManager.getRecentlyListenedSongFromUser() {
+                    self.mostRecentSong = mostRecentSongInstanceEntity.map {
+                        SongInstance(instanceEntity: $0)
+                    }
+                }
+                if let userStashedSongEntities = self.CDataRetManager.getStashFromUser() {
+                    self.stashedSongInstances = userStashedSongEntities.map {
+                        SongInstance(instanceEntity: $0)
+                    }
+                }
+                if let userFriendEntities = self.CDataRetManager.getUsersFriends() {
+                    self.userFriends = userFriendEntities.map {
+                        User(userEntity: $0)
+                    }
+                }
+                if let receivedEntities = self.CDataRetManager.getReceivedFollowRequestsForUser() {
+                    self.followsRequestedFrom = receivedEntities.map {
+                        User(userEntity: $0)
+                    }
+                }
+                if let sentEntities = self.CDataRetManager.getFollowRequestsSentByUser() {
+                    self.usersRequestedToBeFriends = sentEntities.map {
+                        User(userEntity: $0)
+                    }
                 }
             }
         )

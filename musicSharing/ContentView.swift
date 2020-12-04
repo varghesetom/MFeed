@@ -50,6 +50,7 @@ struct AppView: View {
      */
     @Binding var selection: Int
     @State var didAppear = false
+    @State var alreadyLoaded = 0
     let TDManager = TestDataManager()
     var body: some View {
         TabView(selection: $selection) {
@@ -63,8 +64,11 @@ struct AppView: View {
             }.tag(2)
         }.onAppear(
             perform: {
-                self.TDManager.emptyDB()
-                self.TDManager.saveFakeData()
+                if self.alreadyLoaded == 0 {
+                    self.TDManager.emptyDB()
+                    self.TDManager.saveFakeData()
+                    self.alreadyLoaded += 1
+                }
         })
         .onAppear() {
                 UITabBar.appearance().barTintColor = .black
