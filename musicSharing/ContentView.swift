@@ -28,32 +28,20 @@ struct Start: PreviewProvider {
 }
 #endif
 
+
+
+struct MainUser {
+    static var idMainUser = "947be968-e95d-4db4-b975-0e674c934c61"
+}
+
 struct ContentView: View {
-    
-    @State private var selection = 1
-    
+    @State var selection = 1
     var body: some View {
-        
-//        TestSpotifyView()
-//        MusicTweet()
-//        ProfileView()
-//        CoreDataExampleView()
-        AppView(selection: $selection)  // set separately so can test whole view when building. If need to tinker solely with other views, can uncomment and isolate above to reduce build time
-//        SharedInstanceView()
+        AppView(selection: $selection)
     }
 }
 
-func getCoreDataDBPath() {
-    let path = FileManager
-        .default
-        .urls(for: .applicationSupportDirectory, in: .userDomainMask)
-        .last?
-        .absoluteString
-        .replacingOccurrences(of: "file://", with: "")
-        .removingPercentEncoding
 
-    print("Core Data DB Path :: \(path ?? "Not found")")
-}
 
 struct AppView: View {
     /*
@@ -61,6 +49,8 @@ struct AppView: View {
      and Profile view
      */
     @Binding var selection: Int
+    @State var didAppear = false
+    let TDManager = TestDataManager()
     var body: some View {
         TabView(selection: $selection) {
             ScrollTweets().tabItem {
@@ -73,8 +63,8 @@ struct AppView: View {
             }.tag(2)
         }.onAppear(
             perform: {
-                TestDataManager.emptyDB()
-                TestDataManager.saveFakeData()
+                self.TDManager.emptyDB()
+                self.TDManager.saveFakeData()
         })
         .onAppear() {
                 UITabBar.appearance().barTintColor = .black
@@ -84,66 +74,66 @@ struct AppView: View {
 }
 
 
-// below is only used for testing purposes to gather data 
-struct CoreDataExampleView: View {
-    
-    @Environment(\.managedObjectContext) var managedObjectContext
-    @FetchRequest(entity: UserEntity.entity(), sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)],
-                  predicate: NSPredicate(format: "name == %@", "Bob")) var fetchedBobEntity: FetchedResults<UserEntity>
-      @FetchRequest(entity: SongInstanceEntity.entity(),
-                    sortDescriptors: [NSSortDescriptor(key: "song_name", ascending: true)]) var fetchedSongs: FetchedResults<SongInstanceEntity>
-
-    var body: some View {
-
-        let songInstances = fetchedSongs.map( {
-            SongInstance(instanceEntity: $0)
-        })
-       
-        return VStack {
-            VStack {
-                Button(action: {
-                    TestDataManager.emptyDB()
-                    TestDataManager.saveFakeData()
-                    guard let bob = CoreDataRetrievalManager.getUserWithName("Bob") else {
-                        print("No bob was found")
-                        return
-                    }
-                    guard let bobSongInstanceEntities = CoreDataRetrievalManager.getSongInstancesFromUser(bob) else {
-                        print("No bob songs were found")
-                        return
-                    }
-                    print("Bob listens to the following songs:")
-                    bobSongInstanceEntities.forEach({
-                        print("\($0.instanceOf.name)")
-                        })
-                }) {
-                    Text("Test Delete/Create/Read")
-                }
-                
-                Button(action: {
-                    guard !self.fetchedBobEntity.isEmpty else { return }
-                    let bobEntity = self.fetchedBobEntity.first!
-                    if let songInstanceEntities = CoreDataRetrievalManager.getSongInstancesFromUser(bobEntity) {
-                        print("Got first song from User Bob")
-                        let first = songInstanceEntities.first!
-                        CoreRelationshipDataManager.userLikesSong(user: bobEntity, songInstance: first.convertToManagedObject())
-                    }
-                }) {
-                    Text("Add Like")
-                }
-            }
-            
-            ForEach(songInstances, id: \.self) { instance in
-                Group {
-                    Text("Song: \(instance.instanceOf.name)")
-                    ForEach(instance.likers, id: \.self) { liker in
-                        Text("Liker: \(liker.name)")
-                    }
-                }
-            }
-        }
-    }
-}
+//// below is only used for testing purposes to gather data
+//struct CoreDataExampleView: View {
+//
+//    @Environment(\.managedObjectContext) var managedObjectContext
+//    @FetchRequest(entity: UserEntity.entity(), sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)],
+//                  predicate: NSPredicate(format: "name == %@", "Bob")) var fetchedBobEntity: FetchedResults<UserEntity>
+//      @FetchRequest(entity: SongInstanceEntity.entity(),
+//                    sortDescriptors: [NSSortDescriptor(key: "song_name", ascending: true)]) var fetchedSongs: FetchedResults<SongInstanceEntity>
+//
+//    var body: some View {
+//
+//        let songInstances = fetchedSongs.map( {
+//            SongInstance(instanceEntity: $0)
+//        })
+//
+//        return VStack {
+//            VStack {
+//                Button(action: {
+//                    TestDataManager.emptyDB()
+//                    TestDataManager.saveFakeData()
+//                    guard let bob = CoreDataRetrievalManager.getUserWithName("Bob") else {
+//                        print("No bob was found")
+//                        return
+//                    }
+//                    guard let bobSongInstanceEntities = CoreDataRetrievalManager.getSongInstancesFromUser(bob) else {
+//                        print("No bob songs were found")
+//                        return
+//                    }
+//                    print("Bob listens to the following songs:")
+//                    bobSongInstanceEntities.forEach({
+//                        print("\($0.instanceOf.name)")
+//                        })
+//                }) {
+//                    Text("Test Delete/Create/Read")
+//                }
+//
+//                Button(action: {
+//                    guard !self.fetchedBobEntity.isEmpty else { return }
+//                    let bobEntity = self.fetchedBobEntity.first!
+//                    if let songInstanceEntities = CoreDataRetrievalManager.getSongInstancesFromUser(bobEntity) {
+//                        print("Got first song from User Bob")
+//                        let first = songInstanceEntities.first!
+//                        CoreRelationshipDataManager.userLikesSong(user: bobEntity, songInstance: first.convertToManagedObject())
+//                    }
+//                }) {
+//                    Text("Add Like")
+//                }
+//            }
+//
+//            ForEach(songInstances, id: \.self) { instance in
+//                Group {
+//                    Text("Song: \(instance.instanceOf.name)")
+//                    ForEach(instance.likers, id: \.self) { liker in
+//                        Text("Liker: \(liker.name)")
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
     
 
 // HACK with SWIFT example of orienting views

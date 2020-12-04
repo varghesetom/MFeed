@@ -47,18 +47,20 @@ struct SharedInstanceView: View {
     }
     
     func createSongInstance() {
-//        print("creating song instance...")
-//        let r = songName
-//        let a = songArtist
-//
-//        let newSong = Song(name: songName, artist: songArtist, genre: songGenre, image = "", songLength: Decimal(songLength))
-//
-////        guard  else {
-////            print("Couldn't create song from Form Data")
-////            return
-////        }
+        print("creating song instance...")
+        // Defensive Programming Checks
+        
+        let newSong = Song(name: songName, artist: songArtist, genre: songGenre, songLength: Decimal(string: songLength) ?? 0.0)
+        
 //           TestDataManager.saveSongInstance(songName: "Blue Bayou", instanceOf: newSong, playedBy: <#T##UserEntity#>, artist: <#T##String#>, genre: <#T##String#>, songLength: <#T##Decimal#>)
-//        print("finished creating song instance")
+        print("finished creating song instance")
+    }
+    
+    func isValidSongName(_ name: String) -> Bool {
+        if name.count == 0 {
+            return false
+        }
+        return true
     }
 }
 

@@ -4,6 +4,8 @@
     Each struct instance can also create an entity instance as well with a ".convertToManagedObject()" method
  */
 import Foundation
+import SwiftUI
+import CoreData
 
 struct User: Codable, Identifiable, Hashable {
     public var id: UUID = UUID()
@@ -13,8 +15,8 @@ struct User: Codable, Identifiable, Hashable {
 //    var listenedTo = [Song]()
     // add stash property
     
-    func convertToManagedObject() -> UserEntity {
-        let userEntity = UserEntity(context: TestDataManager.context)
+    func convertToManagedObject(_ context: NSManagedObjectContext? = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext) -> UserEntity {
+        let userEntity = UserEntity(context: context!)
         userEntity.userID = self.id
         userEntity.name = self.name
         userEntity.bio = self.user_bio
@@ -51,15 +53,24 @@ extension User {
 
 struct Song: Codable, Identifiable, Hashable {
     
-    public var id: UUID = UUID()
+    public var id: UUID
     let name: String
     let artist: String?
     let genre: String?
-    let image: String?
+    let image: String
     let songLength: Decimal?
     
-    func convertToManagedObject() -> SongEntity {
-        let songEntity = SongEntity(context: TestDataManager.context)
+    init(songId: UUID = UUID(), name: String, artist: String? = nil, genre: String? = nil, image: String = "northern_lights", songLength: Decimal?) {
+        self.id = songId
+        self.name = name
+        self.artist = artist
+        self.genre = genre
+        self.image = image
+        self.songLength = songLength
+    }
+    
+    func convertToManagedObject(_ context: NSManagedObjectContext? = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext) -> SongEntity {
+        let songEntity = SongEntity(context: context!)
         songEntity.song_id = self.id
         songEntity.song_name = self.name
         songEntity.artist_name = self.artist
@@ -87,12 +98,13 @@ struct SongInstance: Codable, Identifiable, Hashable {
     public var id: UUID = UUID()
     let songName: String  // need additional attribute so can use NSSortDescriptor--using the id leads to an Obj-C thread exception
     let dateListened: Date
-    let instanceOf: Song
-    let playedBy: User
+    var instanceOf: Song
+    var playedBy: User
     
     var likers = [User]()
     var commenters = [User]()
     var stashers = [User]()
+    
     // add convo property
     // add stash relationship
     
@@ -100,20 +112,22 @@ struct SongInstance: Codable, Identifiable, Hashable {
 //        return likers.count
 //    }
     
-    func convertToManagedObject() -> SongInstanceEntity {
-        let instanceEntity = SongInstanceEntity(context: TestDataManager.context)
+    func convertToManagedObject(_ context: NSManagedObjectContext? = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext)-> SongInstanceEntity {
+        let instanceEntity = SongInstanceEntity(context: context!)
         instanceEntity.instance_id = self.id
         instanceEntity.date_listened = self.dateListened
         instanceEntity.song_name = self.songName
-        instanceEntity.instance_of = self.instanceOf.convertToManagedObject()
+        instanceEntity.instance_of = self.instanceOf.convertToManagedObject(context)
         instanceEntity.liked_by = NSSet()
         instanceEntity.commented_by = NSSet()
         instanceEntity.stashed_by = NSSet()
-        instanceEntity.played_by = self.playedBy.convertToManagedObject()
+        instanceEntity.played_by = self.playedBy.convertToManagedObject(context)
         
         return instanceEntity
     }
 }
+
+
 
 extension SongInstance {
     init(instanceEntity: SongInstanceEntity) {

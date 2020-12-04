@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import CoreData
 
 #if DEBUG
 struct ProfileView: View {
@@ -26,31 +27,41 @@ struct ProfileView: View {
 
 // will contain the most recent music tweet (which also means including a date attribute...) and Stash, Friends, and Edit buttons
 struct BottomHalfOfProfile: View {
-    @FetchRequest(fetchRequest: CoreDataRetrievalManager.getRecentlyListenedSongFromMainUser) var mostRecentSong: FetchedResults<SongInstanceEntity>
-    @FetchRequest(fetchRequest: CoreDataRetrievalManager.getStashFromMainUser) var userStashedSongs: FetchedResults<SongInstanceEntity>
-    @FetchRequest(fetchRequest: CoreDataRetrievalManager.getMainUsersFriends) var userFriendEntities: FetchedResults<UserEntity>
-    @FetchRequest(fetchRequest: CoreDataRetrievalManager.getReceivedFollowRequestsForMainUser) var receivedEntities: FetchedResults<UserEntity>
-    @FetchRequest(fetchRequest: CoreDataRetrievalManager.getFollowRequestsSentByMainUser) var sentEntities: FetchedResults<UserEntity>
-    
     @State var isStashSheet = false
     @State var isFriendSheet = false
     @State var isFollowerSheet = false
+    @State var stashedSongInstances = [SongInstance]()
+    @State var userFriendEntities = [User]()
+    @State var receivedEntities = [User]()
+    @State var sentEntities = [User]()
+    var CDataRetManager = CoreDataRetrievalManager()
+    
+    init() {
+//        _mostRecentSong = .init(fetchRequest: CDataRetManager.getRecentlyListenedSongFromMainUser)
+////        _userStashedSongs = .init(fetchRequest: CDataRetManager.getStashFromMainUser)
+//        _userFriendEntities = .init(fetchRequest: CDataRetManager.getMainUsersFriends)
+//        _receivedEntities = .init(fetchRequest: CDataRetManager.getReceivedFollowRequestsForMainUser)
+//        _sentEntities = .init(fetchRequest: CDataRetManager.getFollowRequestsSentByMainUser)
+    }
     
     var body: some View {
-        
-        let mostRecentSongInstanceEntity = mostRecentSong[0]
-        let stashedSongInstances = userStashedSongs.map {
-            SongInstance(instanceEntity: $0)
+        if let userStashedSongEntities = CDataRetManager.getStashFromMainUser() {
+            stashedSongInstances = userStashedSongEntities.map {
+                SongInstance(instanceEntity: $0)
+            }
         }
-        let userFriends = userFriendEntities.map {
-            User(userEntity: $0)
-        }
-        let followsRequestedFrom = receivedEntities.map {
-            User(userEntity: $0)
-        }
-        let usersRequestedToBeFriends = sentEntities.map {
-            User(userEntity: $0)
-        }
+
+//        let mostRecentSongInstanceEntity = mostRecentSong[0]
+//
+//        let userFriends = userFriendEntities.map {
+//            User(userEntity: $0)
+//        }
+//        let followsRequestedFrom = receivedEntities.map {
+//            User(userEntity: $0)
+//        }
+//        let usersRequestedToBeFriends = sentEntities.map {
+//            User(userEntity: $0)
+//        }
         
         return AnyView(
             VStack {
@@ -95,7 +106,6 @@ struct BottomHalfOfProfile: View {
                             ForEach(followsRequestedFrom, id: \.self) {
                                 Text("Request from: \($0.name)")
                             }
-                            
                         }
                     }
                     Spacer()
@@ -106,7 +116,12 @@ struct BottomHalfOfProfile: View {
 }
 
 struct UserBox: View {
-    @State private var user = User(userEntity: TestDataManager.mainUser!)
+    private var CDataRetManager = CoreDataRetrievalManager()
+    private var user: User
+    
+    init() {
+        self.user = User(userEntity: CDataRetManager.fetchMainUser()!)
+    }
     
     var body: some View {
         VStack {

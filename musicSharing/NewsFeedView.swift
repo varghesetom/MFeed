@@ -9,10 +9,7 @@ struct ScrollTweets: View {
     @State var isShareViewShown = false
     
     var body: some View {
-//        let songInstances = filterForUniques(fetchedSongInstances.map( {
-//            SongInstance(instanceEntity: $0)
-//        }))
-        let songInstances = fetchedSongInstances.map( {
+        let songInstanceEntities = fetchedSongInstances.map( {
             $0
         })
         
@@ -21,7 +18,7 @@ struct ScrollTweets: View {
                 Color.green.edgesIgnoringSafeArea(.all)
                 ScrollView(.vertical) {
                     VStack(spacing: 50) {
-                        ForEach(songInstances, id: \.self) {
+                        ForEach(songInstanceEntities, id: \.self) {
                             MusicTweet(songInstance: $0)
                         }
                     }
@@ -48,7 +45,7 @@ struct MusicTweet: View {
     
     var body: some View {
         let songInst = SongInstance(instanceEntity: songInstance)
-        let image = UIImage(named: songInst.instanceOf.image ?? "northern_lights") ?? UIImage(named: "northern_lights")  // if the image in songInstance can't be found in Assets, then provide a default image
+        let image = UIImage(named: songInst.instanceOf.image) ?? UIImage(named: "northern_lights")  // if the image in songInstance can't be found in Assets, then provide a default image
         return VStack(alignment: .center, spacing: 0) {
 //            Text("Gabagool")
             HStack() {
@@ -116,13 +113,14 @@ struct MusicTweet: View {
 }
 
 struct TweetButton: View {
-    @State var action: String
-    @State var songInstance: SongInstanceEntity
+    var action: String
+    var songInstanceEntity: SongInstanceEntity
+    @State var CRManager = CoreRelationshipDataManager()
+    @State var CDataRetManager = CoreDataRetrievalManager()
     
-    init(_ action: String, _ songInstance: SongInstanceEntity) {
-        // initialize State variables so can use them after initialization in Button
-        _action = .init(initialValue: action)
-        _songInstance = .init(initialValue: songInstance)
+    init(_ action: String, _ songInstanceEntity: SongInstanceEntity) {
+        self.action = action
+        self.songInstanceEntity = songInstanceEntity
     }
     
     var body: some View {
@@ -145,13 +143,13 @@ struct TweetButton: View {
         switch self.action {
         case "Stash":
             print("Stashed")
-            CoreRelationshipDataManager.userStashesSong(songInstance: songInstance)
+            CRManager.userStashesSong(user: CDataRetManager.fetchMainUser()!, songInstance: songInstanceEntity)
         case "Convo":
             print("Convoed")
-            CoreRelationshipDataManager.userCommentsOnSong(songInstance: songInstance)
+            CRManager.userCommentsOnSong(user: CDataRetManager.fetchMainUser()!, songInstance: songInstanceEntity)
         case "Like":
             print("Liked")
-            CoreRelationshipDataManager.userLikesSong(songInstance: songInstance)
+            CRManager.userLikesSong(user: CDataRetManager.fetchMainUser()!, songInstance: songInstanceEntity)
         default:
             fatalError("Need proper action argument for TweetButton functionality")
         }
@@ -189,7 +187,7 @@ func getFormattedDateStampForTweet(_ date: Date) -> String{
     let day = components.day ?? 1
     let hour = components.hour ?? 0
     let minute = components.minute ?? 0
-    print("ORIGINAL: \(date)\n(FORMATTED: \(month)/\(day)@\(hour):\(minute)")
+//    print("ORIGINAL: \(date)\n(FORMATTED: \(month)/\(day)@\(hour):\(minute)")
     return "\(month)/\(day)@\(hour):\(minute)"
 }
 

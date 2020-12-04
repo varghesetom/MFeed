@@ -20,7 +20,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
 
         // Get the managed object context from the shared persistent container.
-        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+            let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+//        let context = CoreDataStoreContainer().persistentContainer.viewContext
 //        context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
 
@@ -66,6 +67,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         // Save changes in the application's managed object context when the application transitions to the background.
         (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
+//        CoreDataStoreContainer().saveContext()
     }
 
 
