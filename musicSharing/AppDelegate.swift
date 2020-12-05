@@ -31,7 +31,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     // MARK: - Core Data stack
-    lazy var persistentContainer: NSPersistentContainer = CoreDataStoreContainer().persistentContainer
+    lazy var persistentContainer: NSPersistentContainer = CoreDataStoreContainer()!.persistentContainer
 //    lazy var persistentContainer: NSPersistentContainer = {
 //        /*
 //         The persistent container for the application. This implementation
@@ -93,7 +93,7 @@ enum StorageType {
 class CoreDataStoreContainer {
     let memoryType: StorageType
     
-    init(_ storageType: StorageType = .persistent) {
+    init?(_ storageType: StorageType = .persistent) {
         self.memoryType = storageType
     }
     lazy var persistentContainer = createPersistentContainer(self.memoryType)
@@ -116,9 +116,8 @@ class CoreDataStoreContainer {
 func createPersistentContainer(_ memoryType: StorageType) -> NSPersistentContainer {
     let container = NSPersistentContainer(name: "musicSharing")
     if memoryType == .inMemory {
-        // preferred way to write to in-memory so CRUD operations won't persist to an actual data store -- more info here https://www.donnywals.com/setting-up-a-core-data-store-for-unit-tests/
         let description = NSPersistentStoreDescription()
-        description.url = URL(fileURLWithPath: "/dev/null")
+        description.type = NSInMemoryStoreType
         container.persistentStoreDescriptions = [description]
     }
     container.loadPersistentStores(completionHandler: { (storeDescription, error) in

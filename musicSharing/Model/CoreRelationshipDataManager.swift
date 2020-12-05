@@ -13,7 +13,19 @@ class CoreRelationshipDataManager {
      E.g. User stashes a song, and uses the "addToStashes_this" method, then we don't need to have use the "addToStashed_by" assignment where we have our song "add" the user
      
      */
-    lazy var context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
+    let memoryType: StorageType
+    
+    init(_ memoryType: StorageType = .persistent) {
+        self.memoryType = memoryType
+    }
+    lazy var context: NSManagedObjectContext? = {
+        var trueContext = CoreDataStoreContainer(.inMemory)?.persistentContainer.viewContext
+        if self.memoryType == .persistent {
+            trueContext = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
+        }
+        return trueContext
+    }()
+//    lazy var context = CoreDataStoreContainer(self.memoryType)?.persistentContainer.viewContext
     
     func userStashesSong(user: UserEntity, songInstance: SongInstanceEntity) {
         print("\n\nUSER BEFORE ADDING \(user)")

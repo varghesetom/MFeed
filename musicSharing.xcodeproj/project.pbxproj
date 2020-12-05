@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		93F2D777256F8722004FDDD3 /* CoreDataRetrievalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F2D776256F8722004FDDD3 /* CoreDataRetrievalManager.swift */; };
-		93F2D77B256F8782004FDDD3 /* CoreTestDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F2D77A256F8782004FDDD3 /* CoreTestDataManager.swift */; };
+		93F2D77B256F8782004FDDD3 /* TestDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F2D77A256F8782004FDDD3 /* TestDataManager.swift */; };
 		93F2D77D256F8887004FDDD3 /* CoreRelationshipDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F2D77C256F8887004FDDD3 /* CoreRelationshipDataManager.swift */; };
 		93F2D7802575F3DB004FDDD3 /* users.json in Resources */ = {isa = PBXBuildFile; fileRef = 93F2D77F2575F3DA004FDDD3 /* users.json */; };
 		93F2D7822575F6A1004FDDD3 /* songs.json in Resources */ = {isa = PBXBuildFile; fileRef = 93F2D7812575F6A1004FDDD3 /* songs.json */; };
@@ -41,7 +41,7 @@
 
 /* Begin PBXFileReference section */
 		93F2D776256F8722004FDDD3 /* CoreDataRetrievalManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataRetrievalManager.swift; sourceTree = "<group>"; };
-		93F2D77A256F8782004FDDD3 /* CoreTestDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreTestDataManager.swift; sourceTree = "<group>"; };
+		93F2D77A256F8782004FDDD3 /* TestDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDataManager.swift; sourceTree = "<group>"; };
 		93F2D77C256F8887004FDDD3 /* CoreRelationshipDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreRelationshipDataManager.swift; sourceTree = "<group>"; };
 		93F2D77F2575F3DA004FDDD3 /* users.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = users.json; sourceTree = "<group>"; };
 		93F2D7812575F6A1004FDDD3 /* songs.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = songs.json; sourceTree = SOURCE_ROOT; };
@@ -168,7 +168,7 @@
 			isa = PBXGroup;
 			children = (
 				93FE781B25666C6A009D8C4F /* UsersAndSongs.swift */,
-				93F2D77A256F8782004FDDD3 /* CoreTestDataManager.swift */,
+				93F2D77A256F8782004FDDD3 /* TestDataManager.swift */,
 				93F2D77C256F8887004FDDD3 /* CoreRelationshipDataManager.swift */,
 				93F2D776256F8722004FDDD3 /* CoreDataRetrievalManager.swift */,
 			);
@@ -298,7 +298,7 @@
 				93FE782025666CD3009D8C4F /* NewsFeedView.swift in Sources */,
 				93FE781C25666C6A009D8C4F /* UsersAndSongs.swift in Sources */,
 				93F2D77D256F8887004FDDD3 /* CoreRelationshipDataManager.swift in Sources */,
-				93F2D77B256F8782004FDDD3 /* CoreTestDataManager.swift in Sources */,
+				93F2D77B256F8782004FDDD3 /* TestDataManager.swift in Sources */,
 				93FE780625666A60009D8C4F /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
