@@ -31,7 +31,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     // MARK: - Core Data stack
-    lazy var persistentContainer: NSPersistentContainer = CoreDataStoreContainer()!.persistentContainer
+    lazy var persistentContainer: NSPersistentContainer = (CoreDataStoreContainer()?.setUp(completion: {}))!
+    
 //    lazy var persistentContainer: NSPersistentContainer = {
 //        /*
 //         The persistent container for the application. This implementation
@@ -80,7 +81,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
     }
-
 }
 
 
@@ -96,24 +96,44 @@ class CoreDataStoreContainer {
     init?(_ storageType: StorageType = .persistent) {
         self.memoryType = storageType
     }
-    lazy var persistentContainer = createPersistentContainer(self.memoryType)
+//    lazy var persistentContainer = createPersistentContainer(self.memoryType)
+    static let shared = CoreDataStoreContainer()
     
-    func saveContext () {
-        let context = persistentContainer.viewContext
-        if context.hasChanges {
-            do {
-                try context.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nserror = error as NSError
-                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
-            }
+    lazy var persistentContainer = self.setUp(completion: {})
+    
+    func setUp(completion: (() -> Void)?) -> NSPersistentContainer {
+        return createPersistentContainer(self.memoryType) {
+          completion?()
         }
     }
+    
+    lazy var backgroundContext: NSManagedObjectContext = {
+        let context = self.persistentContainer.newBackgroundContext()
+        context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+
+        return context
+    }()
+    
+    lazy var context: NSManagedObjectContext = {
+        let context = self.persistentContainer.viewContext
+        context.automaticallyMergesChangesFromParent = true
+        return context
+    }()
+    
+//    func saveContext (_ contextType: NSManagedObjectContext = self.persistentContainer.viewContext) {
+//        let context = self.setUp(completion: {}).viewContext
+//        if context.hasChanges {
+//            do {
+//                try context.save()
+//            } catch {
+//                let nserror = error as NSError
+//                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+//            }
+//        }
+//    }
 }
 
-func createPersistentContainer(_ memoryType: StorageType) -> NSPersistentContainer {
+func createPersistentContainer(_ memoryType: StorageType, completion: @escaping () -> Void?) -> NSPersistentContainer {
     let container = NSPersistentContainer(name: "musicSharing")
     if memoryType == .inMemory {
         let description = NSPersistentStoreDescription()

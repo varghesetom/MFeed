@@ -6,6 +6,7 @@ import CoreData
 struct ScrollTweets: View {
 
     @FetchRequest(entity: SongInstanceEntity.entity(), sortDescriptors: [NSSortDescriptor(key: "date_listened", ascending: true)]) var fetchedSongInstances: FetchedResults<SongInstanceEntity>
+    
     @State var isShareViewShown = false
     
     var body: some View {

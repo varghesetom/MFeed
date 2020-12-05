@@ -16,30 +16,21 @@ class TestDataManager {
       Class is responsible only for injecting test data into Core Data.
      */
     let memoryType: StorageType
-//    let privateContext: NSManagedObjectContext?
-//    let context: NSManagedObjectContext?
+    let context: NSManagedObjectContext?
     
-    init(_ memoryType: StorageType = .persistent) {
+    init(_ memoryType: StorageType = .persistent, backgroundContext: NSManagedObjectContext? = CoreDataStoreContainer.shared?.backgroundContext) {
         self.memoryType = memoryType
-//        self.privateContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-//        self.context = {
-//             var trueContext = CoreDataStoreContainer(.inMemory)?.persistentContainer.viewContext
-//             if self.memoryType == .persistent {
-//                 trueContext = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
-//             }
-//             return trueContext
-//         }()
+        self.context = backgroundContext
     }
 
-    lazy var context: NSManagedObjectContext? = {
-         var trueContext = CoreDataStoreContainer(.inMemory)?.persistentContainer.viewContext
-         if self.memoryType == .persistent {
-             trueContext = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
-         }
-         return trueContext
-     }()
-//        lazy var context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
-
+//    lazy var context: NSManagedObjectContext? = {
+//         var trueContext = CoreDataStoreContainer(.inMemory)?.persistentContainer.viewContext
+//         if self.memoryType == .persistent {
+//             trueContext = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
+//         }
+//         return trueContext
+//     }()
+    
     
     lazy var testData = JSONTestData()
     lazy var CRManager = CoreRelationshipDataManager(self.memoryType)
@@ -62,7 +53,7 @@ class TestDataManager {
             user.convertToManagedObject(self.context!)
         })
         do {
-            try self.context!.save()
+            try self.context?.save()
             return true
         } catch {
             print("Error saving users to CoreData store \(error.localizedDescription)")
@@ -79,7 +70,7 @@ class TestDataManager {
             song.convertToManagedObject(self.context!)
          })
          do {
-            try self.context!.save()
+            try self.context?.save()
             return true
          } catch {
              print("Error saving songs to CoreData store \(error.localizedDescription)")
@@ -96,7 +87,7 @@ class TestDataManager {
             songInstance.convertToManagedObject(self.context!)
          })
          do {
-            try self.context!.save()
+            try self.context?.save()
             return true
          } catch {
              print("Error saving song instances to CoreData store \(error.localizedDescription)")
@@ -123,7 +114,7 @@ class TestDataManager {
             CRManager.userIsFriends(user: CDataRetManager.fetchMainUser()!, friend: sarah)
             let bob = try self.context!.fetch(bobFriendRequest).first!
             CRManager.userIsFriends(user: CDataRetManager.fetchMainUser()!, friend: bob)
-            try self.context!.save()
+            try self.context?.save()
             return true
         } catch {
             print("Could no assign friendship between test users and main user \(error.localizedDescription)")
@@ -139,7 +130,7 @@ class TestDataManager {
         do {
             let peter = try self.context!.fetch(peterRequest).first!
             CRManager.userSentFollowRequest(from: peter, to: CDataRetManager.fetchMainUser()!)
-            try self.context!.save()
+            try self.context?.save()
             return true
         } catch {
             print("Could not assign follow requests sent by test users to main user \(error.localizedDescription)")
@@ -155,7 +146,7 @@ class TestDataManager {
         do {
             let myCousinVinny = try self.context!.fetch(cousinVinnyRequest).first!
             CRManager.userSentFollowRequest(from: CDataRetManager.fetchMainUser()!, to: myCousinVinny)
-            try self.context!.save()
+            try self.context?.save()
             return true
         } catch {
             print("Could not assign follow requests sent to test users by main user \(error.localizedDescription)")
@@ -174,8 +165,8 @@ class TestDataManager {
     func deleteAllSongs() -> Bool {
         let songFetchRequest: NSFetchRequest<SongEntity> = SongEntity.fetchRequest()
         do {
-            let songs = try self.context!.fetch(songFetchRequest)
-            songs.forEach{ self.context!.delete($0)}
+            let songs = try self.context?.fetch(songFetchRequest)
+            songs?.forEach{ self.context?.delete($0)}
             return true
         } catch {
             print("Error deleting Songs: \(error.localizedDescription)")
@@ -186,8 +177,8 @@ class TestDataManager {
     func deleteAllUsers() -> Bool {
         let userFetchRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
         do {
-            let users = try self.context!.fetch(userFetchRequest)
-            users.forEach{ context!.delete($0)}
+            let users = try self.context?.fetch(userFetchRequest)
+            users?.forEach{ self.context?.delete($0)}
             return true
         } catch {
             print("Error deleting Users: \(error.localizedDescription)")
@@ -201,7 +192,7 @@ class TestDataManager {
         let newSongInstance = SongInstance(id: UUID(), songName: songName, dateListened: Date(), instanceOf: song, playedBy: User(userEntity: playedBy))
         do {
             _ = newSongInstance.convertToManagedObject(self.context!)
-            try self.context!.save()
+            try self.context?.save()
         } catch {
             print("Couldn't save new song instance: \(error.localizedDescription)")
         }

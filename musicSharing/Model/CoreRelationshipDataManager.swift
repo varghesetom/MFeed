@@ -14,18 +14,20 @@ class CoreRelationshipDataManager {
      
      */
     let memoryType: StorageType
+    let context: NSManagedObjectContext?
     
-    init(_ memoryType: StorageType = .persistent) {
+    init(_ memoryType: StorageType = .persistent, backgroundContext: NSManagedObjectContext? = CoreDataStoreContainer.shared!.backgroundContext) {
         self.memoryType = memoryType
+        self.context = backgroundContext
     }
-    lazy var context: NSManagedObjectContext? = {
-        var trueContext = CoreDataStoreContainer(.inMemory)?.persistentContainer.viewContext
-        if self.memoryType == .persistent {
-            trueContext = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
-        }
-        return trueContext
-    }()
-//    lazy var context = CoreDataStoreContainer(self.memoryType)?.persistentContainer.viewContext
+    
+//    lazy var context: NSManagedObjectContext? = {
+//        var trueContext = CoreDataStoreContainer(.inMemory)?.persistentContainer.viewContext
+//        if self.memoryType == .persistent {
+//            trueContext = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
+//        }
+//        return trueContext
+//    }()
     
     func userStashesSong(user: UserEntity, songInstance: SongInstanceEntity) {
         print("\n\nUSER BEFORE ADDING \(user)")

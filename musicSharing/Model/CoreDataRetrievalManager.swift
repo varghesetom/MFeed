@@ -7,20 +7,27 @@ import UIKit
 import CoreData
 
 class CoreDataRetrievalManager {
-    
     let memoryType: StorageType
+    let context: NSManagedObjectContext?
     
-    init(_ memoryType: StorageType = .persistent) {
+    init(_ memoryType: StorageType = .persistent, backgroundContext: NSManagedObjectContext? = CoreDataStoreContainer.shared?.backgroundContext) {
         self.memoryType = memoryType
+        self.context = backgroundContext
     }
-    lazy var context: NSManagedObjectContext? = {
-        var trueContext = CoreDataStoreContainer(.inMemory)?.persistentContainer.viewContext
-        if self.memoryType == .persistent {
-            trueContext = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
-        }
-        return trueContext
-    }()
-//    lazy var context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
+    
+//    let memoryType: StorageType
+//
+//    init(_ memoryType: StorageType = .persistent) {
+//        self.memoryType = memoryType
+//    }
+//
+//    lazy var context: NSManagedObjectContext? = {
+//        var trueContext = CoreDataStoreContainer(.inMemory)?.persistentContainer.viewContext
+//        if self.memoryType == .persistent {
+//            trueContext = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
+//        }
+//        return trueContext
+//    }()
     
     func getUserWithName(_ name: String) -> UserEntity? {
         let userFetchRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()

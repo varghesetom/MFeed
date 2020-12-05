@@ -38,6 +38,7 @@ struct ContentView: View {
     @State var selection = 1
     var body: some View {
         AppView(selection: $selection)
+//        Text("")
     }
 }
 
@@ -65,7 +66,7 @@ struct AppView: View {
         }.onAppear(
             perform: {
                 if self.alreadyLoaded == 0 {
-                    self.TDManager.emptyDB()
+                    _ = self.TDManager.emptyDB()
                     self.TDManager.saveFakeData()
                     self.alreadyLoaded += 1
                 }
