@@ -5,6 +5,12 @@
 
 import SwiftUI
 
+enum ActiveAlert {
+    case missingName
+    case missingLink
+    case missingBoth
+}
+
 // user form to add a song instance
 struct SharedInstanceView: View {
     @State var songName = ""
@@ -13,6 +19,8 @@ struct SharedInstanceView: View {
     @State var songMood = ""
     @State var songLink = ""
     @State var songLength = ""
+    @State var showAlert = false
+    @State var alertCase = ActiveAlert.missingName
     let genres = ["Rock", "Country", "Hip-Hop", "Rap", "Classical", "Pop", "Trance"]
     let moods = ["In My Feels", "Chill", "Feel-Good", "Melancholy", "Pump-Up"]
     var TDManager: TestDataManager
@@ -50,10 +58,20 @@ struct SharedInstanceView: View {
                     }
                 }
             }.navigationBarTitle("Share a song")
+        }.alert(isPresented: $showAlert) {
+            switch alertCase {
+            case .missingBoth:
+                return Alert(title: Text("Invalid Input"), message: Text("Need to provide both song name and song link!"), dismissButton: .default(Text("Continue")))
+            case .missingName:
+                return Alert(title: Text("Invalid Name"), message: Text("Need to provide song name!"), dismissButton: .default(Text("Continue")))
+            case .missingLink:
+                return Alert(title: Text("Invalid Link"), message: Text("Need to provide song link!"), dismissButton: .default(Text("Continue")))
+            }
         }
     }
     
     func createSongInstance() {
+        // check if required info is inputted and correct. Then create a SongInstance entity as well as the SongEntity if it's not already been created
         print("creating song instance...")
         if self.didProvideCorrectRequiredInfo(songName: songName, songLink: songLink) {
             if !self.checkIfSongAlreadyExists(songName) {
@@ -63,12 +81,27 @@ struct SharedInstanceView: View {
                 let fetchedUser = User(userEntity: TDManager.fetchMainUser()!)
                 _ = self.addOnlySongInstanceIfSongExists(fetchedSong, fetchedUser)
             }
+            print("finished creating song instance")
         }
-        print("finished creating song instance")
     }
     
     func didProvideCorrectRequiredInfo(songName: String, songLink: String) -> Bool {
-        return (self.isValidSongName(songName) && self.isValidSongLink(songLink)) ? true : false
+        if !(self.isValidSongName(songName)) && !(self.isValidSongLink(songLink)) {
+            showAlert = true
+            alertCase = .missingBoth
+            return false
+        }
+        else if !self.isValidSongName(songName) {
+            showAlert = true
+            alertCase = .missingName
+            return false
+        }
+        else if !self.isValidSongLink(songLink) {
+            showAlert = true
+            alertCase = .missingLink
+            return false
+        }
+        return true
     }
     
     func isValidSongName(_ name: String) -> Bool {

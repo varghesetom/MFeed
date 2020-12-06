@@ -158,21 +158,7 @@ struct TweetButton: View {
     }
 }
 
-struct TweetButtonBackground: ButtonStyle {
-    @State private var firstGradientColor = Color.orange
-    @State private var secondGradientColor = Color.red
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .padding(10)
-            .foregroundColor(.white)
-            .background(Color.red)
-            .cornerRadius(5)
-            .compositingGroup()
-            .opacity(configuration.isPressed ? 0.5 : 1.0)
-            .scaleEffect(configuration.isPressed ? 0.9 : 1.0)
-            .scaledToFit()
-    }
-}
+
 
 // helper function for formatting dates
 func getFormattedDateStampForTweet(_ date: Date) -> String{
@@ -182,10 +168,7 @@ func getFormattedDateStampForTweet(_ date: Date) -> String{
     dateFormatter.locale = Locale(identifier: "en_US_POSIX")
     dateFormatter.locale = Locale.current
     dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
-    let dateTime = dateFormatter.string(from: date)
-    print("ORIGINAL: \(date)")
-    print("DATE FORMATTER VERSION: \(dateTime)")
-    return dateTime
+    return dateFormatter.string(from: date)
 }
 
 struct NewsFeedView_Previews: PreviewProvider {

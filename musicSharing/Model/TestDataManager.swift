@@ -60,6 +60,28 @@ class TestDataManager {
     
     // COREDATA RETRIEVAL
     
+    func isUserFriendsWithMainUser(id: UUID) -> Bool {
+        let personsFriends = self.getUsersFriends(id.uuidString)
+        guard personsFriends != nil else {
+            print("person has no friends")
+            return false
+        }
+        return (personsFriends?.filter { $0.userID == self.fetchMainUser()!.userID} != nil) ? true : false
+    }
+    
+//    func getUsersFriends(_ id: String = MainUser.idMainUser) -> [UserEntity]? {
+//        let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+//        request.predicate = NSPredicate(format: "ANY is_friends_with.userID = %@", id as CVarArg)
+//        request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+//        do {
+//            let userEntities = try self.context?.fetch(request)
+//            return userEntities
+//        } catch {
+//            print("Couldn't return main user's friends")
+//            return nil
+//        }
+//    }
+    
     func getSong(_ name: String) -> SongEntity? {
         let songRequest: NSFetchRequest<SongEntity> = SongEntity.fetchRequest()
         songRequest.predicate = NSPredicate(format: "song_name == %@", name)
@@ -92,9 +114,9 @@ class TestDataManager {
         }
     }
     
-    func getUserWithName(_ name: String) -> UserEntity? {
+    func getUser(_ id: String) -> UserEntity? {
         let userFetchRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
-        userFetchRequest.predicate = NSPredicate(format: "name == %@", name)
+        userFetchRequest.predicate = NSPredicate(format: "userID == %@", id as CVarArg)
         do {
             let user = try self.context!.fetch(userFetchRequest).first
             return user
@@ -204,10 +226,6 @@ class TestDataManager {
     
             // SAVE TEST DATA
     lazy var testData = JSONTestData()
-//    lazy var CRManager = CoreRelationshipDataManager(self.memoryType, backgroundContext: self.context!)
-//    lazy var CDataRetManager: CoreDataRetrievalManager = {
-//        return CoreDataRetrievalManager(self.memoryType, backgroundContext: self.context!)
-//    }()
     
     func saveFakeData() {
         print("SAVING FAKE DATA")

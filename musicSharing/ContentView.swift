@@ -35,10 +35,23 @@ struct MainUser {
 struct ContentView: View {
     @State var selection = 1
     let TDManager = TestDataManager()
+    let user: User
+    let bobID = "93d95053-e625-4e60-a48c-fb04421f0d9f"
+    
+    init() {
+//        self.user = User(userEntity: TDManager.fetchMainUser()!)
+        guard TDManager.getUser(bobID) != nil else {
+            print("Couldn't get bobFriend")
+            self.user = User(name: "", user_bio: "", avatar: "")
+            return
+        }
+        self.user = User(userEntity: TDManager.getUser(bobID)!)
+    }
+    
     var body: some View {
 //        AppView(selection: $selection)
-        ScrollTweets(TDManager)
-
+//        ScrollTweets(TDManager)
+        ProfileView(TDManager, self.user)
     }
 }
 
