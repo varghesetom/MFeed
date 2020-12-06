@@ -13,19 +13,19 @@ import CoreData
 class CoreDataTests: XCTestCase {
     
     var sut: CoreDataStoreContainer!
-//    var TDManager: TestDataManager!
+    var TDManager: TestDataManager!
     
     override func setUp() {
         super.setUp()
         sut = CoreDataStoreContainer(.inMemory)
-//        TDManager = TestDataManager(.inMemory)
+        TDManager = TestDataManager(.inMemory, backgroundContext: sut.backgroundContext)
     }
 
     override func tearDown() {
         super.tearDown()
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         sut = nil
-//        TDManager = nil
+        TDManager = nil
     }
     
     func testSetupPersistentStore() {
@@ -40,26 +40,76 @@ class CoreDataTests: XCTestCase {
         XCTAssertEqual(self.sut.context.concurrencyType, .mainQueueConcurrencyType)
     }
     
-//    func testLoadingJSON() {
-//        XCTAssertNotNil(TDManager.testData, "json data must exist")
-//        XCTAssertTrue(TDManager.loadSongsFromJSON() == true, "test manager loading songs must be true")
-//        XCTAssertTrue(TDManager.loadUsersFromJSON() == true, "test manager loading users must be true")
-//        XCTAssertTrue(TDManager.loadSongInstancesFromJSON() == true, "test manager loading song instances must be true")
+    func testMatchingBackgroundContexts() {
+        XCTAssertEqual(sut.backgroundContext, TDManager.context, "Test Data Manager is not using the same background context as the CoreDataContainer stack")
+    }
+    
+    func testLoadingJSON() {
+        XCTAssertNotNil(TDManager.testData, "json data must exist")
+        XCTAssertTrue(TDManager.loadSongsFromJSON() == true, "test manager loading songs must be true")
+        XCTAssertTrue(TDManager.loadUsersFromJSON() == true, "test manager loading users must be true")
+        XCTAssertTrue(TDManager.loadSongInstancesFromJSON() == true, "test manager loading song instances must be true")
+    }
+
+//    func testDidSaveData() {
+//        let newContext = sut.newDerivedContext()
+//        let newTD = TestDataManager(.inMemory, backgroundContext: newContext)
+//        expectation(
+//          forNotification: .NSManagedObjectContextDidSave,
+//          object: newContext) { _ in
+//            return true
+//        }
+//        newContext?.perform {
+//            newTD.saveFakeData()
+//        }
+//        waitForExpectations(timeout: 5.0) { error in
+//            XCTAssertNil(error, "Could not save test data")
+//        }
 //    }
-//
-//    func testAssigningTestRelationships() {
-//        XCTAssertTrue(TDManager.assignInitialFriendshipsToUser() == true, "test manager assigning initial friendships must be true")
-//        XCTAssertTrue(TDManager.assignMainUsersSentFollowRequests() == true, "test manager assigning initial sent follow requests must be true")
-//        XCTAssertTrue(TDManager.assignInitialFollowRequestsForMainUser() == true, "test manager assigning initial follow requests to user must be true")
-//    }
-//
-//    func testDataRetrievals() {
-//        XCTAssertNotNil(TDManager.CDataRetManager.getUserWithName("Tom"), "getting 'Tom' user must not be nil")
-//        XCTAssertNil(TDManager.CDataRetManager.getUserWithName("asfljaslfkjaslkdf"), "getting nonsense name must be nil")
-//    }
-//
+
+    func testDataRetrievals() {
+        let newContext = sut.newDerivedContext()
+        let newTD = TestDataManager(.inMemory, backgroundContext: newContext)
+        
+        let id = MainUser.idMainUser
+        let tomUser = User(id: UUID(uuidString: id)!, name: "Tom", user_bio: "", avatar: "")
+        let tomEnt = newTD.addUserEntity(user: tomUser)
+        let sheilaUser = User(name: "Sheila", user_bio: "", avatar: "")
+        let sheilaEnt = newTD.addUserEntity(user: sheilaUser)
+        _ = newTD.userIsFriends(user: tomEnt!, friend: sheilaEnt!)
+        
+        let getTom = User(userEntity: newTD.getUserWithName("Tom")!)
+        let getNull = newTD.getUserWithName("asfasdfas")
+        let getTomsFriends = newTD.getUsersFriends(id)
+        print("UUID: \(UUID(uuidString: id)!), \(id)")
+        print("\(String(describing: getTomsFriends))")
+//        let isSheila = User(userEntity: getTomsFriends![0])
+        XCTAssertNotNil(getTom)
+        XCTAssertNotNil(getTomsFriends)
+//        XCTAssertEqual(isSheila.name, sheilaUser.name)
+        XCTAssertNil(getNull)
+        
+    }
+
 //    func testDeletions() {
-//        XCTAssertTrue(TDManager.deleteAllSongs() == true, "test manager failed to delete all songs")
-//        XCTAssertTrue(TDManager.deleteAllUsers() == true, "test manager failed to delete all users")
+//        let newContext = sut.newDerivedContext()
+//        let newTD = TestDataManager(.inMemory, backgroundContext: newContext)
+//        var didDeleteSongs = false
+//        var didDeleteUsers = false
+//        expectation(
+//          forNotification: .NSManagedObjectContextDidSave,
+//          object: newContext) { _ in
+//            return true
+//        }
+//        newContext?.perform {
+//            newTD.saveFakeData()
+//            didDeleteSongs = newTD.deleteAllSongs()
+//            didDeleteUsers = newTD.deleteAllUsers()
+//        }
+//        waitForExpectations(timeout: 5.0) { _ in
+//            XCTAssertTrue(didDeleteSongs == true, "test manager failed to delete all songs")
+//            XCTAssertTrue(didDeleteUsers == true, "test manager failed to delete all users")
+//        }
 //    }
 }
+

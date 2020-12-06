@@ -22,13 +22,11 @@ struct Start: PreviewProvider {
     
     static var previews: some View {
 //        MusicTweet()
-        AppView(selection: .constant(1))
-//        Text("")
+//        AppView(selection: .constant(1))
+        Text("")
     }
 }
 #endif
-
-
 
 struct MainUser {
     static var idMainUser = "947be968-e95d-4db4-b975-0e674c934c61"
@@ -36,12 +34,13 @@ struct MainUser {
 
 struct ContentView: View {
     @State var selection = 1
+    let TDManager = TestDataManager()
     var body: some View {
-        AppView(selection: $selection)
-//        Text("")
+//        AppView(selection: $selection)
+        ScrollTweets(TDManager)
+
     }
 }
-
 
 
 struct AppView: View {
@@ -53,13 +52,20 @@ struct AppView: View {
     @State var didAppear = false
     @State var alreadyLoaded = 0
     let TDManager = TestDataManager()
+    let mainUser: User
+    
+    init(selection: Binding<Int>) {
+        _selection =  selection
+        self.mainUser = User(userEntity: TDManager.fetchMainUser()!)
+    }
+    
     var body: some View {
         TabView(selection: $selection) {
-            ScrollTweets().tabItem {
+            ScrollTweets(TDManager).tabItem {
                 Image(systemName: "house")
                 Text("Feed")
             }.tag(1)
-            ProfileView().tabItem{
+            ProfileView(TDManager, self.mainUser).tabItem{
                 Image(systemName: "person")
                 Text("Profile")
             }.tag(2)
@@ -77,70 +83,7 @@ struct AppView: View {
         .accentColor(.white)
     }
 }
-
-
-//// below is only used for testing purposes to gather data
-//struct CoreDataExampleView: View {
-//
-//    @Environment(\.managedObjectContext) var managedObjectContext
-//    @FetchRequest(entity: UserEntity.entity(), sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)],
-//                  predicate: NSPredicate(format: "name == %@", "Bob")) var fetchedBobEntity: FetchedResults<UserEntity>
-//      @FetchRequest(entity: SongInstanceEntity.entity(),
-//                    sortDescriptors: [NSSortDescriptor(key: "song_name", ascending: true)]) var fetchedSongs: FetchedResults<SongInstanceEntity>
-//
-//    var body: some View {
-//
-//        let songInstances = fetchedSongs.map( {
-//            SongInstance(instanceEntity: $0)
-//        })
-//
-//        return VStack {
-//            VStack {
-//                Button(action: {
-//                    TestDataManager.emptyDB()
-//                    TestDataManager.saveFakeData()
-//                    guard let bob = CoreDataRetrievalManager.getUserWithName("Bob") else {
-//                        print("No bob was found")
-//                        return
-//                    }
-//                    guard let bobSongInstanceEntities = CoreDataRetrievalManager.getSongInstancesFromUser(bob) else {
-//                        print("No bob songs were found")
-//                        return
-//                    }
-//                    print("Bob listens to the following songs:")
-//                    bobSongInstanceEntities.forEach({
-//                        print("\($0.instanceOf.name)")
-//                        })
-//                }) {
-//                    Text("Test Delete/Create/Read")
-//                }
-//
-//                Button(action: {
-//                    guard !self.fetchedBobEntity.isEmpty else { return }
-//                    let bobEntity = self.fetchedBobEntity.first!
-//                    if let songInstanceEntities = CoreDataRetrievalManager.getSongInstancesFromUser(bobEntity) {
-//                        print("Got first song from User Bob")
-//                        let first = songInstanceEntities.first!
-//                        CoreRelationshipDataManager.userLikesSong(user: bobEntity, songInstance: first.convertToManagedObject())
-//                    }
-//                }) {
-//                    Text("Add Like")
-//                }
-//            }
-//
-//            ForEach(songInstances, id: \.self) { instance in
-//                Group {
-//                    Text("Song: \(instance.instanceOf.name)")
-//                    ForEach(instance.likers, id: \.self) { liker in
-//                        Text("Liker: \(liker.name)")
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
     
-
 // HACK with SWIFT example of orienting views
 struct ExampleOrientationView: View {
     

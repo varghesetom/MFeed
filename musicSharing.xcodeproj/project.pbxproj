@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		930BCDF0257C42FD00C87185 /* SharedInstanceViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 930BCDEF257C42FC00C87185 /* SharedInstanceViewTests.swift */; };
 		93F2D777256F8722004FDDD3 /* CoreDataRetrievalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F2D776256F8722004FDDD3 /* CoreDataRetrievalManager.swift */; };
 		93F2D77B256F8782004FDDD3 /* TestDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F2D77A256F8782004FDDD3 /* TestDataManager.swift */; };
 		93F2D77D256F8887004FDDD3 /* CoreRelationshipDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F2D77C256F8887004FDDD3 /* CoreRelationshipDataManager.swift */; };
@@ -40,6 +41,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		930BCDEF257C42FC00C87185 /* SharedInstanceViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedInstanceViewTests.swift; sourceTree = "<group>"; };
 		93F2D776256F8722004FDDD3 /* CoreDataRetrievalManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataRetrievalManager.swift; sourceTree = "<group>"; };
 		93F2D77A256F8782004FDDD3 /* TestDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDataManager.swift; sourceTree = "<group>"; };
 		93F2D77C256F8887004FDDD3 /* CoreRelationshipDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreRelationshipDataManager.swift; sourceTree = "<group>"; };
@@ -109,6 +111,7 @@
 		93F2D7AB2579A5F4004FDDD3 /* musicSharingTests */ = {
 			isa = PBXGroup;
 			children = (
+				930BCDEF257C42FC00C87185 /* SharedInstanceViewTests.swift */,
 				93F2D7B42579B6FD004FDDD3 /* CoreDataTests.swift */,
 				93F2D7AC2579A5F4004FDDD3 /* musicSharingTests.swift */,
 				93F2D7AE2579A5F4004FDDD3 /* Info.plist */,
@@ -279,6 +282,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				930BCDF0257C42FD00C87185 /* SharedInstanceViewTests.swift in Sources */,
 				93F2D7B52579B6FE004FDDD3 /* CoreDataTests.swift in Sources */,
 				93F2D7AD2579A5F4004FDDD3 /* musicSharingTests.swift in Sources */,
 			);

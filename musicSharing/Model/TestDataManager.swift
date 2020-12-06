@@ -22,19 +22,192 @@ class TestDataManager {
         self.memoryType = memoryType
         self.context = backgroundContext
     }
-
-//    lazy var context: NSManagedObjectContext? = {
-//         var trueContext = CoreDataStoreContainer(.inMemory)?.persistentContainer.viewContext
-//         if self.memoryType == .persistent {
-//             trueContext = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
-//         }
-//         return trueContext
-//     }()
     
+    public func addUserEntity(user: User) -> UserEntity? {
+        let userEnt = user.convertToManagedObject(self.context!)
+        self.context!.perform {
+            do {
+                try self.context!.save()
+            } catch {
+                print("couldn't save user entity")
+            }
+        }
+        return userEnt
+    }
+    public func addSongInstanceEntity(songInstance: SongInstance) -> SongInstanceEntity? {
+        let songInstEnt = songInstance.convertToManagedObject(self.context!)
+        self.context!.perform {
+            do {
+                try self.context!.save()
+            } catch {
+                print("couldn't save song instance entity")
+            }
+        }
+        return songInstEnt
+    }
     
+    func addSongEntity(song: Song) -> SongEntity? {
+        let songEnt = song.convertToManagedObject(self.context!)
+        self.context!.perform {
+            do {
+                try self.context!.save()
+            } catch {
+                print("couldn't save song entity")
+            }
+        }
+        return songEnt
+    }
+    
+    // COREDATA RETRIEVAL
+    
+    func getSong(_ name: String) -> SongEntity? {
+        let songRequest: NSFetchRequest<SongEntity> = SongEntity.fetchRequest()
+        songRequest.predicate = NSPredicate(format: "song_name == %@", name)
+        do {
+            let song = try self.context!.fetch(songRequest).first
+            print("For context \(self.context!) -- Fetched song: \(String(describing: song))")
+            return song
+        } catch {
+            print("Song fetch failed")
+            return nil
+        }
+    }
+    
+    func checkIfSongExists(_ songName: String) -> Bool {
+        let request: NSFetchRequest<SongEntity> = SongEntity.fetchRequest()
+        let regularMatchPredicate = NSPredicate(format: "song_name = %@", songName)
+        let lowerCaseMatchPredicate = NSPredicate(format: "song_name = %@", songName.lowercased())
+        let orPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [regularMatchPredicate, lowerCaseMatchPredicate])
+        request.predicate = orPredicate
+        do {
+            let match = try  self.context!.fetch(request).first
+            guard match != nil else {
+                print("Song does not exist")
+                return false
+            }
+            return true
+        } catch {
+            print("Couldn't perform songName predicate match request.")
+            return false
+        }
+    }
+    
+    func getUserWithName(_ name: String) -> UserEntity? {
+        let userFetchRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+        userFetchRequest.predicate = NSPredicate(format: "name == %@", name)
+        do {
+            let user = try self.context!.fetch(userFetchRequest).first
+            return user
+        } catch {
+            print("User fetch failed")
+            return nil
+        }
+    }
+    
+    func fetchMainUser() -> UserEntity? {
+        let mainUserRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+        mainUserRequest.predicate = NSPredicate(format: "%K == %@", "userID", MainUser.idMainUser as CVarArg)
+        do {
+            print("CONTEXT: \(self.context!)")
+            let mainUser = try self.context!.fetch(mainUserRequest).first!
+            return mainUser
+        } catch {
+            print("Could not initialize main user \(error.localizedDescription)")
+        }
+        return nil
+    }
+    
+    // get main user's songs from their STASH
+    
+    func getStashFromUser(_ id: String = MainUser.idMainUser)->[SongInstanceEntity]? {
+        let request: NSFetchRequest<SongInstanceEntity> = SongInstanceEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "ANY stashed_by.userID = %@", id as CVarArg) // comparing a collection of results(?) to a scalar value so need ANY
+        request.sortDescriptors = [NSSortDescriptor(key: "song_name", ascending: true)]
+        do {
+            let stashSongs = try self.context?.fetch(request)
+            return stashSongs
+        } catch {
+            print("Couldn't return stashed songs for Main User")
+            return nil
+        }
+    }
+    
+    // get main user's friends
+    
+    func getUsersFriends(_ id: String = MainUser.idMainUser) -> [UserEntity]? {
+        let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "ANY is_friends_with.userID = %@", id as CVarArg)
+        request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        do {
+            let userEntities = try self.context?.fetch(request)
+            return userEntities
+        } catch {
+            print("Couldn't return main user's friends")
+            return nil
+        }
+    }
+    
+    // get people who requested to follow main user
+    
+    func getReceivedFollowRequestsForUser(_ id: String = MainUser.idMainUser) -> [UserEntity]? {
+        let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+               request.predicate = NSPredicate(format: "ANY received_follow_request.userID = %@", id as CVarArg)
+               request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        do {
+            let userEntities = try self.context?.fetch(request)
+            return userEntities
+        } catch {
+            print("Couldn't return main user's follower requests")
+            return nil
+        }
+    }
+    
+    // get follow requests sent by main users
+    
+    func getFollowRequestsSentByUser(_ id: String = MainUser.idMainUser) -> [UserEntity]? {
+        let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "ANY sent_follow_request.userID = %@", id as CVarArg)
+        request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        do {
+            let userEntities = try self.context?.fetch(request)
+            return userEntities
+        } catch {
+            print("Could not get requests sent BY main user")
+            return nil
+        }
+    }
+    
+    func getRecentlyListenedSongFromUser(_ id: String = MainUser.idMainUser) -> [SongInstanceEntity]? {
+        let request: NSFetchRequest<SongInstanceEntity> = SongInstanceEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "played_by.userID = %@", id as CVarArg)
+        request.sortDescriptors = [NSSortDescriptor(key: "date_listened", ascending: false)]
+        do {
+            let songInstEnt = try self.context?.fetch(request)
+            return songInstEnt
+        } catch {
+            print("Couldn't get the most recently listened to song for Main User")
+            return nil
+        }
+    }
+    
+    func getSongInstancesFromUser(_ user: UserEntity) -> [SongInstance]? {
+        if let songs:[SongInstanceEntity] = user.listened_to?.allObjects as? [SongInstanceEntity] {
+            songs.forEach({ print("User 1 listens to -> \($0.instance_of!.song_name ?? "Unknown") by \($0.instance_of!.artist_name ?? "")")})
+            let instances = songs.map({
+                SongInstance(instanceEntity: $0)}
+            )
+            return instances
+        }
+        print("No song listens for user")
+        return nil
+    }
+    
+            // SAVE TEST DATA
     lazy var testData = JSONTestData()
-    lazy var CRManager = CoreRelationshipDataManager(self.memoryType)
-    lazy var CDataRetManager = CoreDataRetrievalManager(self.memoryType)
+//    lazy var CRManager = CoreRelationshipDataManager(self.memoryType, backgroundContext: self.context!)
+//    lazy var CDataRetManager: CoreDataRetrievalManager = {
+//        return CoreDataRetrievalManager(self.memoryType, backgroundContext: self.context!)
+//    }()
     
     func saveFakeData() {
         print("SAVING FAKE DATA")
@@ -111,9 +284,9 @@ class TestDataManager {
         bobFriendRequest.predicate = NSPredicate(format: "name == %@", "Bob LobLaw")
         do {
             let sarah = try self.context!.fetch(sarahFriendRequest).first!
-            CRManager.userIsFriends(user: CDataRetManager.fetchMainUser()!, friend: sarah)
+            self.userIsFriends(user: self.fetchMainUser()!, friend: sarah)
             let bob = try self.context!.fetch(bobFriendRequest).first!
-            CRManager.userIsFriends(user: CDataRetManager.fetchMainUser()!, friend: bob)
+            self.userIsFriends(user: self.fetchMainUser()!, friend: bob)
             try self.context?.save()
             return true
         } catch {
@@ -129,7 +302,7 @@ class TestDataManager {
         peterRequest.predicate = NSPredicate(format: "name == %@", "Peter Parker")
         do {
             let peter = try self.context!.fetch(peterRequest).first!
-            CRManager.userSentFollowRequest(from: peter, to: CDataRetManager.fetchMainUser()!)
+            self.userSentFollowRequest(from: peter, to: self.fetchMainUser()!)
             try self.context?.save()
             return true
         } catch {
@@ -145,7 +318,7 @@ class TestDataManager {
         cousinVinnyRequest.predicate = NSPredicate(format: "name == %@", "Vinny Gambini")
         do {
             let myCousinVinny = try self.context!.fetch(cousinVinnyRequest).first!
-            CRManager.userSentFollowRequest(from: CDataRetManager.fetchMainUser()!, to: myCousinVinny)
+            self.userSentFollowRequest(from: self.fetchMainUser()!, to: myCousinVinny)
             try self.context?.save()
             return true
         } catch {
@@ -154,7 +327,7 @@ class TestDataManager {
         }
     }
     
-    // CLEARING CORE DATA METHODS
+    // CLEARING METHODS
     func emptyDB() -> Bool {
         print("EMPTYING DB")
         _ = self.deleteAllSongs()
@@ -186,17 +359,92 @@ class TestDataManager {
         }
     }
     
-    func saveSongInstance(songName: String, instanceOf: Song, playedBy: UserEntity, artist: String = "", genre: String = "", songLength: Decimal?) {
-       
-        let song = Song(name: songName, artist: artist, genre: genre, image: "", songLength: songLength ?? 0.0)
-        let newSongInstance = SongInstance(id: UUID(), songName: songName, dateListened: Date(), instanceOf: song, playedBy: User(userEntity: playedBy))
-        do {
-            _ = newSongInstance.convertToManagedObject(self.context!)
-            try self.context?.save()
-        } catch {
-            print("Couldn't save new song instance: \(error.localizedDescription)")
-        }
+            // CORE DATA RELATIONSHIPS
+    
+    func userStashesSong(user: UserEntity, songInstance: SongInstanceEntity) {
+         print("\n\nUSER BEFORE ADDING \(user)")
+         user.addToStashes_this(songInstance)
+         print("\n\nUSER AFTER ADDING \(user)")
+         do {
+             try self.context!.save()
+         } catch {
+             print("Error adding stashed song relationship for user")
+         }
+     }
+     
+     func userListenedToSong(user: UserEntity, songInstance: SongInstanceEntity) {
+         user.addToListened_to(songInstance)
+         do {
+             try self.context!.save()
+         } catch {
+             print("Error adding listened song relationship for user")
+         }
+     }
+     
+     func userLikesSong(user: UserEntity, songInstance: SongInstanceEntity) {
+         user.addToLikes_this(songInstance)
+         do {
+             try self.context!.save()
+         } catch {
+             print("Error adding liked song relationship for user")
+         }
+     }
+     
+     func userCommentsOnSong(user: UserEntity, songInstance: SongInstanceEntity) {
+         user.addToCommented_on(songInstance)
+         do {
+             try self.context!.save()
+         } catch {
+             print("Error adding commented song relationship for user")
+         }
+     }
+     
+     func userIsFriends(user: UserEntity, friend: UserEntity) {
+         user.addToIs_friends_with(friend)
+         do {
+             try self.context!.save()
+         } catch {
+             print("Error adding friendship for user")
+         }
+     }
+     
+     func userSentFollowRequest(from: UserEntity, to: UserEntity) {
+         from.addToSent_follow_request(to)
+         do {
+             try self.context!.save()
+         } catch {
+             print("Error adding follow sent request for user")
+         }
+     }
+     
+     /* Deleting Database relationships */
+     
+     func userUnlikesSong(user: UserEntity, songInstance: SongInstanceEntity) {
+         user.removeFromLikes_this(songInstance)
+         do {
+             try self.context!.save()
+         } catch {
+             print("Error removing liked song relationship for user")
+         }
+     }
+
+     func userUncommentsSong(user: UserEntity, songInstance: SongInstanceEntity) {
+            user.removeFromCommented_on(songInstance)
+         do {
+             try self.context!.save()
+         } catch {
+             print("Error removing comment relationship for user")
+         }
     }
+     
+     func userUnstashesSong(user: UserEntity, songInstance: SongInstanceEntity) {
+         user.removeFromStashes_this(songInstance)
+         do {
+             try self.context!.save()
+         } catch {
+             print("Error removing stashed song relationship for user")
+         }
+     }
 }
 
 struct JSONTestData {
@@ -239,9 +487,12 @@ struct JSONTestData {
         do {
             if let jsonData = try String(contentsOfFile: songInstancesPath).data(using: .utf8) {
             let decoder = JSONDecoder()
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm"
+            decoder.dateDecodingStrategy = .formatted(dateFormatter)
             songInstances = try decoder.decode([SongInstance].self, from: jsonData)
-//            print("SONGINSTANCES -> \(songInstances ?? [SongInstance]())")
             }
+            print("SONG INSTANCES\(String(describing: songInstances))")
         } catch {
             print("Error occurred for song instances decoding process \(error.localizedDescription)")
         }

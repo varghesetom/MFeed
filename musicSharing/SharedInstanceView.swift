@@ -15,6 +15,12 @@ struct SharedInstanceView: View {
     @State var songLength = ""
     let genres = ["Rock", "Country", "Hip-Hop", "Rap", "Classical", "Pop", "Trance"]
     let moods = ["In My Feels", "Chill", "Feel-Good", "Melancholy", "Pump-Up"]
+    var TDManager: TestDataManager
+    
+    init(_ manager: TestDataManager) {
+        self.TDManager = manager
+    }
+    
     var body: some View {
         NavigationView {
             Form {
@@ -36,32 +42,59 @@ struct SharedInstanceView: View {
                     TextField("Enter song artist", text: $songArtist)
                     TextField("How long?", text: $songLength).keyboardType(.decimalPad)
                 }
-            }
-            Button(action: {
-                self.createSongInstance()
-            }) {
-               Text("Share")
-            }
+                Section {
+                    Button(action: {
+                        self.createSongInstance()
+                    }) {
+                       Text("Share")
+                    }
+                }
+            }.navigationBarTitle("Share a song")
         }
-//        .navigationBarTitle("Share a song")
     }
     
     func createSongInstance() {
         print("creating song instance...")
-        // Defensive Programming Checks
-        
-        let newSong = Song(name: songName, artist: songArtist, genre: songGenre, songLength: Decimal(string: songLength) ?? 0.0)
-        
-//           TestDataManager.saveSongInstance(songName: "Blue Bayou", instanceOf: newSong, playedBy: <#T##UserEntity#>, artist: <#T##String#>, genre: <#T##String#>, songLength: <#T##Decimal#>)
+        if self.didProvideCorrectRequiredInfo(songName: songName, songLink: songLink) {
+            if !self.checkIfSongAlreadyExists(songName) {
+                _ = self.addSongAndSongInstance(songName, songLink)
+            } else {
+                let fetchedSong = Song(songEntity: TDManager.getSong(songName)!)
+                let fetchedUser = User(userEntity: TDManager.fetchMainUser()!)
+                _ = self.addOnlySongInstanceIfSongExists(fetchedSong, fetchedUser)
+            }
+        }
         print("finished creating song instance")
     }
     
-    func isValidSongName(_ name: String) -> Bool {
-        if name.count == 0 {
-            return false
-        }
-        return true
+    func didProvideCorrectRequiredInfo(songName: String, songLink: String) -> Bool {
+        return (self.isValidSongName(songName) && self.isValidSongLink(songLink)) ? true : false
     }
+    
+    func isValidSongName(_ name: String) -> Bool {
+        return name.count > 0 ? true : false
+    }
+    
+    func isValidSongLink(_ link: String) -> Bool {
+        return link.count > 0 ? true : false
+    }
+    
+    func checkIfSongAlreadyExists(_ name: String) -> Bool {
+        let lower = name.lowercased()
+        return TDManager.checkIfSongExists(lower) || TDManager.checkIfSongExists(name) ? true : false
+    }
+    
+    func addSongAndSongInstance(_ songName: String, _ songLink: String) -> SongInstanceEntity? {
+        let song: Song = Song(name: "", songLength: 0.0)
+        let songInstance: SongInstance = SongInstance(songName: "", dateListened: Date(), instanceOf: song, playedBy: User(userEntity: self.TDManager.fetchMainUser()!))
+        _ = TDManager.addSongEntity(song: song)
+        return TDManager.addSongInstanceEntity(songInstance: songInstance)
+    }
+    
+    func addOnlySongInstanceIfSongExists(_ song: Song, _ user: User) -> SongInstanceEntity? {
+        return TDManager.addSongInstanceEntity(songInstance: SongInstance(songName: song.name, dateListened: Date(), instanceOf: song, playedBy: user))
+    }
+    
 }
 
 // Defensive Programming
@@ -71,8 +104,3 @@ struct SharedInstanceView: View {
 // 4. Check if inappropriate words are used
 
 
-struct SharedInstanceView_Previews: PreviewProvider {
-    static var previews: some View {
-        SharedInstanceView()
-    }
-}

@@ -11,128 +11,36 @@ import CoreData
 
 #if DEBUG
 struct ProfileView: View {
+    private var TDManager: TestDataManager
+    private var mainUser: User
+    
+    init(_ manager: TestDataManager, _ user: User) {
+        self.TDManager = manager
+        self.mainUser = User(userEntity: TDManager.fetchMainUser()!)
+    }
+    
     var body: some View {
         VStack {
-            UserBox()
+            UserBox(self.TDManager, user: self.mainUser)
             Spacer()
-            BottomHalfOfProfile()
+            BottomHalfOfProfile(self.TDManager, self.mainUser)
             Spacer()
         }
         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)  // need to set frame to max possible otherwise the sides will still appear as white
         .background(Color.black.edgesIgnoringSafeArea(.all))
-        
+
     }
 }
 #endif
 
-// will contain the most recent music tweet (which also means including a date attribute...) and Stash, Friends, and Edit buttons
-struct BottomHalfOfProfile: View {
-    @State var isStashSheet = false
-    @State var isFriendSheet = false
-    @State var isFollowerSheet = false
-    @State var stashedSongInstances = [SongInstance]()
-    @State var userFriends = [User]()
-    @State var followsRequestedFrom = [User]()
-    @State var usersRequestedToBeFriends = [User]()
-    @State var mostRecentSong = [SongInstance]()
-//    @State var stashedSongInstances: [SongInstance]
-//    @State var userFriends: [User]
-//    @State var followsRequestedFrom: [User]
-//    @State var usersRequestedToBeFriends: [User]
-//    @State var mostRecentSong: [SongInstance]
-    var CDataRetManager = CoreDataRetrievalManager()
-    
-    var body: some View {
-
-        return AnyView(
-            VStack {
-                Text("Recent Song")
-                    .foregroundColor(.white)
-                    .font(.headline)
-                    .underline()
-                if mostRecentSong.count == 0 {
-                    Text("No recently listened to song")
-                } else {
-                    MusicTweet(songInstance: mostRecentSong[0].convertToManagedObject(), alignment: Alignment.bottomLeading).scaleEffect(0.85)
-                }
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        self.isStashSheet.toggle()
-                    }) {
-                        Text("Stash")
-                    }.sheet(isPresented: $isStashSheet) {
-                        List {
-                            ForEach(self.stashedSongInstances, id: \.self) {
-                                Text("Song: \($0.songName)")
-                            }
-                        }
-                    }
-                    Spacer()
-                    Button(action: {
-                        self.isFriendSheet.toggle()
-                    }) {
-                        Text("Friends")
-                    }.sheet(isPresented: $isFriendSheet) {
-                        List {
-                            ForEach(self.userFriends, id: \.self) {
-                                Text("Friend: \($0.name)")
-                            }
-                        }
-                    }
-                    Spacer()
-                    Button(action: {
-                        self.isFollowerSheet.toggle()
-                        print("The other fetched result was \(self.usersRequestedToBeFriends)")
-                    }) {
-                        Text("Follow Requests")
-                    }.sheet(isPresented: $isFollowerSheet) {
-                        List {
-                            ForEach(self.followsRequestedFrom, id: \.self) {
-                                Text("Request from: \($0.name)")
-                            }
-                        }
-                    }
-                    Spacer()
-                }
-            }
-            .onAppear {
-                if let mostRecentSongInstanceEntity = self.CDataRetManager.getRecentlyListenedSongFromUser() {
-                    self.mostRecentSong = mostRecentSongInstanceEntity.map {
-                        SongInstance(instanceEntity: $0)
-                    }
-                }
-                if let userStashedSongEntities = self.CDataRetManager.getStashFromUser() {
-                    self.stashedSongInstances = userStashedSongEntities.map {
-                        SongInstance(instanceEntity: $0)
-                    }
-                }
-                if let userFriendEntities = self.CDataRetManager.getUsersFriends() {
-                    self.userFriends = userFriendEntities.map {
-                        User(userEntity: $0)
-                    }
-                }
-                if let receivedEntities = self.CDataRetManager.getReceivedFollowRequestsForUser() {
-                    self.followsRequestedFrom = receivedEntities.map {
-                        User(userEntity: $0)
-                    }
-                }
-                if let sentEntities = self.CDataRetManager.getFollowRequestsSentByUser() {
-                    self.usersRequestedToBeFriends = sentEntities.map {
-                        User(userEntity: $0)
-                    }
-                }
-            }
-        )
-    }
-}
 
 struct UserBox: View {
-    private var CDataRetManager = CoreDataRetrievalManager()
+    private var TDManager: TestDataManager
     private var user: User
     
-    init() {
-        self.user = User(userEntity: CDataRetManager.fetchMainUser()!)
+    init(_ manager: TestDataManager, user: User) {
+        self.TDManager = manager
+        self.user = User(userEntity: self.TDManager.fetchMainUser()!)
     }
     
     var body: some View {
@@ -189,6 +97,111 @@ struct UserBox: View {
     }
 }
 
+// will contain the most recent music tweet (which also means including a date attribute...) and Stash, Friends, and Edit buttons
+struct BottomHalfOfProfile: View {
+    @State var isStashSheet = false
+    @State var isFriendSheet = false
+    @State var isFollowerSheet = false
+    @State var stashedSongInstances = [SongInstance]()
+    @State var userFriends = [User]()
+    @State var followsRequestedFrom = [User]()
+    @State var usersRequestedToBeFriends = [User]()
+    @State var mostRecentSong = [SongInstance]()
+    var TDManager: TestDataManager
+    private var mainUser: User
+    
+    init(_ manager: TestDataManager, _ user: User) {
+        self.TDManager = manager
+        self.mainUser = User(userEntity: TDManager.fetchMainUser()!)
+    }
+    
+    var body: some View {
+
+        return AnyView(
+            VStack {
+                Text("Recent Song")
+                    .foregroundColor(.white)
+                    .font(.headline)
+                    .underline()
+                if mostRecentSong.count == 0 {
+                    Text("No recently listened to song")
+                } else {
+                    MusicTweet(songInstance: self.TDManager.getRecentlyListenedSongFromUser()![0], alignment: Alignment.bottomLeading).scaleEffect(0.85)
+                }
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        self.isStashSheet.toggle()
+                    }) {
+                        Text("Stash")
+                    }.sheet(isPresented: $isStashSheet) {
+                        List {
+                            ForEach(self.stashedSongInstances, id: \.self) {
+                                Text("Song: \($0.songName)")
+                            }
+                        }
+                    }
+                    Spacer()
+                    Button(action: {
+                        self.isFriendSheet.toggle()
+                    }) {
+                        Text("Friends")
+                    }.sheet(isPresented: $isFriendSheet) {
+                        List {
+                            ForEach(self.userFriends, id: \.self) {
+                                Text("Friend: \($0.name)")
+                            }
+                        }
+                    }
+                    Spacer()
+                    Button(action: {
+                        self.isFollowerSheet.toggle()
+                        print("The other fetched result was \(self.usersRequestedToBeFriends)")
+                    }) {
+                        Text("Follow Requests")
+                    }.sheet(isPresented: $isFollowerSheet) {
+                        List {
+                            ForEach(self.followsRequestedFrom, id: \.self) {
+                                Text("Request from: \($0.name)")
+                            }
+                        }
+                    }
+                    Spacer()
+                }
+            }
+            .onAppear {
+                if let mostRecentSongInstanceEntity = self.TDManager.getRecentlyListenedSongFromUser() {
+                    self.mostRecentSong = mostRecentSongInstanceEntity.map {
+                        SongInstance(instanceEntity: $0)
+                    }
+                }
+                if let userStashedSongEntities = self.TDManager.getStashFromUser() {
+                    self.stashedSongInstances = userStashedSongEntities.map {
+                        SongInstance(instanceEntity: $0)
+                    }
+                }
+                if let userFriendEntities = self.TDManager.getUsersFriends() {
+                    self.userFriends = userFriendEntities.map {
+                        User(userEntity: $0)
+                    }
+                }
+                if let receivedEntities = self.TDManager.getReceivedFollowRequestsForUser() {
+                    self.followsRequestedFrom = receivedEntities.map {
+                        User(userEntity: $0)
+                    }
+                }
+                if let sentEntities = self.TDManager.getFollowRequestsSentByUser() {
+                    self.usersRequestedToBeFriends = sentEntities.map {
+                        User(userEntity: $0)
+                    }
+                }
+            }
+        )
+    }
+}
+
+
+
 struct GenreSeeking: View {
     @State var genre: String
     @State var didSelectGenre = false
@@ -226,15 +239,15 @@ struct GenreSeekingStyle: ButtonStyle {
     }
 }
 
-struct ProfileView_Previews: PreviewProvider {
-    static var previews: some View {
-        VStack {
-            UserBox()
-            Spacer()
-            BottomHalfOfProfile()
-            Spacer()
-        }
-        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)  // need to set frame to max possible otherwise the sides will still appear as white
-        .background(Color.black.edgesIgnoringSafeArea(.all))
-    }
-}
+//struct ProfileView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        VStack {
+//            UserBox()
+//            Spacer()
+//            BottomHalfOfProfile()
+//            Spacer()
+//        }
+//        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)  // need to set frame to max possible otherwise the sides will still appear as white
+//        .background(Color.black.edgesIgnoringSafeArea(.all))
+//    }
+//}

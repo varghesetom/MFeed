@@ -5,9 +5,14 @@ import CoreData
 
 struct ScrollTweets: View {
 
-    @FetchRequest(entity: SongInstanceEntity.entity(), sortDescriptors: [NSSortDescriptor(key: "date_listened", ascending: true)]) var fetchedSongInstances: FetchedResults<SongInstanceEntity>
+    @FetchRequest(entity: SongInstanceEntity.entity(), sortDescriptors: [NSSortDescriptor(key: "date_listened", ascending: false)]) var fetchedSongInstances: FetchedResults<SongInstanceEntity>
     
     @State var isShareViewShown = false
+    var TDManager: TestDataManager
+    
+    init(_ manager: TestDataManager) {
+        self.TDManager = manager
+    }
     
     var body: some View {
         let songInstanceEntities = fetchedSongInstances.map( {
@@ -33,7 +38,7 @@ struct ScrollTweets: View {
             })
         }
         .sheet(isPresented: $isShareViewShown) {
-            Text("hi")
+            SharedInstanceView(self.TDManager)
         }
     }
 }
@@ -48,7 +53,6 @@ struct MusicTweet: View {
         let songInst = SongInstance(instanceEntity: songInstance)
         let image = UIImage(named: songInst.instanceOf.image) ?? UIImage(named: "northern_lights")  // if the image in songInstance can't be found in Assets, then provide a default image
         return VStack(alignment: .center, spacing: 0) {
-//            Text("Gabagool")
             HStack() {
                 Spacer()
                 Text("\(songInst.playedBy.name)")
@@ -116,12 +120,12 @@ struct MusicTweet: View {
 struct TweetButton: View {
     var action: String
     var songInstanceEntity: SongInstanceEntity
-    @State var CRManager = CoreRelationshipDataManager()
-    @State var CDataRetManager = CoreDataRetrievalManager()
+    var TDManager: TestDataManager
     
     init(_ action: String, _ songInstanceEntity: SongInstanceEntity) {
         self.action = action
         self.songInstanceEntity = songInstanceEntity
+        self.TDManager = TestDataManager()
     }
     
     var body: some View {
@@ -134,30 +138,27 @@ struct TweetButton: View {
                 .minimumScaleFactor(0.7)
                 .allowsTightening(true)
         }
-            .buttonStyle(ButtonBackground())
+            .buttonStyle(TweetButtonBackground())
     }
     
     func buttonFunctionality() -> Void {
-        // TODO - fix bug where duplicate tweets appear after clicking on a random user's stash button
-        
-
         switch self.action {
         case "Stash":
             print("Stashed")
-            CRManager.userStashesSong(user: CDataRetManager.fetchMainUser()!, songInstance: songInstanceEntity)
+            TDManager.userStashesSong(user: TDManager.fetchMainUser()!, songInstance: songInstanceEntity)
         case "Convo":
             print("Convoed")
-            CRManager.userCommentsOnSong(user: CDataRetManager.fetchMainUser()!, songInstance: songInstanceEntity)
+            TDManager.userCommentsOnSong(user: TDManager.fetchMainUser()!, songInstance: songInstanceEntity)
         case "Like":
             print("Liked")
-            CRManager.userLikesSong(user: CDataRetManager.fetchMainUser()!, songInstance: songInstanceEntity)
+            TDManager.userLikesSong(user: TDManager.fetchMainUser()!, songInstance: songInstanceEntity)
         default:
             fatalError("Need proper action argument for TweetButton functionality")
         }
     }
 }
 
-struct ButtonBackground: ButtonStyle {
+struct TweetButtonBackground: ButtonStyle {
     @State private var firstGradientColor = Color.orange
     @State private var secondGradientColor = Color.red
     func makeBody(configuration: Configuration) -> some View {
@@ -173,23 +174,18 @@ struct ButtonBackground: ButtonStyle {
     }
 }
 
-
-//func getDateFormatter() -> DateFormatter{
-//    let formatter = DateFormatter()
-//    formatter.dateStyle = .short
-//    formatter.timeStyle = .short
-//    return formatter
-//}
-
 // helper function for formatting dates
 func getFormattedDateStampForTweet(_ date: Date) -> String{
-    let components = Calendar.current.dateComponents([.month, .day,.hour, .minute], from: date)
-    let month = components.month ?? 1
-    let day = components.day ?? 1
-    let hour = components.hour ?? 0
-    let minute = components.minute ?? 0
-//    print("ORIGINAL: \(date)\n(FORMATTED: \(month)/\(day)@\(hour):\(minute)")
-    return "\(month)/\(day)@\(hour):\(minute)"
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateStyle = .medium
+    dateFormatter.dateFormat = "MM/dd @ HH:mm"
+    dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+    dateFormatter.locale = Locale.current
+    dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+    let dateTime = dateFormatter.string(from: date)
+    print("ORIGINAL: \(date)")
+    print("DATE FORMATTER VERSION: \(dateTime)")
+    return dateTime
 }
 
 struct NewsFeedView_Previews: PreviewProvider {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19H2" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="SongEntity" representedClassName="SongEntity" syncable="YES" codeGenerationType="class">
+    <entity name="SongEntity" representedClassName=".SongEntity" syncable="YES" codeGenerationType="class">
         <attribute name="artist_name" optional="YES" attributeType="String"/>
         <attribute name="genre" optional="YES" attributeType="String"/>
         <attribute name="song_id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
@@ -9,7 +9,7 @@
         <attribute name="song_name" optional="YES" attributeType="String"/>
         <relationship name="instance" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="SongInstanceEntity" inverseName="instance_of" inverseEntity="SongInstanceEntity"/>
     </entity>
-    <entity name="SongInstanceEntity" representedClassName="SongInstanceEntity" syncable="YES" codeGenerationType="class">
+    <entity name="SongInstanceEntity" representedClassName=".SongInstanceEntity" syncable="YES" codeGenerationType="class">
         <attribute name="date_listened" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="instance_id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="song_name" optional="YES" attributeType="String"/>
@@ -19,7 +19,7 @@
         <relationship name="played_by" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserEntity" inverseName="listened_to" inverseEntity="UserEntity"/>
         <relationship name="stashed_by" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserEntity" inverseName="stashes_this" inverseEntity="UserEntity"/>
     </entity>
-    <entity name="UserEntity" representedClassName="UserEntity" syncable="YES" codeGenerationType="class">
+    <entity name="UserEntity" representedClassName=".UserEntity" syncable="YES" codeGenerationType="class">
         <attribute name="avatar" optional="YES" attributeType="String"/>
         <attribute name="bio" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>

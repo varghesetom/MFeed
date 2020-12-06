@@ -12,11 +12,12 @@ struct User: Codable, Identifiable, Hashable {
     let name: String
     let user_bio: String?
     let avatar: String?
-//    var listenedTo = [Song]()
-    // add stash property
     
-    func convertToManagedObject(_ context: NSManagedObjectContext? = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext) -> UserEntity {
-        let userEntity = UserEntity(context: context!)
+    func convertToManagedObject(_ context: NSManagedObjectContext? = CoreDataStoreContainer.shared?.backgroundContext) -> UserEntity {
+//        let userEntity = UserEntity(context: context!)
+        
+        // reconfigure to avoid mismatching when testing. Core Data gets confused when it thinks multiple NSEntityDescriptions claim NSManagedObject subclasses
+        let userEntity = NSEntityDescription.insertNewObject(forEntityName: "UserEntity", into: context!) as! UserEntity
         userEntity.userID = self.id
         userEntity.name = self.name
         userEntity.bio = self.user_bio
@@ -33,22 +34,7 @@ extension User {
         self.name = userEntity.name ?? "Unknown"
         self.user_bio = userEntity.bio ?? "prefers to keep an air of mystery"
         self.avatar = userEntity.avatar ?? "northern-lights"
-//        self.listenedTo = self.getListenedTo(userEntity)
     }
-    
-//    func getListenedTo(_ userEntity: UserEntity) -> [Song] {
-//        var songs = [Song]()
-//        if ((userEntity.listened_to?.allObjects as? [SongEntity]) == nil) {
-//            return songs
-//        }
-//        let r = userEntity.listened_to?.allObjects as? [SongEntity]
-//        for listened in userEntity.listened_to!.allObjects as! [SongEntity]{
-//            let song = Song(songEntity: listened)
-//            songs.append(song)
-//        }
-//        return songs
-//    }
-    
 }
 
 struct Song: Codable, Identifiable, Hashable {
@@ -69,8 +55,9 @@ struct Song: Codable, Identifiable, Hashable {
         self.songLength = songLength
     }
     
-    func convertToManagedObject(_ context: NSManagedObjectContext? = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext) -> SongEntity {
-        let songEntity = SongEntity(context: context!)
+    func convertToManagedObject(_ context: NSManagedObjectContext? = CoreDataStoreContainer.shared?.backgroundContext) -> SongEntity {
+//        let songEntity = SongEntity(context: context!)
+        let songEntity = NSEntityDescription.insertNewObject(forEntityName: "SongEntity", into: context!) as! SongEntity
         songEntity.song_id = self.id
         songEntity.song_name = self.name
         songEntity.artist_name = self.artist
@@ -112,8 +99,9 @@ struct SongInstance: Codable, Identifiable, Hashable {
 //        return likers.count
 //    }
     
-    func convertToManagedObject(_ context: NSManagedObjectContext? = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext)-> SongInstanceEntity {
-        let instanceEntity = SongInstanceEntity(context: context!)
+    func convertToManagedObject(_ context: NSManagedObjectContext? = CoreDataStoreContainer.shared?.backgroundContext) -> SongInstanceEntity {
+//        let instanceEntity = SongInstanceEntity(context: context!)
+        let instanceEntity = NSEntityDescription.insertNewObject(forEntityName: "SongInstanceEntity", into: context!) as! SongInstanceEntity
         instanceEntity.instance_id = self.id
         instanceEntity.date_listened = self.dateListened
         instanceEntity.song_name = self.songName
