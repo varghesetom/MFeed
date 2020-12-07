@@ -11,18 +11,41 @@ import SwiftUI
 struct ConvoView: View {
     var manager: TestDataManager
     var songInstEnt: SongInstanceEntity
-    @State private var offset = CGFloat.zero
+    @Binding var dismiss: Bool
+    @State var offset = CGFloat.zero
+    @State var showActionSheet = false
     
     var body: some View {
-//        GeometryReader { geometry in
         ZStack {
             Color.yellow.edgesIgnoringSafeArea(.all)
             ScrollView(.vertical) {
                 HStack{
-                    Text("Conversation").font(.largeTitle).padding(.leading, 20)
+                    Text("Conversation")
+                        .font(.system(size: 35, weight: .bold, design: .default))
+                        .padding(.leading, 20)
+                        .allowsTightening(true)
                     Spacer()
-                    Button("Back") {}
-                }.padding(.bottom)
+                    Button("Add Comment") {
+                        self.showActionSheet.toggle()
+                    }
+                    .actionSheet(isPresented: self.$showActionSheet) {
+                        ActionSheet(
+                            title: Text("Actions"),
+                            message: Text("Available actions"),
+                            buttons: [
+                                .cancel { print(self.showActionSheet)},
+                                .default(Text("Action")) {
+                                    print("actioned")
+                                },
+                                .destructive(Text("Delete")) {
+                                    print("deleted")
+                                }
+                            ]
+                            )
+                    }
+                    .padding()
+                    Button("Back") { self.dismiss.toggle() }.padding()
+                }.padding(.bottom).padding(.top)
                 VStack {
                     MusicTweet(self.manager, songInstEnt: self.songInstEnt, Alignment.center)
                     Spacer()
@@ -36,18 +59,37 @@ struct ConvoView: View {
                     Spacer()
                 }.background(GeometryReader {
                     Color.clear.preference(key: ViewOffsetKey.self,
-                                       value: -$0.frame(in: .named("scroll")).origin.y)
+                                       value: -$0.frame(in: .named("convo")).origin.y)
                 })
                 .onPreferenceChange(ViewOffsetKey.self) {
-                    self.offset = $0   // needed offset to shift back image
+                    self.offset = $0
                 }
-            }.coordinateSpace(name: "scroll")
-            .navigationBarTitle("Conversation")
-            .navigationBarItems(trailing: Button("Back") {
-            })
+            }.coordinateSpace(name: "convo")
         }
     }
 }
+
+class ConvoViewModel {
+    var manager: TestDataManager
+    var songInstEnt: SongInstanceEntity
+    var toggleGreatComment = false
+    var toggleInterestingComment = false
+    var toggleLoveComment = false
+    
+    init(_ manager: TestDataManager, _ songInstEnt: SongInstanceEntity) {
+        self.manager = manager
+        self.songInstEnt = songInstEnt
+    }
+    
+    func addComment(_ commentType: CommentType) {
+    
+    }
+    
+    func getAllCommentsForSongInstance() {
+        
+    }
+}
+
 
 struct ViewOffsetKey: PreferenceKey {
     typealias Value = CGFloat

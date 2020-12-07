@@ -85,7 +85,7 @@ class ProfileViewModel: ObservableObject {
 
 
 class ProfileButtonsViewModel: ObservableObject {
-    // used as an observed object to track a user's songs, friends, and follow requests
+    // used to track a user's songs, friends, and follow requests
     
     @Published var stashedSongInstances = [SongInstance]()
     @Published var userFriends = [User]()
@@ -97,15 +97,6 @@ class ProfileButtonsViewModel: ObservableObject {
     init(userProfile: ProfileViewModel) {
         self.userProfile = userProfile
     }
-//    var TDManager: TestDataManager
-//    private var user: User
-//    private var isMainUser = true
-//    private var isFriendOfMainUser = false
-//
-//    init(_ manager: TestDataManager, person: User) {
-//        self.TDManager = manager
-//        self.user = person
-//    }
 
     func update() {
         self.updateStashedSongs()

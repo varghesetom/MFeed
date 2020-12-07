@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19H2" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="CommentEntity" representedClassName="CommentEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="comment_type" optional="YES" attributeType="String"/>
+        <attribute name="time_commented" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="comment_for" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SongInstanceEntity" inverseName="has_comments" inverseEntity="SongInstanceEntity"/>
+        <relationship name="commented_by" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserEntity" inverseName="commented_on" inverseEntity="UserEntity"/>
+    </entity>
     <entity name="GenreEntity" representedClassName="GenreEntity" syncable="YES" codeGenerationType="class">
         <attribute name="genre_name" optional="YES" attributeType="String"/>
         <relationship name="toggled_by" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="UserEntity" inverseName="toggled_genre" inverseEntity="UserEntity"/>
@@ -17,7 +23,7 @@
         <attribute name="date_listened" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="instance_id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="song_name" optional="YES" attributeType="String"/>
-        <relationship name="commented_by" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserEntity" inverseName="commented_on" inverseEntity="UserEntity"/>
+        <relationship name="has_comments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CommentEntity" inverseName="comment_for" inverseEntity="CommentEntity"/>
         <relationship name="instance_of" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SongEntity" inverseName="instance" inverseEntity="SongEntity"/>
         <relationship name="liked_by" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserEntity" inverseName="likes_this" inverseEntity="UserEntity"/>
         <relationship name="played_by" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserEntity" inverseName="listened_to" inverseEntity="UserEntity"/>
@@ -28,7 +34,7 @@
         <attribute name="bio" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="userID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <relationship name="commented_on" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="SongInstanceEntity" inverseName="commented_by" inverseEntity="SongInstanceEntity"/>
+        <relationship name="commented_on" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CommentEntity" inverseName="commented_by" inverseEntity="CommentEntity"/>
         <relationship name="is_friends_with" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="UserEntity" inverseName="is_friends_with" inverseEntity="UserEntity"/>
         <relationship name="likes_this" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="SongInstanceEntity" inverseName="liked_by" inverseEntity="SongInstanceEntity"/>
         <relationship name="listened_to" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="SongInstanceEntity" inverseName="played_by" inverseEntity="SongInstanceEntity"/>
@@ -38,9 +44,10 @@
         <relationship name="toggled_genre" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="GenreEntity" inverseName="toggled_by" inverseEntity="GenreEntity"/>
     </entity>
     <elements>
-        <element name="SongEntity" positionX="-54" positionY="-9" width="128" height="148"/>
-        <element name="SongInstanceEntity" positionX="-36" positionY="9" width="128" height="163"/>
-        <element name="UserEntity" positionX="-18" positionY="27" width="128" height="223"/>
-        <element name="GenreEntity" positionX="-27" positionY="108" width="128" height="73"/>
+        <element name="CommentEntity" positionX="-99" positionY="18" width="128" height="103"/>
+        <element name="GenreEntity" positionX="107.51953125" positionY="286.90234375" width="128" height="73"/>
+        <element name="SongEntity" positionX="-329.28515625" positionY="-231.2578125" width="128" height="148"/>
+        <element name="SongInstanceEntity" positionX="66.65234375" positionY="-313.65625" width="128" height="163"/>
+        <element name="UserEntity" positionX="-311.4140625" positionY="107.1796875" width="128" height="223"/>
     </elements>
 </model>

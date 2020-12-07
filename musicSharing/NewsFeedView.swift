@@ -157,7 +157,7 @@ struct TweetButton: View {
                 .allowsTightening(true)
         }.buttonStyle(TweetButtonBackground())
          .sheet(isPresented: $showConvo) {
-            ConvoView(manager: self.TDManager, songInstEnt: self.songInstanceEntity)
+            ConvoView(manager: self.TDManager, songInstEnt: self.songInstanceEntity, dismiss: self.$showConvo)
         }
     }
     

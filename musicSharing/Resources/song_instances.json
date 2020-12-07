@@ -31,8 +31,8 @@
                 ]
             },
         "likers" : [],
-        "commenters" : [],
-        "stashers" : []
+        "stashers" : [],
+        "comments": []
     },
     {
         "id": "c9fecb9d-6665-4ef1-8c3d-920e43511884",
@@ -66,8 +66,8 @@
                 ]
             },
         "likers" : [],
-        "commenters" : [],
-        "stashers" : []
+        "stashers" : [],
+        "comments": []
     },
     {
         "id": "cb133c93-475f-4552-aba3-a47a3c717483",
@@ -98,8 +98,8 @@
                 ]
             },
         "likers" : [],
-        "commenters" : [],
-        "stashers" : []
+        "stashers" : [],
+        "comments": []
     },
     {
         "id": "bd79d88f-ac53-4570-a24d-014b9e8c4362",
@@ -135,8 +135,8 @@
                 ]
             },
         "likers" : [],
-        "commenters" : [],
-        "stashers" : []
+        "stashers" : [],
+        "comments": []
     },
     {
         "id": "5223cb86-abc8-42c8-ac1d-1a2a876ec6a1",
@@ -157,18 +157,11 @@
                    "name" : "Tom",
                    "user_bio": "student who likes all kinds of music. No favorite song -- Different songs for different moods.",
                    "avatar" : "johnsmith",
-                   "genres": [
-                       {
-                           "genre" : "Rock",
-                       },
-                       {
-                           "genre" : "HipHop",
-                       }
-                   ]
+                   "genres": []
             },
         "likers" : [],
-        "commenters" : [],
-        "stashers" : []
+        "stashers" : [],
+        "comments": []
     },
     {
         "id": "7fb9d993-80c7-4f3d-8053-35281e903a54",
@@ -189,18 +182,11 @@
                    "name" : "Tom",
                    "user_bio": "student who likes all kinds of music. No favorite song -- Different songs for different moods.",
                    "avatar" : "johnsmith",
-                   "genres": [
-                       {
-                           "genre" : "Rock",
-                       },
-                       {
-                           "genre" : "HipHop",
-                       }
-                   ]
+                   "genres": []
            },
         "likers" : [],
-        "commenters" : [],
-        "stashers" : []
+        "stashers" : [],
+        "comments": []
     },
     {
         "id": "0ebb7b69-f181-4af6-94d0-5e47418392f9",
@@ -234,8 +220,8 @@
                 ]
             },
         "likers" : [],
-        "commenters" : [],
-        "stashers" : []
+        "stashers" : [],
+        "comments": []
     },
     {
         "id": "2204fa7e-a654-4a1e-bd50-91f805ecd6e5",
@@ -255,17 +241,10 @@
                 "name" : "Tom",
                 "user_bio": "student who likes all kinds of music. No favorite song -- Different songs for different moods.",
                 "avatar" : "johnsmith",
-                "genres": [
-                    {
-                        "genre" : "Rock",
-                    },
-                    {
-                        "genre" : "HipHop",
-                    }
-                ]
+                "genres": []
             },
         "likers" : [],
-        "commenters" : [],
-        "stashers" : []
+        "stashers" : [],
+        "comments": []
     },
 ]

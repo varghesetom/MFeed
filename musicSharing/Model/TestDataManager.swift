@@ -60,6 +60,11 @@ class TestDataManager {
     
     // COREDATA RETRIEVAL
     
+    func getAllCommentsForSong() {
+        let request: NSFetchRequest<SongInstanceEntity> = SongInstanceEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "commented_by == %@", "f")
+    }
+    
     func getGenreEntity(genre: Genre) -> GenreEntity? {
         let request: NSFetchRequest<GenreEntity> = GenreEntity.fetchRequest()
         request.predicate = NSPredicate(format: "genre_name == %@", genre.genre)
@@ -262,6 +267,7 @@ class TestDataManager {
         _ = self.loadUsersFromJSON()
         _ = self.loadSongsFromJSON()
         _ = self.loadSongInstancesFromJSON()
+        _ = self.loadCommentsFromJSON()
 //        _ = self.loadGenresFromJSON()
         _ = self.assignAllInitialRelationships()
     }
@@ -302,8 +308,8 @@ class TestDataManager {
     
     func loadSongInstancesFromJSON() -> Bool{
         guard let songInstances = testData.songInstances else {
-                print("Could not load song instances data")
-                return false
+            print("Could not load song instances data")
+            return false
         }
          songInstances.forEach({ songInstance in _ =
             songInstance.convertToManagedObject(self.context!)
@@ -313,6 +319,23 @@ class TestDataManager {
             return true
          } catch {
              print("Error saving song instances to CoreData store \(error.localizedDescription)")
+            return false
+         }
+    }
+    
+    func loadCommentsFromJSON() -> Bool {
+        guard let comments = testData.comments else {
+            print("Could not load song instances data")
+            return false
+        }
+         comments.forEach({ comment in _ =
+            comment.convertToManagedObject(self.context!)
+         })
+         do {
+            try self.context?.save()
+            return true
+         } catch {
+             print("Error saving comments to CoreData store \(error.localizedDescription)")
             return false
          }
     }
@@ -477,8 +500,8 @@ class TestDataManager {
          }
      }
      
-     func userCommentsOnSong(user: UserEntity, songInstance: SongInstanceEntity) {
-         user.addToCommented_on(songInstance)
+     func userCommentsOnSong(user: UserEntity, comment: CommentEntity) {
+         user.addToCommented_on(comment)
          do {
              try self.context!.save()
          } catch {
@@ -515,8 +538,8 @@ class TestDataManager {
          }
      }
 
-     func userUncommentsSong(user: UserEntity, songInstance: SongInstanceEntity) {
-            user.removeFromCommented_on(songInstance)
+     func userUncommentsSong(user: UserEntity, commentEnt: CommentEntity) {
+            user.removeFromCommented_on(commentEnt)
          do {
              try self.context!.save()
          } catch {
@@ -539,6 +562,7 @@ struct JSONTestData {
     var songs: [Song]?
     var songInstances: [SongInstance]?
     var genres: [Genre]?
+    var comments: [Comment]?
     
     init() {
         guard let usersPath = Bundle.main.path(forResource: "users", ofType: "json") else {
@@ -597,6 +621,23 @@ struct JSONTestData {
              }
          } catch {
            print("Error occurred for genre decoding process \(error.localizedDescription)")
+        }
+        
+         guard let commentsPath = Bundle.main.path(forResource: "comments", ofType: "json") else {
+             print("Yo! no comments Path!")
+             return
+         }
+         do {
+             if let jsonData = try String(contentsOfFile: commentsPath).data(using: .utf8) {
+                let decoder = JSONDecoder()
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm"
+                decoder.dateDecodingStrategy = .formatted(dateFormatter)
+                comments = try decoder.decode([Comment].self, from: jsonData)
+                print("COMMENTS -> \(comments ?? [Comment]())")
+             }
+         } catch {
+           print("Error occurred for comment decoding process \(error.localizedDescription)")
         }
     }
 }
