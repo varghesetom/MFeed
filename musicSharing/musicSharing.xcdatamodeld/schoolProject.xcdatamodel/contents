@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19H2" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="GenreEntity" representedClassName="GenreEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="genre_name" optional="YES" attributeType="String"/>
+        <relationship name="toggled_by" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserEntity" inverseName="toggled_genre" inverseEntity="UserEntity"/>
+    </entity>
     <entity name="SongEntity" representedClassName=".SongEntity" syncable="YES" codeGenerationType="class">
         <attribute name="artist_name" optional="YES" attributeType="String"/>
         <attribute name="genre" optional="YES" attributeType="String"/>
@@ -31,10 +35,12 @@
         <relationship name="received_follow_request" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserEntity" inverseName="sent_follow_request" inverseEntity="UserEntity"/>
         <relationship name="sent_follow_request" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserEntity" inverseName="received_follow_request" inverseEntity="UserEntity"/>
         <relationship name="stashes_this" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="SongInstanceEntity" inverseName="stashed_by" inverseEntity="SongInstanceEntity"/>
+        <relationship name="toggled_genre" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="GenreEntity" inverseName="toggled_by" inverseEntity="GenreEntity"/>
     </entity>
     <elements>
         <element name="SongEntity" positionX="-54" positionY="-9" width="128" height="148"/>
         <element name="SongInstanceEntity" positionX="-36" positionY="9" width="128" height="163"/>
-        <element name="UserEntity" positionX="-18" positionY="27" width="128" height="208"/>
+        <element name="UserEntity" positionX="-18" positionY="27" width="128" height="223"/>
+        <element name="GenreEntity" positionX="-27" positionY="108" width="128" height="73"/>
     </elements>
 </model>

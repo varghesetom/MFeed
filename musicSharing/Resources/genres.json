@@ -1,0 +1,21 @@
+[
+    {
+        "genre" : "Rock",
+    },
+    {
+        "genre" : "Classical",
+    },
+    {
+        "genre" : "Techno",
+    },
+    {
+        "genre" : "HipHop",
+    },
+    {
+        "genre" : "Country",
+    },
+    {
+        "genre" : "Religious",
+    }
+]
+

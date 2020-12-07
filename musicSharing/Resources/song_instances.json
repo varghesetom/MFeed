@@ -18,6 +18,17 @@
                 "name" : "Bob LobLaw",
                 "user_bio": "lawyer unfortunately representing the Bluth family",
                 "avatar" : "northern_lights",
+                "genres": [
+                    {
+                        "genre" : "Rock",
+                    },
+                    {
+                        "genre" : "Classical",
+                    },
+                    {
+                        "genre" : "Religious",
+                    }
+                ]
             },
         "likers" : [],
         "commenters" : [],
@@ -42,6 +53,17 @@
                 "name" : "Bob LobLaw",
                 "user_bio": "lawyer unfortunately representing the Bluth family",
                 "avatar" : "northern_lights",
+                "genres": [
+                    {
+                        "genre" : "Rock",
+                    },
+                    {
+                        "genre" : "Classical",
+                    },
+                    {
+                        "genre" : "Religious",
+                    }
+                ]
             },
         "likers" : [],
         "commenters" : [],
@@ -66,6 +88,14 @@
                 "name" : "Sarah Connor",
                 "user_bio": "Judgment Day is coming.",
                 "avatar" : "northern_lights",
+                "genres": [
+                    {
+                        "genre" : "Rock",
+                    },
+                    {
+                        "genre" : "Techno",
+                    }
+                ]
             },
         "likers" : [],
         "commenters" : [],
@@ -89,6 +119,20 @@
                 "name" : "Peter Parker",
                 "user_bio": "college freshman studying biophysics at Empire State University and definitely not Spider-Man",
                 "avatar" : "northern_lights",
+                "genres": [
+                    {
+                        "genre" : "HipHop",
+                    },
+                    {
+                        "genre" : "Classical",
+                    },
+                    {
+                        "genre" : "Techno",
+                    },
+                    {
+                        "genre" : "Rock",
+                    },
+                ]
             },
         "likers" : [],
         "commenters" : [],
@@ -109,10 +153,18 @@
             },
         "playedBy":
             {
-                "id" : "947be968-e95d-4db4-b975-0e674c934c61",
-                "name" : "Tom",
-                "user_bio": "student who likes all kinds of music. No favorite song -- Different songs for different moods.",
-                "avatar" : "northern_lights",
+                   "id" : "947be968-e95d-4db4-b975-0e674c934c61",
+                   "name" : "Tom",
+                   "user_bio": "student who likes all kinds of music. No favorite song -- Different songs for different moods.",
+                   "avatar" : "johnsmith",
+                   "genres": [
+                       {
+                           "genre" : "Rock",
+                       },
+                       {
+                           "genre" : "HipHop",
+                       }
+                   ]
             },
         "likers" : [],
         "commenters" : [],
@@ -133,11 +185,19 @@
             },
         "playedBy":
             {
-                "id" : "947be968-e95d-4db4-b975-0e674c934c61",
-                "name" : "Tom",
-                "user_bio": "student who likes all kinds of music. No favorite song -- Different songs for different moods.",
-                "avatar" : "northern_lights",
-            },
+                   "id" : "947be968-e95d-4db4-b975-0e674c934c61",
+                   "name" : "Tom",
+                   "user_bio": "student who likes all kinds of music. No favorite song -- Different songs for different moods.",
+                   "avatar" : "johnsmith",
+                   "genres": [
+                       {
+                           "genre" : "Rock",
+                       },
+                       {
+                           "genre" : "HipHop",
+                       }
+                   ]
+           },
         "likers" : [],
         "commenters" : [],
         "stashers" : []
@@ -161,6 +221,17 @@
                 "name" : "Vinny Gambini",
                 "user_bio": "recently minted lawyer who can clear any murder charges. Husband of Mona Lisa Vito a celebrated car mechanic",
                 "avatar" : "northern_lights",
+                "genres": [
+                    {
+                        "genre" : "Rock",
+                    },
+                    {
+                        "genre" : "Country",
+                    },
+                    {
+                        "genre" : "Religious",
+                    }
+                ]
             },
         "likers" : [],
         "commenters" : [],
@@ -183,7 +254,15 @@
                 "id" : "947be968-e95d-4db4-b975-0e674c934c61",
                 "name" : "Tom",
                 "user_bio": "student who likes all kinds of music. No favorite song -- Different songs for different moods.",
-                "avatar" : "northern_lights",
+                "avatar" : "johnsmith",
+                "genres": [
+                    {
+                        "genre" : "Rock",
+                    },
+                    {
+                        "genre" : "HipHop",
+                    }
+                ]
             },
         "likers" : [],
         "commenters" : [],

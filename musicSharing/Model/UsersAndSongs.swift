@@ -7,11 +7,28 @@ import Foundation
 import SwiftUI
 import CoreData
 
+struct Genre: Codable, Hashable {
+    let genre: String
+    
+    func convertToManagedObject(_ context: NSManagedObjectContext? = CoreDataStoreContainer.shared?.backgroundContext) -> GenreEntity {
+        let genreEntity = NSEntityDescription.insertNewObject(forEntityName: "GenreEntity", into: context!) as! GenreEntity
+        genreEntity.genre_name = self.genre
+        return genreEntity
+    }
+}
+
+extension Genre {
+    init(genreEntity: GenreEntity) {
+        self.genre = genreEntity.genre_name ?? "Unknown"
+    }
+}
+
 struct User: Codable, Identifiable, Hashable {
     public var id: UUID = UUID()
     let name: String
     let user_bio: String?
     let avatar: String?
+    var genres = [Genre]()
     
     func convertToManagedObject(_ context: NSManagedObjectContext? = CoreDataStoreContainer.shared?.backgroundContext) -> UserEntity {
 //        let userEntity = UserEntity(context: context!)
@@ -22,9 +39,22 @@ struct User: Codable, Identifiable, Hashable {
         userEntity.name = self.name
         userEntity.bio = self.user_bio
         userEntity.avatar = self.avatar
+        userEntity.toggled_genre = NSSet()
 //        userEntity.listened_to = NSSet()
         return userEntity
     }
+    
+//    func getStashers(instanceEntity: SongInstanceEntity) -> [User] {
+//        var stashers = [User]()
+//        if instanceEntity.stashed_by?.allObjects as? [UserEntity] == nil {
+//            return stashers
+//        }
+//        for stasher in instanceEntity.stashed_by!.allObjects as! [UserEntity] {
+//            let user = User(userEntity: stasher)
+//            stashers.append(user)
+//        }
+//        return stashers
+//    }
 }
 
 
@@ -34,8 +64,22 @@ extension User {
         self.name = userEntity.name ?? "Unknown"
         self.user_bio = userEntity.bio ?? "prefers to keep an air of mystery"
         self.avatar = userEntity.avatar ?? "northern-lights"
+        self.genres = self.getGenres(userEntity: userEntity)
+    }
+    
+    func getGenres(userEntity: UserEntity) -> [Genre] {
+        var genres = [Genre]()
+        if userEntity.toggled_genre?.allObjects as? [GenreEntity] == nil {
+            return genres
+        }
+        for genreEnt in userEntity.toggled_genre!.allObjects as! [GenreEntity] {
+            let toggled = Genre(genreEntity: genreEnt)
+            genres.append(toggled)
+        }
+        return genres
     }
 }
+
 
 struct Song: Codable, Identifiable, Hashable {
     

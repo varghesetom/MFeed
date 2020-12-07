@@ -70,8 +70,6 @@ class TestDataManager {
             print("person has no friends")
             return false
         }
-        
-        print("Getting all friends for \(self.getUser(id.uuidString)!.name)")
 
         for per in personsFriends! {
             print(User(userEntity: per).name)
@@ -217,7 +215,8 @@ class TestDataManager {
         return nil
     }
     
-            // SAVE TEST DATA
+    // SAVE TEST DATA
+    
     lazy var testData = JSONTestData()
     
     func saveFakeData() {
@@ -225,6 +224,7 @@ class TestDataManager {
         _ = self.loadUsersFromJSON()
         _ = self.loadSongsFromJSON()
         _ = self.loadSongInstancesFromJSON()
+        _ = self.loadGenresFromJSON()
         _ = self.assignAllInitialRelationships()
     }
     
@@ -277,6 +277,23 @@ class TestDataManager {
              print("Error saving song instances to CoreData store \(error.localizedDescription)")
             return false
          }
+    }
+    
+    func loadGenresFromJSON() -> Bool {
+        guard let genres = testData.genres else {
+            print("Could not load genres data")
+            return false
+        }
+        genres.forEach({ genre in _ =
+            genre.convertToManagedObject(self.context!)
+        })
+        do {
+           try self.context?.save()
+           return true
+        } catch {
+            print("Error saving genres to CoreData store \(error.localizedDescription)")
+           return false
+        }
     }
     
     // INITIAL RELATIONSHIPS
@@ -463,6 +480,7 @@ struct JSONTestData {
     var users: [User]?
     var songs: [Song]?
     var songInstances: [SongInstance]?
+    var genres: [Genre]?
     
     init() {
         guard let usersPath = Bundle.main.path(forResource: "users", ofType: "json") else {
@@ -507,6 +525,19 @@ struct JSONTestData {
             print("SONG INSTANCES\(String(describing: songInstances))")
         } catch {
             print("Error occurred for song instances decoding process \(error.localizedDescription)")
+        }
+        
+         guard let genresPath = Bundle.main.path(forResource: "genres", ofType: "json") else {
+             print("Yo! no genres Path!")
+             return
+         }
+         do {
+             if let jsonData = try String(contentsOfFile: genresPath).data(using: .utf8) {
+                let decoder = JSONDecoder()
+                genres = try decoder.decode([Genre].self, from: jsonData)
+             }
+         } catch {
+           print("Error occurred for genre decoding process \(error.localizedDescription)")
         }
     }
 }

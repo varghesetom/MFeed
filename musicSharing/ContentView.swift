@@ -68,6 +68,8 @@ struct AppView: View {
     
     init(selection: Binding<Int>) {
         _selection =  selection
+        _ = self.TDManager.emptyDB()
+        self.TDManager.saveFakeData()
         self.user = User(userEntity: TDManager.fetchMainUser()!)
     }
     
@@ -84,8 +86,8 @@ struct AppView: View {
         }.onAppear(
             perform: {
                 if self.alreadyLoaded == 0 {
-                    _ = self.TDManager.emptyDB()
-                    self.TDManager.saveFakeData()
+//                    _ = self.TDManager.emptyDB()
+//                    self.TDManager.saveFakeData()
                     self.alreadyLoaded += 1
                 }
             }).onAppear() {
