@@ -2,7 +2,7 @@
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19H2" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="GenreEntity" representedClassName="GenreEntity" syncable="YES" codeGenerationType="class">
         <attribute name="genre_name" optional="YES" attributeType="String"/>
-        <relationship name="toggled_by" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserEntity" inverseName="toggled_genre" inverseEntity="UserEntity"/>
+        <relationship name="toggled_by" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="UserEntity" inverseName="toggled_genre" inverseEntity="UserEntity"/>
     </entity>
     <entity name="SongEntity" representedClassName=".SongEntity" syncable="YES" codeGenerationType="class">
         <attribute name="artist_name" optional="YES" attributeType="String"/>
@@ -29,13 +29,13 @@
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="userID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <relationship name="commented_on" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="SongInstanceEntity" inverseName="commented_by" inverseEntity="SongInstanceEntity"/>
-        <relationship name="is_friends_with" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserEntity" inverseName="is_friends_with" inverseEntity="UserEntity"/>
+        <relationship name="is_friends_with" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="UserEntity" inverseName="is_friends_with" inverseEntity="UserEntity"/>
         <relationship name="likes_this" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="SongInstanceEntity" inverseName="liked_by" inverseEntity="SongInstanceEntity"/>
         <relationship name="listened_to" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="SongInstanceEntity" inverseName="played_by" inverseEntity="SongInstanceEntity"/>
-        <relationship name="received_follow_request" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserEntity" inverseName="sent_follow_request" inverseEntity="UserEntity"/>
-        <relationship name="sent_follow_request" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserEntity" inverseName="received_follow_request" inverseEntity="UserEntity"/>
+        <relationship name="received_follow_request" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="UserEntity" inverseName="sent_follow_request" inverseEntity="UserEntity"/>
+        <relationship name="sent_follow_request" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="UserEntity" inverseName="received_follow_request" inverseEntity="UserEntity"/>
         <relationship name="stashes_this" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="SongInstanceEntity" inverseName="stashed_by" inverseEntity="SongInstanceEntity"/>
-        <relationship name="toggled_genre" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="GenreEntity" inverseName="toggled_by" inverseEntity="GenreEntity"/>
+        <relationship name="toggled_genre" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="GenreEntity" inverseName="toggled_by" inverseEntity="GenreEntity"/>
     </entity>
     <elements>
         <element name="SongEntity" positionX="-54" positionY="-9" width="128" height="148"/>

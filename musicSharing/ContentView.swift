@@ -56,9 +56,7 @@ struct ContentView: View {
 
 
 struct AppView: View {
-    /*
-     NavigationView that sets up tab bar with the ScrollTweets()
-     and Profile view
+    /* Tabbed Item View 
      */
     @Binding var selection: Int
     @State var didAppear = false
@@ -67,9 +65,9 @@ struct AppView: View {
     let user: User
     
     init(selection: Binding<Int>) {
-        _selection =  selection
         _ = self.TDManager.emptyDB()
         self.TDManager.saveFakeData()
+        _selection =  selection
         self.user = User(userEntity: TDManager.fetchMainUser()!)
     }
     
@@ -83,14 +81,7 @@ struct AppView: View {
                 Image(systemName: "person")
                 Text("Profile")
             }.tag(2)
-        }.onAppear(
-            perform: {
-                if self.alreadyLoaded == 0 {
-//                    _ = self.TDManager.emptyDB()
-//                    self.TDManager.saveFakeData()
-                    self.alreadyLoaded += 1
-                }
-            }).onAppear() {
+        }.onAppear() {
                 UITabBar.appearance().barTintColor = .black
             }.accentColor(.white)
     }

@@ -60,6 +60,44 @@ class TestDataManager {
     
     // COREDATA RETRIEVAL
     
+    func getGenreEntity(genre: Genre) -> GenreEntity? {
+        let request: NSFetchRequest<GenreEntity> = GenreEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "genre_name == %@", genre.genre)
+        request.sortDescriptors = [NSSortDescriptor(key: "genre_name", ascending: true)]
+        do {
+            let genreEntity = try self.context!.fetch(request).first
+            return genreEntity
+        } catch {
+            print("Couldn't get matching genre entity for genre")
+            return nil
+        }
+    }
+    
+    func getAllGenreForUser(id: UUID, genreName: String) -> [Genre] {
+        let genreEnts = self.getGenresForUser(id: id)
+        var toggledGenres = [Genre]()
+        if let unwrappedEnts = genreEnts {
+          toggledGenres = unwrappedEnts.map {
+              Genre(genreEntity: $0)
+          }
+        }
+        return toggledGenres
+    }
+    
+    func getGenresForUser(id: UUID) -> [GenreEntity]? {
+        // get user's toggled genres
+        let request: NSFetchRequest<GenreEntity> = GenreEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "ANY toggled_by.userID = %@", id as CVarArg)
+        request.sortDescriptors = [NSSortDescriptor(key: "genre_name", ascending: true)]
+        do {
+            let genreEntities = try self.context?.fetch(request)
+            return genreEntities
+        } catch {
+            print("Couldn't return user's genres")
+            return nil
+        }
+    }
+    
     func isUserFriendsWithMainUser(id: UUID) -> Bool {
         let personsFriends = self.getUsersFriends(id.uuidString)
         guard personsFriends != nil else {
@@ -224,7 +262,7 @@ class TestDataManager {
         _ = self.loadUsersFromJSON()
         _ = self.loadSongsFromJSON()
         _ = self.loadSongInstancesFromJSON()
-        _ = self.loadGenresFromJSON()
+//        _ = self.loadGenresFromJSON()
         _ = self.assignAllInitialRelationships()
     }
     
@@ -287,6 +325,7 @@ class TestDataManager {
         genres.forEach({ genre in _ =
             genre.convertToManagedObject(self.context!)
         })
+        
         do {
            try self.context?.save()
            return true
@@ -301,6 +340,7 @@ class TestDataManager {
         _ = self.assignInitialFriendships()
         _ = self.assignInitialFollowRequestsSentByMainUser()
         _ = self.assignInitialFollowRequestsSentToMainUser()
+
         // need to assign stash relationships
         return true
     }
@@ -390,10 +430,28 @@ class TestDataManager {
     
             // CORE DATA RELATIONSHIPS
     
+    func userToggleGenre(user: UserEntity, genreEntity: GenreEntity) {
+        user.addToToggled_genre(genreEntity)
+        do {
+            try self.context!.save()
+        } catch {
+            print("Error assigning genre to user")
+        }
+    }
+    
+    func userUntogglesGenre(user: UserEntity, genreEntity: GenreEntity) {
+        user.removeFromToggled_genre(genreEntity)
+        do {
+            try self.context!.save()
+        } catch {
+            print("Error unassigning genre to user")
+        }
+    }
+    
     func userStashesSong(user: UserEntity, songInstance: SongInstanceEntity) {
-         print("\n\nUSER BEFORE ADDING \(user)")
+//         print("\n\nUSER BEFORE ADDING \(user)")
          user.addToStashes_this(songInstance)
-         print("\n\nUSER AFTER ADDING \(user)")
+//         print("\n\nUSER AFTER ADDING \(user)")
          do {
              try self.context!.save()
          } catch {
@@ -535,6 +593,7 @@ struct JSONTestData {
              if let jsonData = try String(contentsOfFile: genresPath).data(using: .utf8) {
                 let decoder = JSONDecoder()
                 genres = try decoder.decode([Genre].self, from: jsonData)
+                print("GENRES -> \(genres ?? [Genre]())")
              }
          } catch {
            print("Error occurred for genre decoding process \(error.localizedDescription)")

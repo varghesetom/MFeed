@@ -28,7 +28,7 @@ struct User: Codable, Identifiable, Hashable {
     let name: String
     let user_bio: String?
     let avatar: String?
-    var genres = [Genre]()
+    var genres: [Genre]
     
     func convertToManagedObject(_ context: NSManagedObjectContext? = CoreDataStoreContainer.shared?.backgroundContext) -> UserEntity {
 //        let userEntity = UserEntity(context: context!)
@@ -40,21 +40,12 @@ struct User: Codable, Identifiable, Hashable {
         userEntity.bio = self.user_bio
         userEntity.avatar = self.avatar
         userEntity.toggled_genre = NSSet()
-//        userEntity.listened_to = NSSet()
+        for genre in self.genres {
+            userEntity.addToToggled_genre(genre.convertToManagedObject())
+        }
         return userEntity
     }
-    
-//    func getStashers(instanceEntity: SongInstanceEntity) -> [User] {
-//        var stashers = [User]()
-//        if instanceEntity.stashed_by?.allObjects as? [UserEntity] == nil {
-//            return stashers
-//        }
-//        for stasher in instanceEntity.stashed_by!.allObjects as! [UserEntity] {
-//            let user = User(userEntity: stasher)
-//            stashers.append(user)
-//        }
-//        return stashers
-//    }
+
 }
 
 
@@ -64,6 +55,7 @@ extension User {
         self.name = userEntity.name ?? "Unknown"
         self.user_bio = userEntity.bio ?? "prefers to keep an air of mystery"
         self.avatar = userEntity.avatar ?? "northern-lights"
+        self.genres = [] 
         self.genres = self.getGenres(userEntity: userEntity)
     }
     

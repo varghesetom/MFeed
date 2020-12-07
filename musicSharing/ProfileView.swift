@@ -60,7 +60,7 @@ struct UserBox: View {
                 Spacer()
             }
             if self.userProfile.isMainUser || self.userProfile.isFriendOfMainUser {
-                MainUserGenres()
+                MainUserGenres(userProfile: self.userProfile)
             }
         }
         .frame(width: 300, height: 300, alignment: .center)
@@ -70,26 +70,158 @@ struct UserBox: View {
 }
 
 struct MainUserGenres: View {
+    @ObservedObject var userProfile: ProfileViewModel
+    
+    init(userProfile: ProfileViewModel){
+        self.userProfile = userProfile
+    }
     var body: some View {
         HStack {
             VStack(alignment: .center) {
                 Spacer()
                 Spacer()
                 HStack {
-                    GenreSeekingButton(genre: "Rock")
-                    GenreSeekingButton(genre: "Classical")
-                    GenreSeekingButton(genre: "Techno")
+                    GenreSeekingButton(genre: "Rock", userProfile: self.userProfile)
+                    GenreSeekingButton(genre: "Classical", userProfile: self.userProfile)
+                    GenreSeekingButton(genre: "Techno", userProfile: self.userProfile)
                 }
                 Spacer()
                 HStack {
-                    GenreSeekingButton(genre: "HipHop")
-                    GenreSeekingButton(genre: "Country")
-                    GenreSeekingButton(genre: "Religious")
+                    GenreSeekingButton(genre: "HipHop", userProfile: self.userProfile)
+                    GenreSeekingButton(genre: "Country", userProfile: self.userProfile)
+                    GenreSeekingButton(genre: "Religious", userProfile: self.userProfile)
                 }
             }
         }
     }
 }
+
+struct GenreSeekingButton: View {
+    @State var genre: String
+    @ObservedObject var userProfile: ProfileViewModel
+    @State var toggledGenres = [Genre]()
+    @State var toggleRock = false
+    @State var toggleClassical = false
+    @State var toggleTechno = false
+    @State var toggleHipHop = false
+    @State var toggleCountry = false
+    @State var toggleReligious = false
+    @State var displayButtonEffect = false
+    @State var turnOffInitialToggle = false
+    @State private var chosenGenre = LinearGradient(gradient: Gradient(colors: [Color.red, Color.orange]), startPoint: .leading, endPoint: .trailing)
+    @State private var unselected = LinearGradient(gradient: Gradient(colors: [ Color.white, Color.gray]), startPoint: .leading, endPoint: .trailing)
+    
+    var body: some View {
+        Button(action: {
+            if self.userProfile.isMainUser {
+                if self.displayButtonEffect {  // display effect was on and now turning it off
+                    self.displayButtonEffect = false
+                    self.turnOffInitialToggle = true
+                    if self.checkIfUserAlreadyHasGenre(genreName: self.genre) {
+                        print("User did toggle genre")
+                        self.removeGenreRelationships(genreName: self.genre)
+                    }
+                } else {  // turning on the display
+                    self.displayButtonEffect = true
+                    
+                    // check if already has genre before needing to add
+                    if !self.checkIfUserAlreadyHasGenre(genreName: self.genre) {
+                        print("User did not toggle genre")
+                        let userEnt = self.userProfile.TDManager.getUser(self.userProfile.user.id.uuidString)
+                        let genreEnt = self.userProfile.TDManager.getGenreEntity(genre: Genre(genre: self.genre))
+                        self.userProfile.TDManager.userToggleGenre(user: userEnt!, genreEntity: genreEnt!)
+                    }
+                }
+            }
+        }) {
+            Text("\(genre)")
+                .padding(2)
+                .font(.subheadline)
+                .allowsTightening(true)
+        }
+        .onAppear() {
+                print("\n\n\nNextUpdate")
+                self.getInitialToggledGenres()
+        }
+        .buttonStyle((self.ifMainUserSelectedAndDidSelect() || self.didInitialToggle()) && !self.turnOffInitialToggle ? GenreSeekingStyle(selectedColor: chosenGenre) : GenreSeekingStyle(selectedColor: unselected))
+    }
+    
+
+    func ifMainUserSelectedAndDidSelect() -> Bool {
+        return (self.userProfile.isMainUser && self.displayButtonEffect) ? true : false
+    }
+
+    func getInitialToggledGenres() {
+        if let userGenreEnts = self.userProfile.TDManager.getGenresForUser(id: self.userProfile.user.id) {
+            toggledGenres = userGenreEnts.map { Genre(genreEntity: $0)}
+        }
+//        toggledGenres = self.userProfile.getUpdatedToggled(toggledGenres: &toggledGenres)
+        for toggled in toggledGenres {
+            
+            switch toggled.genre {
+            case "Rock": toggleRock = true
+            case "Classical": toggleClassical = true
+            case "Techno": toggleTechno = true
+            case "HipHop": toggleHipHop = true
+            case "Country": toggleCountry = true
+            case "Religious": toggleReligious = true
+            default:
+                print("\nUnknown genre\n")
+            }
+        }
+        print("User: \(self.userProfile.user.name)'s genres: \(self.toggledGenres)")
+        print("TOGGLED: \(toggleRock), \(toggleClassical), \(toggleTechno), \(toggleHipHop), \(toggleCountry), \(toggleReligious)")
+    }
+    
+    func didInitialToggle() -> Bool {
+        if self.turnOffInitialToggle { return false }
+        switch genre {
+        case "Rock": return self.toggleRock
+        case "Classical": return self.toggleClassical
+        case "Techno" : return self.toggleTechno
+        case "HipHop": return self.toggleHipHop
+        case "Country": return self.toggleCountry
+        case "Religious": return self.toggleReligious
+        default:
+            print("Ignoring")
+            return false
+        }
+    }
+    
+    func checkIfUserAlreadyHasGenre(genreName: String) -> Bool {
+        let genreEnts = self.userProfile.TDManager.getGenresForUser(id: self.userProfile.user.id)
+        if let unwrappedEnts = genreEnts {
+            toggledGenres = unwrappedEnts.map {
+                Genre(genreEntity: $0)
+            }
+        }
+        if toggledGenres.filter({ genreName == $0.genre}).count > 0 {
+            print("Exists in user's genres")
+            return true
+        }
+        return false
+    }
+    
+    func removeGenreRelationships(genreName: String) {
+        let userEnt = self.userProfile.TDManager.getUser(self.userProfile.user.id.uuidString)
+        toggledGenres = self.userProfile.TDManager.getAllGenreForUser(id: self.userProfile.user.id, genreName: genreName)
+        for genre in toggledGenres {
+            if genre.genre == genreName {
+                let genreEnt = self.userProfile.TDManager.getGenreEntity(genre: genre)
+                print("Untoggling relationship \(genre.genre) for \(User(userEntity: userEnt!))")
+                self.userProfile.TDManager.userUntogglesGenre(user: userEnt!, genreEntity: genreEnt!)
+                let fil = self.userProfile.user.genres.filter { $0.genre != genreName}
+                toggledGenres = toggledGenres.filter { $0.genre != genreName }
+                toggledGenres = fil
+            }
+        }
+        try! self.userProfile.TDManager.context!.save()
+        print("\nAfter untoggling, user's current genres are \(toggledGenres)")
+    }
+    
+    
+}
+
 
 // will contain the most recent music tweet (which also means including a date attribute...) and Stash, Friends, and Edit buttons
 struct BottomHalfOfProfile: View {
@@ -218,24 +350,6 @@ struct ProfileFollowRequestsButtonView: View {
     }
 }
 
-struct GenreSeekingButton: View {
-    @State var genre: String
-    @State var didSelectGenre = false
-    @State private var chosenGenre = LinearGradient(gradient: Gradient(colors: [Color.red, Color.orange]), startPoint: .leading, endPoint: .trailing)
-    @State private var unselected = LinearGradient(gradient: Gradient(colors: [ Color.white, Color.gray]), startPoint: .leading, endPoint: .trailing)
-    
-    var body: some View {
-        Button(action: {
-            self.didSelectGenre.toggle()
-        }) {
-            Text("\(genre)")
-                .padding(2)
-                .font(.subheadline)
-                .allowsTightening(true)
-        }
-        .buttonStyle(didSelectGenre ? GenreSeekingStyle(selectedColor: chosenGenre) : GenreSeekingStyle(selectedColor: unselected))
-    }
-}
 
 
 

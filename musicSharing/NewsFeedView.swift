@@ -48,6 +48,7 @@ struct MusicTweet: View {
     @State var height = CGFloat(180)
     @State var alignment = Alignment.center
     @State var showProfile = false
+    
     @Environment(\.presentationMode) var presentationMode
     private var songInstance: SongInstanceEntity
     private var TDManager: TestDataManager
@@ -69,8 +70,11 @@ struct MusicTweet: View {
                 }) {
                     Text("\(songInst.playedBy.name)")
                 }.sheet(isPresented: $showProfile) {
-//                    ProfileView(self.TDManager, songInst.playedBy)
-                    ProfileView(userProfile: ProfileViewModel(self.TDManager, songInst.playedBy))
+                    if songInst.playedBy.id == User(userEntity: self.TDManager.fetchMainUser()!).id {
+                        ProfileView(userProfile: ProfileViewModel(self.TDManager, User(userEntity: self.TDManager.fetchMainUser()!)))
+                    } else {
+                        ProfileView(userProfile: ProfileViewModel(self.TDManager, songInst.playedBy))
+                    }
                 }
                 Spacer()
                 Spacer()
@@ -113,15 +117,14 @@ struct MusicTweet: View {
             .background(Color.orange)
             HStack(spacing: 10) {
                 Spacer()
-                TweetButton("Stash", songInstance)
+                TweetButton(self.TDManager, "Stash", songInstance)
                 Spacer()
-                TweetButton("Convo", songInstance)
+                TweetButton(self.TDManager, "Convo", songInstance)
+
                 Spacer()
-                TweetButton("Like", songInstance)
+                TweetButton(self.TDManager, "Like", songInstance)
                 Spacer()
             }
-//            .padding(.top, 30)
-//            .padding(.trailing, 10)
             .frame(width: width, height: 70, alignment: alignment)
             .background(Color.orange)
         }
@@ -129,28 +132,33 @@ struct MusicTweet: View {
 }
 
 struct TweetButton: View {
-    private var action: String
-    private var songInstanceEntity: SongInstanceEntity
-    private var TDManager: TestDataManager
+    var action: String
+    var songInstanceEntity: SongInstanceEntity
+    var TDManager: TestDataManager
+    @State var showConvo = false
     
-    init(_ action: String, _ songInstanceEntity: SongInstanceEntity) {
+    init(_ manager: TestDataManager, _ action: String, _ songInstanceEntity: SongInstanceEntity) {
+        self.TDManager = manager
         self.action = action
         self.songInstanceEntity = songInstanceEntity
-        self.TDManager = TestDataManager()
-        
     }
     
     var body: some View {
         Button(action: {
             print("\(self.action) clicked")  // add to stash action
+            if self.action == "Convo" {
+                self.showConvo.toggle()
+            }
             self.buttonFunctionality()
         }) {
             Text("\(action)")
                 .font(.caption)
                 .minimumScaleFactor(0.7)
                 .allowsTightening(true)
+        }.buttonStyle(TweetButtonBackground())
+         .sheet(isPresented: $showConvo) {
+            ConvoView(manager: self.TDManager, songInstEnt: self.songInstanceEntity)
         }
-            .buttonStyle(TweetButtonBackground())
     }
     
     func buttonFunctionality() -> Void {
@@ -160,7 +168,7 @@ struct TweetButton: View {
             TDManager.userStashesSong(user: TDManager.fetchMainUser()!, songInstance: songInstanceEntity)
         case "Convo":
             print("Convoed")
-            TDManager.userCommentsOnSong(user: TDManager.fetchMainUser()!, songInstance: songInstanceEntity)
+//            TDManager.userCommentsOnSong(user: TDManager.fetchMainUser()!, songInstance: songInstanceEntity)
         case "Like":
             print("Liked")
             TDManager.userLikesSong(user: TDManager.fetchMainUser()!, songInstance: songInstanceEntity)
