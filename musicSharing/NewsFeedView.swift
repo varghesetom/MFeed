@@ -8,7 +8,7 @@ struct ScrollTweets: View {
     @FetchRequest(entity: SongInstanceEntity.entity(), sortDescriptors: [NSSortDescriptor(key: "date_listened", ascending: false)]) var fetchedSongInstances: FetchedResults<SongInstanceEntity>
     
     @State var isShareViewShown = false
-    var TDManager: TestDataManager
+    private var TDManager: TestDataManager
     
     init(_ manager: TestDataManager) {
         self.TDManager = manager
@@ -25,7 +25,7 @@ struct ScrollTweets: View {
                 ScrollView(.vertical) {
                     VStack(spacing: 50) {
                         ForEach(songInstanceEntities, id: \.self) {
-                            MusicTweet(songInstance: $0)
+                            MusicTweet(self.TDManager, songInstEnt: $0)
                         }
                     }
                 }
@@ -44,10 +44,19 @@ struct ScrollTweets: View {
 }
 
 struct MusicTweet: View {
-    @State var songInstance: SongInstanceEntity
     @State var width = CGFloat(370)
     @State var height = CGFloat(180)
     @State var alignment = Alignment.center
+    @State var showProfile = false
+    @Environment(\.presentationMode) var presentationMode
+    private var songInstance: SongInstanceEntity
+    private var TDManager: TestDataManager
+    
+    init(_ manager: TestDataManager, songInstEnt: SongInstanceEntity, _ alignment: Alignment = Alignment.center) {
+        self.TDManager = manager
+        self.songInstance = songInstEnt
+        _alignment = .init(initialValue: alignment)
+    }
     
     var body: some View {
         let songInst = SongInstance(instanceEntity: songInstance)
@@ -55,12 +64,14 @@ struct MusicTweet: View {
         return VStack(alignment: .center, spacing: 0) {
             HStack() {
                 Spacer()
-                Text("\(songInst.playedBy.name)")
-                    .font(.system(.headline, design: .monospaced))
-                    .font(.largeTitle)
-                    .minimumScaleFactor(0.6)
-                    .allowsTightening(true)
-                    .alignmentGuide(.center) { d in d[.leading] }
+                Button(action: {
+                    self.showProfile.toggle()
+                }) {
+                    Text("\(songInst.playedBy.name)")
+                }.sheet(isPresented: $showProfile) {
+//                    ProfileView(self.TDManager, songInst.playedBy)
+                    ProfileView(userProfile: ProfileViewModel(self.TDManager, songInst.playedBy))
+                }
                 Spacer()
                 Spacer()
                 Text("\(getFormattedDateStampForTweet(songInst.dateListened))")
@@ -118,14 +129,15 @@ struct MusicTweet: View {
 }
 
 struct TweetButton: View {
-    var action: String
-    var songInstanceEntity: SongInstanceEntity
-    var TDManager: TestDataManager
+    private var action: String
+    private var songInstanceEntity: SongInstanceEntity
+    private var TDManager: TestDataManager
     
     init(_ action: String, _ songInstanceEntity: SongInstanceEntity) {
         self.action = action
         self.songInstanceEntity = songInstanceEntity
         self.TDManager = TestDataManager()
+        
     }
     
     var body: some View {

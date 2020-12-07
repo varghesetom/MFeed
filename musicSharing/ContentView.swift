@@ -45,13 +45,13 @@ struct ContentView: View {
             self.user = User(name: "", user_bio: "", avatar: "")
             return
         }
-        self.user = User(userEntity: TDManager.getUser(bobID)!)
+        self.user = User(userEntity: TDManager.getUser("93d95053-e625-4e60-a48c-fb04421f0d9f")!)
     }
     
     var body: some View {
-//        AppView(selection: $selection)
+        AppView(selection: $selection)
 //        ScrollTweets(TDManager)
-        ProfileView(TDManager, self.user)
+//        ProfileView(TDManager, self.user)
     }
 }
 
@@ -65,20 +65,23 @@ struct AppView: View {
     @State var didAppear = false
     @State var alreadyLoaded = 0
     let TDManager = TestDataManager()
-    let mainUser: User
+    let user: User
     
     init(selection: Binding<Int>) {
         _selection =  selection
-        self.mainUser = User(userEntity: TDManager.fetchMainUser()!)
+        self.user = User(userEntity: TDManager.fetchMainUser()!)
     }
     
     var body: some View {
-        TabView(selection: $selection) {
-            ScrollTweets(TDManager).tabItem {
+    TabView(selection: $selection){
+        ScrollTweets(self.TDManager).tabItem {
                 Image(systemName: "house")
                 Text("Feed")
             }.tag(1)
-            ProfileView(TDManager, self.mainUser).tabItem{
+//            ProfileView(TDManager, self.user).tabItem{
+//                Image(systemName: "person")
+//                Text("Profile")
+            ProfileView(userProfile: ProfileViewModel(self.TDManager, self.user)).tabItem{
                 Image(systemName: "person")
                 Text("Profile")
             }.tag(2)

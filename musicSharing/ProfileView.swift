@@ -10,55 +10,13 @@ import SwiftUI
 import CoreData
 
 struct ProfileView: View {
-    private var TDManager: TestDataManager
-    private var user: User
-    private var isMainUser = true
-    private var isFriendOfMainUser = false
-    
-    init(_ manager: TestDataManager, _ person: User) {
-        self.TDManager = manager
-        self.user = person
-        // not main user -> determine if this person is a friend or not
-        // if friend -> show everything
-        // if not -> show only Name and Image with a "Send Follow"
-        determineUser(manager: self.TDManager, person: user, isMainUser: &isMainUser, isFriendOfMainUser: &isFriendOfMainUser)
-//        if !Self.isMainUser(manager: self.TDManager, check: person) {
-//            self.isMainUser = false
-//        }
-//        if TDManager.isUserFriendsWithMainUser(id: person.id) {
-//            self.isFriendOfMainUser = true
-//        }
-    }
-    
-    var body: some View {
-        let mainUserView = UserView(TDManager, User(userEntity: TDManager.fetchMainUser()!))
-        let friendView = UserView(TDManager, User(userEntity: TDManager.getUser(self.user.id.uuidString)!))
-        if self.isMainUser {
-            return mainUserView
-        } else {
-            return friendView
-        }
-    }
-    
-}
-
-struct UserView: View {
-    private var TDManager: TestDataManager
-    private var user: User
-    private var isMainUser = true
-    private var isFriendOfMainUser = false
-    
-    init(_ manager: TestDataManager, _ user: User) {
-        self.TDManager = manager
-        self.user = user
-        determineUser(manager: self.TDManager, person: user, isMainUser: &isMainUser, isFriendOfMainUser: &isFriendOfMainUser)
-    }
+    @ObservedObject var userProfile: ProfileViewModel
     
     var body: some View {
         VStack {
-            UserBox(self.TDManager, user: self.user)
+            UserBox(userProfile: userProfile)
             Spacer()
-            BottomHalfOfProfile(self.TDManager, user: self.user)
+            BottomHalfOfProfile(userProfile: userProfile)
             Spacer()
         }
         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)  // need to set frame to max possible otherwise the sides will still appear as white
@@ -67,22 +25,13 @@ struct UserView: View {
 }
 
 struct UserBox: View {
-    private var TDManager: TestDataManager
-    private var user: User
-    private var isMainUser = true
-    private var isFriendOfMainUser = false
-    
-    init(_ manager: TestDataManager, user: User) {
-        self.TDManager = manager
-        self.user = User(userEntity: self.TDManager.fetchMainUser()!)
-        determineUser(manager: self.TDManager, person: user, isMainUser: &isMainUser, isFriendOfMainUser: &isFriendOfMainUser)
-    }
+    @ObservedObject var userProfile: ProfileViewModel
     
     var body: some View {
         VStack {
             HStack {
                 VStack {
-                    Image(self.user.avatar!)
+                    Image(self.userProfile.user.avatar!)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .clipShape(Circle()) // apply the clipshape before setting the frame otherwise won't get a full circle
@@ -92,12 +41,12 @@ struct UserBox: View {
                 Spacer()
                 VStack(alignment: .leading) {
                     Spacer()
-                    Text("\(user.name)")
+                    Text("\(self.userProfile.user.name)")
                         .foregroundColor(.white)
                         .font(.largeTitle)
                         .bold()
-                    if self.isMainUser || self.isFriendOfMainUser {
-                        Text("\(user.user_bio!)")
+                    if self.userProfile.isMainUser || self.userProfile.isFriendOfMainUser {
+                        Text("\(self.userProfile.user.user_bio!)")
                             .foregroundColor(.white)
                             .font(.subheadline)
                             .italic()
@@ -110,7 +59,7 @@ struct UserBox: View {
                 Spacer()
                 Spacer()
             }
-            if self.isMainUser || self.isFriendOfMainUser {
+            if self.userProfile.isMainUser || self.userProfile.isFriendOfMainUser {
                 MainUserGenres()
             }
         }
@@ -147,41 +96,37 @@ struct BottomHalfOfProfile: View {
     @State var isStashSheet = false
     @State var isFriendSheet = false
     @State var isFollowerSheet = false
-    @State var stashedSongInstances = [SongInstance]()
-    @State var userFriends = [User]()
-    @State var followsRequestedFrom = [User]()
-    @State var usersRequestedToBeFriends = [User]()
     @State var mostRecentSong = [SongInstance]()
-    var TDManager: TestDataManager
-    private var user: User
-    private var isMainUser = true
-    private var isFriendOfMainUser = false
+    @ObservedObject var userProfile: ProfileViewModel
+    @ObservedObject var profileButtons: ProfileButtonsViewModel
     
-    init(_ manager: TestDataManager, user: User) {
-        self.TDManager = manager
-        self.user = User(userEntity: self.TDManager.fetchMainUser()!)
-        determineUser(manager: self.TDManager, person: user, isMainUser: &isMainUser, isFriendOfMainUser: &isFriendOfMainUser)
+    init(userProfile: ProfileViewModel) {
+        self.userProfile = userProfile
+        self.profileButtons = ProfileButtonsViewModel(userProfile: userProfile)
     }
+    
     var body: some View {
-        VStack {
+         VStack {
             Text("Recent Song")
                 .foregroundColor(.white)
                 .font(.headline)
                 .underline()
-            if mostRecentSong.count == 0 {
+            if self.mostRecentSong.count == 0 {
                 Text("No recently listened to song")
             } else {
-                MusicTweet(songInstance: self.TDManager.getRecentlyListenedSongFromUser()![0], alignment: Alignment.bottomLeading).scaleEffect(0.85)
+                MusicTweet(self.userProfile.TDManager, songInstEnt: self.userProfile.TDManager.getRecentlyListenedSongFromUser(self.userProfile.user.id.uuidString)![0], Alignment.bottomLeading)
+                    .scaleEffect(0.85)
             }
             HStack {
                 Spacer()
                 Button(action: {
                     self.isStashSheet.toggle()
+                    self.profileButtons.updateStashedSongs()
                 }) {
                     Text("Stash")
                 }.sheet(isPresented: $isStashSheet) {
                     List {
-                        ForEach(self.stashedSongInstances, id: \.self) {
+                        ForEach(self.profileButtons.stashedSongInstances, id: \.self) {
                             Text("Song: \($0.songName)")
                         }
                     }
@@ -189,11 +134,12 @@ struct BottomHalfOfProfile: View {
                 Spacer()
                 Button(action: {
                     self.isFriendSheet.toggle()
+                    self.profileButtons.updateFriends()
                 }) {
                     Text("Friends")
                 }.sheet(isPresented: $isFriendSheet) {
                     List {
-                        ForEach(self.userFriends, id: \.self) {
+                        ForEach(self.profileButtons.userFriends, id: \.self) {
                             Text("Friend: \($0.name)")
                         }
                     }
@@ -201,66 +147,30 @@ struct BottomHalfOfProfile: View {
                 Spacer()
                 Button(action: {
                     self.isFollowerSheet.toggle()
-                    print("The other fetched result was \(self.usersRequestedToBeFriends)")
+                    self.profileButtons.updateReceived()
+                    print("The other fetched result was \(self.profileButtons.usersRequestedToBeFriends)")
                 }) {
                     Text("Follow Requests")
                 }.sheet(isPresented: $isFollowerSheet) {
                     List {
-                        ForEach(self.followsRequestedFrom, id: \.self) {
+                        ForEach(self.profileButtons.followsRequestedFrom, id: \.self) {
                             Text("Request from: \($0.name)")
                         }
                     }
                 }
                 Spacer()
             }
-        }
-        .onAppear {
-            if let mostRecentSongInstanceEntity = self.TDManager.getRecentlyListenedSongFromUser() {
+         }.onAppear(){
+            if let mostRecentSongInstanceEntity = self.userProfile.TDManager.getRecentlyListenedSongFromUser() {
                 self.mostRecentSong = mostRecentSongInstanceEntity.map {
                     SongInstance(instanceEntity: $0)
-                }
-            }
-            if let userStashedSongEntities = self.TDManager.getStashFromUser() {
-                self.stashedSongInstances = userStashedSongEntities.map {
-                    SongInstance(instanceEntity: $0)
-                }
-            }
-            if let userFriendEntities = self.TDManager.getUsersFriends() {
-                self.userFriends = userFriendEntities.map {
-                    User(userEntity: $0)
-                }
-            }
-            if let receivedEntities = self.TDManager.getReceivedFollowRequestsForUser() {
-                self.followsRequestedFrom = receivedEntities.map {
-                    User(userEntity: $0)
-                }
-            }
-            if let sentEntities = self.TDManager.getFollowRequestsSentByUser() {
-                self.usersRequestedToBeFriends = sentEntities.map {
-                    User(userEntity: $0)
                 }
             }
         }
     }
 }
 
-extension View {
-    // bundle up the common functionalities for the ProfileView --> checking if the User is the main user, friend, or stranger
-    
-    func determineUser(manager: TestDataManager, person: User, isMainUser: inout Bool, isFriendOfMainUser: inout Bool) {
-        
-        if !Self.isMainUser(manager: manager, check: person) {
-            isMainUser = false
-        }
-        if manager.isUserFriendsWithMainUser(id: person.id) {
-            isFriendOfMainUser = true
-        }
-    }
-    
-    static func isMainUser(manager: TestDataManager, check: User) -> Bool {
-        return check == User(userEntity: manager.fetchMainUser()!) ? true : false
-    }
-}
+
 
 
 
@@ -276,3 +186,4 @@ extension View {
 //        .background(Color.black.edgesIgnoringSafeArea(.all))
 //    }
 //}
+
