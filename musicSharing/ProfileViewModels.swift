@@ -9,33 +9,43 @@
 import Foundation
 import SwiftUI
 
+
 class ProfileViewModel: ObservableObject {
     // used to track info on whether profile is the main user, friend, or stranger. Is used to initialize all the profile view components in "ProfileView".
-    @Published var TDManager: TestDataManager
-    @Published var user: User = User(name: "", user_bio: "", avatar: "")
-    @Published var isMainUser = true
+    var TDManager: TestDataManager
+    var user: User
+    @Published var isMainUser = false
     @Published var isFriendOfMainUser = false
+    @Published var isStranger = false
     
     init(_ manager: TestDataManager, _ person: User) {
         self.TDManager = manager
-        determineUser(manager: manager, person: person, isMainUser: &isMainUser, isFriendOfMainUser: &isFriendOfMainUser)
         self.user = person
-    }
-    
-    func determineUser(manager: TestDataManager, person: User, isMainUser: inout Bool, isFriendOfMainUser: inout Bool) {
+        self.determineUser()
         
-        if !self.isMainUser(manager: manager, check: person) {
-            isMainUser = false
+    }
+    
+    func determineUser() {
+        if self.determineIfMainUser() {
+            print("\(self.user.name) is main ")
+            self.isMainUser = true
         }
-        if manager.isUserFriendsWithMainUser(id: person.id) {
-            isFriendOfMainUser = true
+        else if self.TDManager.isUserFriendsWithMainUser(id: self.user.id) {
+            print("\(self.user.name) is friends ")
+            self.isFriendOfMainUser = true
+        }
+        else {
+            print("\(self.user.name) is not friends ")
+            self.isStranger = true
+            
         }
     }
     
-    func isMainUser(manager: TestDataManager, check: User) -> Bool {
-        return check == User(userEntity: manager.fetchMainUser()!) ? true : false
+    func determineIfMainUser() -> Bool {
+        return self.user == User(userEntity: self.TDManager.fetchMainUser()!) ? true : false
     }
 }
+
 
 class ProfileButtonsViewModel: ObservableObject {
     // used as an observed object to track a user's songs, friends, and follow requests

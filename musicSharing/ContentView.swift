@@ -33,21 +33,20 @@ struct MainUser {
 }
 
 struct ContentView: View {
+    // uncomment below to test looking at from a different main user
+//    let TDManager = TestDataManager()
+//    let user: User
+//    let bobID = "93d95053-e625-4e60-a48c-fb04421f0d9f"
+    
+//    init() {
+//        guard TDManager.getUser(bobID) != nil else {
+//            print("Couldn't get bobFriend")
+//            self.user = User(name: "", user_bio: "", avatar: "")
+//            return
+//        }
+//        self.user = User(userEntity: TDManager.getUser("93d95053-e625-4e60-a48c-fb04421f0d9f")!)
+//    }
     @State var selection = 1
-    let TDManager = TestDataManager()
-    let user: User
-    let bobID = "93d95053-e625-4e60-a48c-fb04421f0d9f"
-    
-    init() {
-//        self.user = User(userEntity: TDManager.fetchMainUser()!)
-        guard TDManager.getUser(bobID) != nil else {
-            print("Couldn't get bobFriend")
-            self.user = User(name: "", user_bio: "", avatar: "")
-            return
-        }
-        self.user = User(userEntity: TDManager.getUser("93d95053-e625-4e60-a48c-fb04421f0d9f")!)
-    }
-    
     var body: some View {
         AppView(selection: $selection)
 //        ScrollTweets(TDManager)
@@ -73,14 +72,11 @@ struct AppView: View {
     }
     
     var body: some View {
-    TabView(selection: $selection){
-        ScrollTweets(self.TDManager).tabItem {
+        TabView(selection: $selection){
+            ScrollTweets(self.TDManager).tabItem {
                 Image(systemName: "house")
                 Text("Feed")
             }.tag(1)
-//            ProfileView(TDManager, self.user).tabItem{
-//                Image(systemName: "person")
-//                Text("Profile")
             ProfileView(userProfile: ProfileViewModel(self.TDManager, self.user)).tabItem{
                 Image(systemName: "person")
                 Text("Profile")
@@ -92,11 +88,9 @@ struct AppView: View {
                     self.TDManager.saveFakeData()
                     self.alreadyLoaded += 1
                 }
-        })
-        .onAppear() {
+            }).onAppear() {
                 UITabBar.appearance().barTintColor = .black
-        }
-        .accentColor(.white)
+            }.accentColor(.white)
     }
 }
     

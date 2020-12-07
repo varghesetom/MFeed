@@ -66,21 +66,45 @@ class TestDataManager {
             print("person has no friends")
             return false
         }
-        return (personsFriends?.filter { $0.userID == self.fetchMainUser()!.userID} != nil) ? true : false
+        if personsFriends!.count == 0 {
+            print("person has no friends")
+            return false
+        }
+        
+        print("Getting all friends for \(self.getUser(id.uuidString)!.name)")
+
+        for per in personsFriends! {
+            print(User(userEntity: per).name)
+        }
+        let main = User(userEntity: self.fetchMainUser()!)
+        return (personsFriends!.filter { $0.userID == main.id}).count == 1 ? true : false
     }
     
-//    func getUsersFriends(_ id: String = MainUser.idMainUser) -> [UserEntity]? {
-//        let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
-//        request.predicate = NSPredicate(format: "ANY is_friends_with.userID = %@", id as CVarArg)
-//        request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-//        do {
-//            let userEntities = try self.context?.fetch(request)
-//            return userEntities
-//        } catch {
-//            print("Couldn't return main user's friends")
-//            return nil
-//        }
-//    }
+    func getUsersFriends(_ id: String = MainUser.idMainUser) -> [UserEntity]? {
+        // get main user's friends
+        let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "ANY is_friends_with.userID = %@", id as CVarArg)
+        request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        do {
+            let userEntities = try self.context?.fetch(request)
+            return userEntities
+        } catch {
+            print("Couldn't return main user's friends")
+            return nil
+        }
+    }
+    
+    func fetchMainUser() -> UserEntity? {
+        let mainUserRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+        mainUserRequest.predicate = NSPredicate(format: "%K == %@", "userID", MainUser.idMainUser as CVarArg)
+        do {
+            let mainUser = try self.context!.fetch(mainUserRequest).first!
+            return mainUser
+        } catch {
+            print("Could not initialize main user \(error.localizedDescription)")
+        }
+        return nil
+    }
     
     func getSong(_ name: String) -> SongEntity? {
         let songRequest: NSFetchRequest<SongEntity> = SongEntity.fetchRequest()
@@ -126,22 +150,8 @@ class TestDataManager {
         }
     }
     
-    func fetchMainUser() -> UserEntity? {
-        let mainUserRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
-        mainUserRequest.predicate = NSPredicate(format: "%K == %@", "userID", MainUser.idMainUser as CVarArg)
-        do {
-            print("CONTEXT: \(self.context!)")
-            let mainUser = try self.context!.fetch(mainUserRequest).first!
-            return mainUser
-        } catch {
-            print("Could not initialize main user \(error.localizedDescription)")
-        }
-        return nil
-    }
-    
-    // get main user's songs from their STASH
-    
     func getStashFromUser(_ id: String = MainUser.idMainUser)->[SongInstanceEntity]? {
+        // get main user's songs from their STASH
         let request: NSFetchRequest<SongInstanceEntity> = SongInstanceEntity.fetchRequest()
         request.predicate = NSPredicate(format: "ANY stashed_by.userID = %@", id as CVarArg) // comparing a collection of results(?) to a scalar value so need ANY
         request.sortDescriptors = [NSSortDescriptor(key: "song_name", ascending: true)]
@@ -154,24 +164,8 @@ class TestDataManager {
         }
     }
     
-    // get main user's friends
-    
-    func getUsersFriends(_ id: String = MainUser.idMainUser) -> [UserEntity]? {
-        let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "ANY is_friends_with.userID = %@", id as CVarArg)
-        request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-        do {
-            let userEntities = try self.context?.fetch(request)
-            return userEntities
-        } catch {
-            print("Couldn't return main user's friends")
-            return nil
-        }
-    }
-    
-    // get people who requested to follow main user
-    
     func getReceivedFollowRequestsForUser(_ id: String = MainUser.idMainUser) -> [UserEntity]? {
+        // get people who requested to follow main user
         let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
                request.predicate = NSPredicate(format: "ANY received_follow_request.userID = %@", id as CVarArg)
                request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
@@ -184,9 +178,8 @@ class TestDataManager {
         }
     }
     
-    // get follow requests sent by main users
-    
     func getFollowRequestsSentByUser(_ id: String = MainUser.idMainUser) -> [UserEntity]? {
+        // get follow requests sent by main users
         let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
         request.predicate = NSPredicate(format: "ANY sent_follow_request.userID = %@", id as CVarArg)
         request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
@@ -288,23 +281,28 @@ class TestDataManager {
     
     // INITIAL RELATIONSHIPS
     func assignAllInitialRelationships() -> Bool {
-        _ = self.assignInitialFollowRequestsForMainUser()
-        _ = self.assignMainUsersSentFollowRequests()
-        _ = self.assignInitialFriendshipsToUser()
+        _ = self.assignInitialFriendships()
+        _ = self.assignInitialFollowRequestsSentByMainUser()
+        _ = self.assignInitialFollowRequestsSentToMainUser()
         // need to assign stash relationships
         return true
     }
     
-    func assignInitialFriendshipsToUser() -> Bool{
+    func assignInitialFriendships() -> Bool{
         let sarahFriendRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
         sarahFriendRequest.predicate = NSPredicate(format: "name == %@", "Sarah Connor")
         let bobFriendRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
         bobFriendRequest.predicate = NSPredicate(format: "name == %@", "Bob LobLaw")
+        let peterFriendRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+        peterFriendRequest.predicate = NSPredicate(format: "name == %@", "Peter Parker")
         do {
             let sarah = try self.context!.fetch(sarahFriendRequest).first!
-            self.userIsFriends(user: self.fetchMainUser()!, friend: sarah)
             let bob = try self.context!.fetch(bobFriendRequest).first!
-            self.userIsFriends(user: self.fetchMainUser()!, friend: bob)
+            let peter = try self.context!.fetch(peterFriendRequest).first!
+            self.userIsFriends(user: self.fetchMainUser()!, friend: sarah) // I'm friends with Sarah
+            self.userIsFriends(user: self.fetchMainUser()!, friend: bob)   // I'm friends with Bob
+            self.userIsFriends(user: bob, friend: sarah)                   // Bob is friends with Sarah
+            self.userIsFriends(user: peter, friend: sarah)                 // Peter is friends with Sarah
             try self.context?.save()
             return true
         } catch {
@@ -313,9 +311,7 @@ class TestDataManager {
         }
     }
     
-    func assignInitialFollowRequestsForMainUser() -> Bool{
-        let sarahFriendRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
-        sarahFriendRequest.predicate = NSPredicate(format: "name == %@", "Sarah Connor")
+    func assignInitialFollowRequestsSentByMainUser() -> Bool{
         let peterRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
         peterRequest.predicate = NSPredicate(format: "name == %@", "Peter Parker")
         do {
@@ -329,9 +325,7 @@ class TestDataManager {
         }
     }
     
-    func assignMainUsersSentFollowRequests() -> Bool {
-        let sarahFriendRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
-        sarahFriendRequest.predicate = NSPredicate(format: "name == %@", "Sarah Connor")
+    func assignInitialFollowRequestsSentToMainUser() -> Bool {
         let cousinVinnyRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
         cousinVinnyRequest.predicate = NSPredicate(format: "name == %@", "Vinny Gambini")
         do {

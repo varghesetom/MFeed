@@ -1,31 +1,6 @@
-//
-//  StyleViews.swift
-//  musicSharing
-//
-//  Created by Varghese Thomas on 06/12/2020.
-//  Copyright © 2020 Varghese Thomas. All rights reserved.
-//
+
 
 import SwiftUI
-
-struct GenreSeekingButton: View {
-    @State var genre: String
-    @State var didSelectGenre = false
-    @State private var chosenGenre = LinearGradient(gradient: Gradient(colors: [Color.red, Color.orange]), startPoint: .leading, endPoint: .trailing)
-    @State private var unselected = LinearGradient(gradient: Gradient(colors: [ Color.white, Color.gray]), startPoint: .leading, endPoint: .trailing)
-    
-    var body: some View {
-        Button(action: {
-            self.didSelectGenre.toggle()
-        }) {
-            Text("\(genre)")
-                .padding(2)
-                .font(.subheadline)
-                .allowsTightening(true)
-        }
-        .buttonStyle(didSelectGenre ? GenreSeekingStyle(selectedColor: chosenGenre) : GenreSeekingStyle(selectedColor: unselected))
-    }
-}
 
 struct GenreSeekingStyle: ButtonStyle {
     
