@@ -9,36 +9,7 @@
 import Foundation
 import SwiftUI
 import CoreData
-
-enum CommentType: String, Codable  {
-    case great
-    case interesting
-    case love
-}
-
-struct Comment: Codable, Hashable {
-    
-    var user: User
-    var comment: CommentType
-    var timeCommented: Date
-    var forSongInst: SongInstance
-    
-    func convertToManagedObject(_ context: NSManagedObjectContext? = CoreDataStoreContainer.shared?.backgroundContext) -> CommentEntity {
-        let commentEntity = NSEntityDescription.insertNewObject(forEntityName: "CommentEntity", into: context!) as! CommentEntity
-        commentEntity.comment_for = self.forSongInst.instantiateFromExisting()
-        return commentEntity
-    }
-}
-
-extension Comment {
-    init(commentEntity: CommentEntity) {
-        self.user = User(userEntity: commentEntity.commented_by!)
-        self.comment = CommentType.init(rawValue: commentEntity.comment_type!)!
-        self.timeCommented = commentEntity.time_commented!
-        self.forSongInst = SongInstance(instanceEntity: commentEntity.comment_for!)
-    }
-}
-
+ 
 struct SongInstance: Codable, Identifiable, Hashable {
     
     public var id: UUID = UUID()
@@ -46,10 +17,8 @@ struct SongInstance: Codable, Identifiable, Hashable {
     let dateListened: Date
     var instanceOf: Song
     var playedBy: User
-    
     var likers = [User]()
     var stashers = [User]()
-    
     var comments = [Comment]()
     
     
@@ -63,12 +32,11 @@ struct SongInstance: Codable, Identifiable, Hashable {
         instanceEntity.stashed_by = NSSet()
         instanceEntity.has_comments = NSSet()
         instanceEntity.played_by = self.playedBy.convertToManagedObject(context)
-        
+        print("converted to managed object: \(self.id), \(self.songName), \(self.playedBy.name)")
         return instanceEntity
     }
     
 }
-
 
 
 extension SongInstance {
@@ -83,19 +51,11 @@ extension SongInstance {
         self.comments = self.getComments(instanceEntity: instanceEntity)
     }
     
-    func instantiateFromExisting(_ context: NSManagedObjectContext? = CoreDataStoreContainer.shared?.backgroundContext) -> SongInstanceEntity {
-        let instanceEntity = SongInstanceEntity(context: context!)
-        instanceEntity.instance_id = self.id
-        instanceEntity.date_listened = self.dateListened
-        instanceEntity.song_name = self.songName
-        instanceEntity.instance_of = self.instanceOf.convertToManagedObject(context)
-        instanceEntity.liked_by = NSSet()
-        instanceEntity.stashed_by = NSSet()
-        instanceEntity.has_comments = NSSet()
-        instanceEntity.played_by = self.playedBy.convertToManagedObject(context)
-        return instanceEntity
+    func instantiateEntityFromExisting(_ context: NSManagedObjectContext? = CoreDataStoreContainer.shared?.backgroundContext) -> SongInstanceEntity {
+        return SongInstanceEntity(context: context!)
     }
     
+    // look into removing these helper methods below -- can do the fetches and all within the data manager class
     func getPeopleLikes(instanceEntity: SongInstanceEntity) -> [User] {
         // for each SongInstanceEntity, get all the people who liked the song
         var likers = [User]()

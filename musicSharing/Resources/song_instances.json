@@ -28,7 +28,8 @@
                     {
                         "genre" : "Religious",
                     }
-                ]
+                ],
+                "comments": []
             },
         "likers" : [],
         "stashers" : [],
@@ -63,7 +64,8 @@
                     {
                         "genre" : "Religious",
                     }
-                ]
+                ],
+                "comments": []
             },
         "likers" : [],
         "stashers" : [],
@@ -87,7 +89,7 @@
                 "id" : "c8d28461-23ed-4b07-99b1-43d880a8d077",
                 "name" : "Sarah Connor",
                 "user_bio": "Judgment Day is coming.",
-                "avatar" : "northern_lights",
+                "avatar" : "female_avatar_1",
                 "genres": [
                     {
                         "genre" : "Rock",
@@ -95,7 +97,8 @@
                     {
                         "genre" : "Techno",
                     }
-                ]
+                ],
+                "comments": []
             },
         "likers" : [],
         "stashers" : [],
@@ -132,7 +135,8 @@
                     {
                         "genre" : "Rock",
                     },
-                ]
+                ],
+                "comments": []
             },
         "likers" : [],
         "stashers" : [],
@@ -157,7 +161,8 @@
                    "name" : "Tom",
                    "user_bio": "student who likes all kinds of music. No favorite song -- Different songs for different moods.",
                    "avatar" : "johnsmith",
-                   "genres": []
+                   "genres": [],
+                   "comments": []
             },
         "likers" : [],
         "stashers" : [],
@@ -182,7 +187,8 @@
                    "name" : "Tom",
                    "user_bio": "student who likes all kinds of music. No favorite song -- Different songs for different moods.",
                    "avatar" : "johnsmith",
-                   "genres": []
+                   "genres": [],
+                   "comments": []
            },
         "likers" : [],
         "stashers" : [],
@@ -217,7 +223,8 @@
                     {
                         "genre" : "Religious",
                     }
-                ]
+                ],
+                "comments": []
             },
         "likers" : [],
         "stashers" : [],
@@ -241,10 +248,11 @@
                 "name" : "Tom",
                 "user_bio": "student who likes all kinds of music. No favorite song -- Different songs for different moods.",
                 "avatar" : "johnsmith",
-                "genres": []
+                "genres": [],
+                "comments": []
             },
         "likers" : [],
         "stashers" : [],
         "comments": []
-    },
+    }
 ]

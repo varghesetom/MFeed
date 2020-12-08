@@ -58,11 +58,38 @@ class TestDataManager {
         return songEnt
     }
     
-    // COREDATA RETRIEVAL
+    func addCommentEntity(commentType: CommentType, songInstEnt: SongInstanceEntity, userEnt: UserEntity) {
+        let comment = Comment(user: User(userEntity: userEnt), comment: commentType, timeCommented: Date(), forSongInst: SongInstance(instanceEntity: songInstEnt))
+        let commentEnt = comment.convertToManagedObject(self.context)
+        self.userCommentsOnSong(user: userEnt, comment: commentEnt)
+        self.commentForSongInst(songInstEnt: songInstEnt, comment: commentEnt)
+        self.context!.perform {
+            do {
+                try self.context?.save()
+            } catch {
+                print("couldn't save comment entity")
+            }
+        }
+    }
     
-    func getAllCommentsForSong() {
-        let request: NSFetchRequest<SongInstanceEntity> = SongInstanceEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "commented_by == %@", "f")
+    // COREDATA RETRIEVAL
+
+    func getCommentsForSongInstID(songInstID: UUID) -> [Comment]? {
+        let request: NSFetchRequest<CommentEntity> = CommentEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "comment_for.instance_id == %@", songInstID as CVarArg)
+        request.sortDescriptors = [NSSortDescriptor(key: "time_commented", ascending: true)]
+        do {
+            let commentEnts = try self.context!.fetch(request)
+            if commentEnts.count == 0 { return [Comment]() }
+            let comments = commentEnts.map{
+                Comment(commentEntity: $0)
+            }
+            return comments
+            
+        } catch {
+            print("Couldn't load all comments for song instance entity")
+            return nil
+        }
     }
     
     func getGenreEntity(genre: Genre) -> GenreEntity? {
@@ -267,8 +294,6 @@ class TestDataManager {
         _ = self.loadUsersFromJSON()
         _ = self.loadSongsFromJSON()
         _ = self.loadSongInstancesFromJSON()
-        _ = self.loadCommentsFromJSON()
-//        _ = self.loadGenresFromJSON()
         _ = self.assignAllInitialRelationships()
     }
     
@@ -340,32 +365,38 @@ class TestDataManager {
          }
     }
     
-    func loadGenresFromJSON() -> Bool {
-        guard let genres = testData.genres else {
-            print("Could not load genres data")
-            return false
-        }
-        genres.forEach({ genre in _ =
-            genre.convertToManagedObject(self.context!)
-        })
-        
-        do {
-           try self.context?.save()
-           return true
-        } catch {
-            print("Error saving genres to CoreData store \(error.localizedDescription)")
-           return false
-        }
-    }
-    
     // INITIAL RELATIONSHIPS
     func assignAllInitialRelationships() -> Bool {
         _ = self.assignInitialFriendships()
         _ = self.assignInitialFollowRequestsSentByMainUser()
         _ = self.assignInitialFollowRequestsSentToMainUser()
-
+        _ = self.assignInitialComments()
+        print("assigned all relationships")
         // need to assign stash relationships
         return true
+    }
+    
+    func assignInitialComments() -> Bool {
+        let bobAdagioRequest: NSFetchRequest<SongInstanceEntity> = SongInstanceEntity.fetchRequest()
+        bobAdagioRequest.predicate = NSPredicate(format: "instance_id == %@", "d362db4f-a6ac-46c9-809b-a6137f43c4da" as CVarArg)
+        let sarahFriendRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+        sarahFriendRequest.predicate = NSPredicate(format: "name == %@", "Sarah Connor")
+        do {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm"
+            let sarah = try self.context!.fetch(sarahFriendRequest).first!
+            let bobAdagio = try self.context!.fetch(bobAdagioRequest).first!
+            let sarahCommentDate = dateFormatter.date(from: "2020-12-01T10:01")!
+            let sarahComment = Comment(user: User(userEntity: sarah), comment: CommentType.great, timeCommented: sarahCommentDate, forSongInst: SongInstance(instanceEntity: bobAdagio))
+            let sarahCommentEntity = sarahComment.convertToManagedObject(self.context)
+            self.userCommentsOnSong(user: sarah, comment: sarahCommentEntity)
+            self.commentForSongInst(songInstEnt: bobAdagio, comment: sarahCommentEntity)
+            try self.context?.save()
+            return true
+        } catch {
+            print("Couldn't assign initial comments")
+        }
+        return false
     }
     
     func assignInitialFriendships() -> Bool{
@@ -424,6 +455,8 @@ class TestDataManager {
         print("EMPTYING DB")
         _ = self.deleteAllSongs()
         _ = self.deleteAllUsers()
+        _ = self.deleteAllSongInstances()
+        print("Deleted all data")
         return true
     }
     
@@ -451,7 +484,37 @@ class TestDataManager {
         }
     }
     
+    func deleteAllSongInstances() -> Bool {
+        let songInstFetchRequest: NSFetchRequest<SongInstanceEntity> = SongInstanceEntity.fetchRequest()
+        do {
+            let songInsts = try self.context?.fetch(songInstFetchRequest)
+            songInsts?.forEach { self.context?.delete($0) }
+            return true
+        } catch {
+            print("Error deleting Song Instances: \(error.localizedDescription)")
+            return false
+        }
+    }
+    
             // CORE DATA RELATIONSHIPS
+    
+     func userCommentsOnSong(user: UserEntity, comment: CommentEntity) {
+         user.addToCommented_on(comment)
+         do {
+             try self.context!.save()
+         } catch {
+             print("Error adding commented song relationship for user")
+         }
+     }
+    
+    func commentForSongInst(songInstEnt: SongInstanceEntity, comment: CommentEntity) {
+        songInstEnt.addToHas_comments(comment)
+        do {
+            try self.context!.save()
+        } catch {
+            print("Error adding commented song relationship for user")
+        }
+    }
     
     func userToggleGenre(user: UserEntity, genreEntity: GenreEntity) {
         user.addToToggled_genre(genreEntity)
@@ -472,9 +535,7 @@ class TestDataManager {
     }
     
     func userStashesSong(user: UserEntity, songInstance: SongInstanceEntity) {
-//         print("\n\nUSER BEFORE ADDING \(user)")
          user.addToStashes_this(songInstance)
-//         print("\n\nUSER AFTER ADDING \(user)")
          do {
              try self.context!.save()
          } catch {
@@ -499,15 +560,7 @@ class TestDataManager {
              print("Error adding liked song relationship for user")
          }
      }
-     
-     func userCommentsOnSong(user: UserEntity, comment: CommentEntity) {
-         user.addToCommented_on(comment)
-         do {
-             try self.context!.save()
-         } catch {
-             print("Error adding commented song relationship for user")
-         }
-     }
+    
      
      func userIsFriends(user: UserEntity, friend: UserEntity) {
          user.addToIs_friends_with(friend)
@@ -621,23 +674,6 @@ struct JSONTestData {
              }
          } catch {
            print("Error occurred for genre decoding process \(error.localizedDescription)")
-        }
-        
-         guard let commentsPath = Bundle.main.path(forResource: "comments", ofType: "json") else {
-             print("Yo! no comments Path!")
-             return
-         }
-         do {
-             if let jsonData = try String(contentsOfFile: commentsPath).data(using: .utf8) {
-                let decoder = JSONDecoder()
-                let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm"
-                decoder.dateDecodingStrategy = .formatted(dateFormatter)
-                comments = try decoder.decode([Comment].self, from: jsonData)
-                print("COMMENTS -> \(comments ?? [Comment]())")
-             }
-         } catch {
-           print("Error occurred for comment decoding process \(error.localizedDescription)")
         }
     }
 }

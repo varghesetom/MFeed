@@ -13,6 +13,7 @@ struct User: Codable, Identifiable, Hashable {
     let user_bio: String?
     let avatar: String?
     var genres: [Genre]
+//    var comments: [Comment]
     
     func convertToManagedObject(_ context: NSManagedObjectContext? = CoreDataStoreContainer.shared?.backgroundContext) -> UserEntity {
         // reconfigure to avoid mismatching when testing. Core Data gets confused when it thinks multiple NSEntityDescriptions claim NSManagedObject subclasses
@@ -22,9 +23,13 @@ struct User: Codable, Identifiable, Hashable {
         userEntity.bio = self.user_bio
         userEntity.avatar = self.avatar
         userEntity.toggled_genre = NSSet()
+        userEntity.commented_on = NSSet()
         for genre in self.genres {
             userEntity.addToToggled_genre(genre.convertToManagedObject())
         }
+//        for comment in self.comments {
+//            userEntity.addToCommented_on(comment.convertToManagedObject())
+//        }
         return userEntity
     }
 
@@ -38,7 +43,13 @@ extension User {
         self.user_bio = userEntity.bio ?? "prefers to keep an air of mystery"
         self.avatar = userEntity.avatar ?? "northern-lights"
         self.genres = []
-        self.genres = self.getGenres(userEntity: userEntity)
+//        self.comments = []
+//        self.genres = self.getGenres(userEntity: userEntity)
+//        self.comments = self.getComments(userEntity: userEntity)
+    }
+    
+    func instantiateEntityFromExisting(_ context: NSManagedObjectContext? = CoreDataStoreContainer.shared?.backgroundContext) -> UserEntity {
+        return UserEntity(context: context!)
     }
     
     func getGenres(userEntity: UserEntity) -> [Genre] {
@@ -52,6 +63,18 @@ extension User {
         }
         return genres
     }
+//
+//    func getComments(userEntity: UserEntity) -> [Comment] {
+//        var comments = [Comment]()
+//        if userEntity.commented_on?.allObjects as? [CommentEntity] == nil {
+//            return comments
+//        }
+//        for commentEnt in userEntity.commented_on!.allObjects as! [CommentEntity] {
+//            let commented = Comment(commentEntity: commentEnt)
+//            comments.append(commented)
+//        }
+//        return comments
+//    }
 }
 
 

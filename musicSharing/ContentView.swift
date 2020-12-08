@@ -28,6 +28,9 @@ struct Start: PreviewProvider {
 }
 #endif
 
+// AVATAR IMAGES SOURCED BELOW
+// women head avatars -> "<a href='https://www.freepik.com/vectors/woman'>Woman vector created by ddraw - www.freepik.com</a>"
+// men head avatars -> "<a href='https://www.freepik.com/vectors/fashion'>Fashion vector created by ddraw - www.freepik.com</a>"
 struct MainUser {
     static var idMainUser = "947be968-e95d-4db4-b975-0e674c934c61"
 }

@@ -14,10 +14,18 @@ class ProfileViewModel: ObservableObject {
     // used to track info on whether profile is the main user, friend, or stranger. Is used to initialize all the profile view components in "ProfileView".
     var TDManager: TestDataManager
     var user: User
-    @Published var toggledGenres = [Genre]()
     @Published var isMainUser = false
     @Published var isFriendOfMainUser = false
     @Published var isStranger = false
+    
+    @Published var toggledGenres = [Genre]()
+    @Published var toggleRock = false
+    @Published var toggleClassical = false
+    @Published var toggleTechno = false
+    @Published var toggleHipHop = false
+    @Published var toggleCountry = false
+    @Published var toggleReligious = false
+    @Published var displayButtonEffect = false
     
     init(_ manager: TestDataManager, _ person: User) {
         self.TDManager = manager
@@ -45,7 +53,7 @@ class ProfileViewModel: ObservableObject {
         return self.user == User(userEntity: self.TDManager.fetchMainUser()!) ? true : false
     }
     
-    func checkIfUserAlreadyHasGenre(toggledGenres: inout [Genre], genreName: String) -> Bool {
+    func checkIfUserAlreadyHasGenre(genreName: String) -> Bool {
         let genreEnts = self.TDManager.getGenresForUser(id: self.user.id)
         if let unwrappedEnts = genreEnts {
             toggledGenres = unwrappedEnts.map {
@@ -59,7 +67,7 @@ class ProfileViewModel: ObservableObject {
         return false
     }
     
-    func removeGenreRelationships(toggledGenres: inout [Genre], genreName: String) {
+    func removeGenreRelationships(genreName: String) {
         let userEnt = self.TDManager.getUser(self.user.id.uuidString)
         toggledGenres = self.TDManager.getAllGenreForUser(id: self.user.id, genreName: genreName)
         for genre in toggledGenres {
@@ -74,11 +82,50 @@ class ProfileViewModel: ObservableObject {
         print("\nAfter untoggling, user's current genres are \(toggledGenres)")
     }
     
-    func getUpdatedToggled(toggledGenres: inout [Genre]) -> [Genre] {
+    func updateToggledGenres() {
+        toggleRock = false
+        toggleReligious = false
+        toggleClassical = false
+        toggleTechno = false
+        toggleCountry = false
+        toggleHipHop = false
         if let userGenreEnts = self.TDManager.getGenresForUser(id: self.user.id) {
             toggledGenres = userGenreEnts.map { Genre(genreEntity: $0)}
         }
-        return toggledGenres
+        for toggled in toggledGenres {
+            switch toggled.genre {
+            case "Rock": toggleRock = true
+            case "Classical": toggleClassical = true
+            case "Techno": toggleTechno = true
+            case "HipHop": toggleHipHop = true
+            case "Country": toggleCountry = true
+            case "Religious": toggleReligious = true
+            default:
+                print("\nUnknown genre\n")
+            }
+        }
+        print("User: \(self.user.name)'s genres: \(self.toggledGenres)")
+        print("TOGGLED: \(toggleRock), \(toggleClassical), \(toggleTechno), \(toggleHipHop), \(toggleCountry), \(toggleReligious)")
+    }
+    
+    func nonMainUserDidInitialToggle() {
+        if self.isFriendOfMainUser {
+            if let userGenreEnts = self.TDManager.getGenresForUser(id: self.user.id) {
+                toggledGenres = userGenreEnts.map { Genre(genreEntity: $0)}
+            }
+            for toggled in toggledGenres {
+                switch toggled.genre {
+                case "Rock": toggleRock = true
+                case "Classical": toggleClassical = true
+                case "Techno": toggleTechno = true
+                case "HipHop": toggleHipHop = true
+                case "Country": toggleCountry = true
+                case "Religious": toggleReligious = true
+                default:
+                    print("\nUnknown genre\n")
+                }
+            }
+        }
     }
 
 }

@@ -4,7 +4,8 @@
         "name" : "Tom",
         "user_bio": "student who likes all kinds of music. No favorite song -- Different songs for different moods.",
         "avatar" : "johnsmith",
-        "genres": []
+        "genres": [],
+        "comments": []
     },
     {
         "id" : "93d95053-e625-4e60-a48c-fb04421f0d9f",
@@ -21,13 +22,14 @@
             {
                 "genre" : "Religious",
             }
-        ]
+        ],
+        "comments": []
     },
     {
         "id" : "c8d28461-23ed-4b07-99b1-43d880a8d077",
         "name" : "Sarah Connor",
         "user_bio": "Judgment Day is coming.",
-        "avatar" : "northern_lights",
+        "avatar" : "female_avatar_1",
         "genres": [
             {
                 "genre" : "Rock",
@@ -35,7 +37,8 @@
             {
                 "genre" : "Techno",
             }
-        ]
+        ],
+        "comments": []
     },
     {
         "id" : "6eb17b62-9cac-4f06-a3cc-edd9197b80a5",
@@ -55,7 +58,8 @@
             {
                 "genre" : "Rock",
             },
-        ]
+        ],
+        "comments": []
     },
     {
         "id" : "5dfa765a-11ac-44b1-b66d-f6d48fe5cbe6",
@@ -72,7 +76,8 @@
             {
                 "genre" : "Religious",
             }
-        ]
+        ],
+        "comments": []
     }
 ]
 

@@ -17,7 +17,7 @@ struct ScrollTweets: View {
     var body: some View {
         let songInstanceEntities = fetchedSongInstances.map( {
             $0
-        })
+        }).filter { $0.instance_id != nil}
         
         return NavigationView {
             ZStack {
@@ -25,6 +25,7 @@ struct ScrollTweets: View {
                 ScrollView(.vertical) {
                     VStack(spacing: 50) {
                         ForEach(songInstanceEntities, id: \.self) {
+                            
                             MusicTweet(self.TDManager, songInstEnt: $0)
                         }
                     }
@@ -61,7 +62,7 @@ struct MusicTweet: View {
     
     var body: some View {
         let songInst = SongInstance(instanceEntity: songInstance)
-        let image = UIImage(named: songInst.instanceOf.image) ?? UIImage(named: "northern_lights")  // if the image in songInstance can't be found in Assets, then provide a default image
+//        let image = UIImage(named: songInst.instanceOf.image) ?? UIImage(named: "northern_lights")  // if the image in songInstance can't be found in Assets, then provide a default image
         return VStack(alignment: .center, spacing: 0) {
             HStack() {
                 Spacer()
@@ -88,7 +89,8 @@ struct MusicTweet: View {
             .frame(width: 370, height: 50, alignment: .center) // red rectangle gets its own frame -- easier than ZStack
             .background(Color.red)
             HStack(alignment: .center, spacing: 15) {
-                Image(uiImage: image!)
+//                Image(uiImage: image!)
+                Image("\(songInst.playedBy.avatar!)")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 100, height: 80, alignment: .center)
