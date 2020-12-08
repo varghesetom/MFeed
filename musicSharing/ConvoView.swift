@@ -83,6 +83,7 @@ struct ConvoView: View {
                                 }
                             }
                             .padding()
+                            .cornerRadius(3)
                             .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.black, lineWidth: 2))
                             .background(Color("comment"))
                             .shadow(color: Color(UIColor.secondarySystemBackground), radius: 5, x: 1, y: 1)

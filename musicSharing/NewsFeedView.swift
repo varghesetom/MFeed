@@ -49,20 +49,22 @@ struct MusicTweet: View {
     @State var height = CGFloat(180)
     @State var alignment = Alignment.center
     @State var showProfile = false
+    @ObservedObject var lvModel: LikeViewModel
+//    @Environment(\.presentationMode) var presentationMode
+    var songInstEnt: SongInstanceEntity
+    var TDManager: TestDataManager
     
-    @Environment(\.presentationMode) var presentationMode
-    private var songInstance: SongInstanceEntity
-    private var TDManager: TestDataManager
     
     init(_ manager: TestDataManager, songInstEnt: SongInstanceEntity, _ alignment: Alignment = Alignment.center) {
         self.TDManager = manager
-        self.songInstance = songInstEnt
+        self.songInstEnt = songInstEnt
+        self.lvModel = LikeViewModel(self.TDManager, self.songInstEnt)
         _alignment = .init(initialValue: alignment)
+        
     }
     
     var body: some View {
-        let songInst = SongInstance(instanceEntity: songInstance)
-//        let image = UIImage(named: songInst.instanceOf.image) ?? UIImage(named: "northern_lights")  // if the image in songInstance can't be found in Assets, then provide a default image
+        let songInst = SongInstance(instanceEntity: songInstEnt)
         return VStack(alignment: .center, spacing: 0) {
             HStack() {
                 Spacer()
@@ -78,18 +80,22 @@ struct MusicTweet: View {
                     }
                 }
                 Spacer()
-                Spacer()
                 Text("\(getFormattedDateStampForTweet(songInst.dateListened))")
                     .font(.system(.subheadline, design: .monospaced))
                     .minimumScaleFactor(0.6)
                     .allowsTightening(true)
                     .alignmentGuide(.center) { d in d[.trailing]}
                 Spacer()
+                Spacer()
+                if self.lvModel.numLikes > 0 {
+                    LikeView(numLikes: self.lvModel.numLikes)
+                } else {
+                    Text("Nada").allowsTightening(true).minimumScaleFactor(0.7)
+                }
             }
             .frame(width: 370, height: 50, alignment: .center) // red rectangle gets its own frame -- easier than ZStack
             .background(Color.red)
             HStack(alignment: .center, spacing: 15) {
-//                Image(uiImage: image!)
                 Image("\(songInst.playedBy.avatar!)")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -119,16 +125,17 @@ struct MusicTweet: View {
             .background(Color.orange)
             HStack(spacing: 10) {
                 Spacer()
-                TweetButton(self.TDManager, "Stash", songInstance)
+                TweetButton(self.TDManager, "Stash", songInstEnt).environmentObject(self.lvModel)
                 Spacer()
-                TweetButton(self.TDManager, "Convo", songInstance)
-
+                TweetButton(self.TDManager, "Convo", songInstEnt).environmentObject(self.lvModel)
                 Spacer()
-                TweetButton(self.TDManager, "Like", songInstance)
+                TweetButton(self.TDManager, "Like", songInstEnt).environmentObject(self.lvModel)
                 Spacer()
             }
             .frame(width: width, height: 70, alignment: alignment)
             .background(Color.orange)
+        }.onAppear {
+            self.lvModel.getLikes()
         }
     }
 }
@@ -138,6 +145,7 @@ struct TweetButton: View {
     var songInstanceEntity: SongInstanceEntity
     var TDManager: TestDataManager
     @State var showConvo = false
+    @EnvironmentObject var lvModel: LikeViewModel
     
     init(_ manager: TestDataManager, _ action: String, _ songInstanceEntity: SongInstanceEntity) {
         self.TDManager = manager
@@ -148,6 +156,9 @@ struct TweetButton: View {
     var body: some View {
         Button(action: {
             print("\(self.action) clicked")  // add to stash action
+            if self.lvModel.numLikes > 0 {
+                print("\n\nShould show Likeview")
+            }
             if self.action == "Convo" {
                 self.showConvo.toggle()
             }
@@ -167,13 +178,15 @@ struct TweetButton: View {
         switch self.action {
         case "Stash":
             print("Stashed")
-            TDManager.userStashesSong(user: TDManager.fetchMainUser()!, songInstance: songInstanceEntity)
+            self.TDManager.userStashesSong(user: self.TDManager.fetchMainUser()!, songInstance: songInstanceEntity)
         case "Convo":
             print("Convoed")
-//            TDManager.userCommentsOnSong(user: TDManager.fetchMainUser()!, songInstance: songInstanceEntity)
         case "Like":
+            print("Before adding like relationship: \(lvModel.numLikes)")
             print("Liked")
-            TDManager.userLikesSong(user: TDManager.fetchMainUser()!, songInstance: songInstanceEntity)
+            self.TDManager.userLikesSong(user: self.TDManager.fetchMainUser()!, songInstance: songInstanceEntity)
+            lvModel.getLikes()
+            print("Current # of likes: \(lvModel.numLikes)")
         default:
             fatalError("Need proper action argument for TweetButton functionality")
         }

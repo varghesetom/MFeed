@@ -73,6 +73,24 @@ class TestDataManager {
     }
     
     // COREDATA RETRIEVAL
+    
+    func getLikesForSongInstID(songInstID: UUID) -> Int {
+        let request: NSFetchRequest<SongInstanceEntity> = SongInstanceEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "instance_id == %@", songInstID as CVarArg)
+        request.sortDescriptors = [NSSortDescriptor(key: "song_name", ascending: true)]
+        do {
+            let songInstEnt = try self.context!.fetch(request).first!
+            var numLikes = 0
+            if songInstEnt.liked_by?.allObjects as? [UserEntity] == nil {
+                return numLikes
+            }
+            numLikes = (songInstEnt.liked_by!.allObjects as! [UserEntity]).count
+            return numLikes            
+        } catch {
+            print("Couldn't load song instances for getting likes")
+            return 0
+        }
+    }
 
     func getCommentsForSongInstID(songInstID: UUID) -> [Comment]? {
         let request: NSFetchRequest<CommentEntity> = CommentEntity.fetchRequest()

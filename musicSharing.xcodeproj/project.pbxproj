@@ -15,6 +15,7 @@
 		93B8B00A257EE5BD00560061 /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B8B009257EE5BD00560061 /* Song.swift */; };
 		93B8B00C257EE5FE00560061 /* SongInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B8B00B257EE5FE00560061 /* SongInstance.swift */; };
 		93B8B012257F323900560061 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B8B011257F323900560061 /* Comment.swift */; };
+		93B8B014257F76B100560061 /* LikeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B8B013257F76B100560061 /* LikeView.swift */; };
 		93F2D777256F8722004FDDD3 /* CoreDataRetrievalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F2D776256F8722004FDDD3 /* CoreDataRetrievalManager.swift */; };
 		93F2D77B256F8782004FDDD3 /* TestDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F2D77A256F8782004FDDD3 /* TestDataManager.swift */; };
 		93F2D77D256F8887004FDDD3 /* CoreRelationshipDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F2D77C256F8887004FDDD3 /* CoreRelationshipDataManager.swift */; };
@@ -55,6 +56,7 @@
 		93B8B009257EE5BD00560061 /* Song.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
 		93B8B00B257EE5FE00560061 /* SongInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongInstance.swift; sourceTree = "<group>"; };
 		93B8B011257F323900560061 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Comment.swift; path = musicSharing/Comment.swift; sourceTree = SOURCE_ROOT; };
+		93B8B013257F76B100560061 /* LikeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikeView.swift; sourceTree = "<group>"; };
 		93F2D776256F8722004FDDD3 /* CoreDataRetrievalManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataRetrievalManager.swift; sourceTree = "<group>"; };
 		93F2D77A256F8782004FDDD3 /* TestDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDataManager.swift; sourceTree = "<group>"; };
 		93F2D77C256F8887004FDDD3 /* CoreRelationshipDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreRelationshipDataManager.swift; sourceTree = "<group>"; };
@@ -161,6 +163,7 @@
 				93FE781F25666CD3009D8C4F /* NewsFeedView.swift */,
 				93FE78252566F51D009D8C4F /* ProfileView.swift */,
 				93B8B005257E279400560061 /* ConvoView.swift */,
+				93B8B013257F76B100560061 /* LikeView.swift */,
 				930BCDF1257CB64A00C87185 /* Styles.swift */,
 				93FE780C25666A69009D8C4F /* Assets.xcassets */,
 				93F2D77E2575F39E004FDDD3 /* Resources */,
@@ -311,6 +314,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				93B8B006257E279400560061 /* ConvoView.swift in Sources */,
+				93B8B014257F76B100560061 /* LikeView.swift in Sources */,
 				93B8B00C257EE5FE00560061 /* SongInstance.swift in Sources */,
 				93F2D777256F8722004FDDD3 /* CoreDataRetrievalManager.swift in Sources */,
 				93FE78262566F51D009D8C4F /* ProfileView.swift in Sources */,

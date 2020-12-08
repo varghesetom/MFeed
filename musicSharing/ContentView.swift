@@ -52,6 +52,7 @@ struct ContentView: View {
     @State var selection = 1
     var body: some View {
         AppView(selection: $selection)
+//        LikeView()
 //        ScrollTweets(TDManager)
 //        ProfileView(TDManager, self.user)
     }
