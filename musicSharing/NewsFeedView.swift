@@ -25,8 +25,7 @@ struct ScrollTweets: View {
                 ScrollView(.vertical) {
                     VStack(spacing: 50) {
                         ForEach(songInstanceEntities, id: \.self) {
-                            
-                            MusicTweet(self.TDManager, songInstEnt: $0)
+                            MusicTweet(self.TDManager, songInstEnt: $0).environmentObject(LikeViewModel(self.TDManager, $0))
                         }
                     }
                 }
@@ -49,7 +48,8 @@ struct MusicTweet: View {
     @State var height = CGFloat(180)
     @State var alignment = Alignment.center
     @State var showProfile = false
-    @ObservedObject var lvModel: LikeViewModel
+    @EnvironmentObject var lvModel: LikeViewModel
+    
 //    @Environment(\.presentationMode) var presentationMode
     var songInstEnt: SongInstanceEntity
     var TDManager: TestDataManager
@@ -58,7 +58,7 @@ struct MusicTweet: View {
     init(_ manager: TestDataManager, songInstEnt: SongInstanceEntity, _ alignment: Alignment = Alignment.center) {
         self.TDManager = manager
         self.songInstEnt = songInstEnt
-        self.lvModel = LikeViewModel(self.TDManager, self.songInstEnt)
+//        self.lvModel = LikeViewModel(self.TDManager, self.songInstEnt)
         _alignment = .init(initialValue: alignment)
         
     }
@@ -89,8 +89,6 @@ struct MusicTweet: View {
                 Spacer()
                 if self.lvModel.numLikes > 0 {
                     LikeView(numLikes: self.lvModel.numLikes)
-                } else {
-                    Text("Nada").allowsTightening(true).minimumScaleFactor(0.7)
                 }
             }
             .frame(width: 370, height: 50, alignment: .center) // red rectangle gets its own frame -- easier than ZStack
@@ -182,11 +180,10 @@ struct TweetButton: View {
         case "Convo":
             print("Convoed")
         case "Like":
-            print("Before adding like relationship: \(lvModel.numLikes)")
-            print("Liked")
+            print("Before adding like relationship: \(self.lvModel.numLikes)")
             self.TDManager.userLikesSong(user: self.TDManager.fetchMainUser()!, songInstance: songInstanceEntity)
-            lvModel.getLikes()
-            print("Current # of likes: \(lvModel.numLikes)")
+            self.lvModel.getLikes()
+            print("Current # of likes: \(self.lvModel.numLikes)")
         default:
             fatalError("Need proper action argument for TweetButton functionality")
         }

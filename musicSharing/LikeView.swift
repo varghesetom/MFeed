@@ -17,7 +17,7 @@ class LikeViewModel: ObservableObject {
     }
     
     func getLikes() {
-        numLikes = self.manager.getLikesForSongInstID(songInstID: songInstEnt.instance_id! )
+        self.numLikes = self.manager.getLikesForSongInstID(songInstID: songInstEnt.instance_id! )
     }
 }
 
@@ -28,7 +28,7 @@ struct LikeView: View {
     var body: some View {
         Heart()
             .overlay(NumberText(numLikes: numLikes))
-            .scaleEffect(0.1)
+            .scaleEffect(0.25)
     }
 }
 
@@ -43,7 +43,7 @@ struct NumberText: View {
                 .font(.system(size: 50, weight: .bold, design: .rounded))
                 .allowsHitTesting(true)
                 .minimumScaleFactor(0.5)
-                .foregroundColor(Color("heartNum"))
+                .foregroundColor(Color(.red))
                 .shadow(color: Color(UIColor.systemBackground), radius: 10, x: 1, y: 2)
         }
             .padding(.bottom, 25)
@@ -55,15 +55,15 @@ struct Heart: View {
         ZStack {
             Rectangle()
                 .frame(width: HeartDimensions.width, height: HeartDimensions.height, alignment: .center)
-                .foregroundColor(.blue)
+                .foregroundColor(.white)
                 .cornerRadius(5)
             Circle()
                 .frame(width: HeartDimensions.width, height: HeartDimensions.height, alignment: .center)
-                .foregroundColor(.blue)
+                .foregroundColor(.white)
                 .padding(.top, -HeartDimensions.height)
             Circle()
                 .frame(width: HeartDimensions.width, height: HeartDimensions.height, alignment: .center)
-                .foregroundColor(.blue)
+                .foregroundColor(.white)
                 .padding(.trailing, -HeartDimensions.width)
         }.rotationEffect(Angle(degrees: -45))
     }
