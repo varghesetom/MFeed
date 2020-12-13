@@ -17,7 +17,6 @@ class ProfileViewModel: ObservableObject {
     @Published var isMainUser = false
     @Published var isFriendOfMainUser = false
     @Published var isStranger = false
-    
     @Published var toggledGenres = [Genre]()
     @Published var toggleRock = false
     @Published var toggleClassical = false
@@ -60,11 +59,7 @@ class ProfileViewModel: ObservableObject {
                 Genre(genreEntity: $0)
             }
         }
-        if toggledGenres.filter({ genreName == $0.genre}).count > 0 {
-            print("Exists in user's genres")
-            return true
-        }
-        return false
+        return toggledGenres.filter({ genreName == $0.genre}).count > 0 ? true : false
     }
     
     func removeGenreRelationships(genreName: String) {
@@ -79,7 +74,7 @@ class ProfileViewModel: ObservableObject {
             }
         }
         try! self.TDManager.context!.save()
-        print("\nAfter untoggling, user's current genres are \(toggledGenres)")
+//        print("\nAfter untoggling, user's current genres are \(toggledGenres)")
     }
     
     func updateToggledGenres() {
@@ -104,8 +99,8 @@ class ProfileViewModel: ObservableObject {
                 print("\nUnknown genre\n")
             }
         }
-        print("User: \(self.user.name)'s genres: \(self.toggledGenres)")
-        print("TOGGLED: \(toggleRock), \(toggleClassical), \(toggleTechno), \(toggleHipHop), \(toggleCountry), \(toggleReligious)")
+//        print("User: \(self.user.name)'s genres: \(self.toggledGenres)")
+//        print("TOGGLED: \(toggleRock), \(toggleClassical), \(toggleTechno), \(toggleHipHop), \(toggleCountry), \(toggleReligious)")
     }
     
     func nonMainUserDidInitialToggle() {

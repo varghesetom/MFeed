@@ -22,6 +22,7 @@
     <entity name="SongInstanceEntity" representedClassName=".SongInstanceEntity" syncable="YES" codeGenerationType="class">
         <attribute name="date_listened" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="instance_id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="song_link" optional="YES" attributeType="String"/>
         <attribute name="song_name" optional="YES" attributeType="String"/>
         <relationship name="has_comments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CommentEntity" inverseName="comment_for" inverseEntity="CommentEntity"/>
         <relationship name="instance_of" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SongEntity" inverseName="instance" inverseEntity="SongEntity"/>
@@ -47,7 +48,7 @@
         <element name="CommentEntity" positionX="-99" positionY="18" width="128" height="103"/>
         <element name="GenreEntity" positionX="107.51953125" positionY="286.90234375" width="128" height="73"/>
         <element name="SongEntity" positionX="-329.28515625" positionY="-231.2578125" width="128" height="148"/>
-        <element name="SongInstanceEntity" positionX="66.65234375" positionY="-313.65625" width="128" height="163"/>
+        <element name="SongInstanceEntity" positionX="66.65234375" positionY="-313.65625" width="128" height="178"/>
         <element name="UserEntity" positionX="-311.4140625" positionY="107.1796875" width="128" height="223"/>
     </elements>
 </model>

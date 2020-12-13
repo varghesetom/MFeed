@@ -14,6 +14,7 @@ struct SongInstance: Codable, Identifiable, Hashable {
     
     public var id: UUID = UUID()
     let songName: String  // need additional attribute so can use NSSortDescriptor--using the id leads to an Obj-C thread exception
+    let songLink: String
     let dateListened: Date
     var instanceOf: Song
     var playedBy: User
@@ -27,6 +28,7 @@ struct SongInstance: Codable, Identifiable, Hashable {
         instanceEntity.instance_id = self.id
         instanceEntity.date_listened = self.dateListened
         instanceEntity.song_name = self.songName
+        instanceEntity.song_link = self.songLink
         instanceEntity.instance_of = self.instanceOf.convertToManagedObject(context)
         instanceEntity.liked_by = NSSet()
         instanceEntity.stashed_by = NSSet()
@@ -43,6 +45,7 @@ extension SongInstance {
     init(instanceEntity: SongInstanceEntity) {
         self.id = instanceEntity.instance_id!
         self.songName = instanceEntity.song_name!
+        self.songLink = instanceEntity.song_link!
         self.dateListened = instanceEntity.date_listened!
         self.instanceOf = Song(songEntity: instanceEntity.instance_of!)
         self.playedBy = User(userEntity: instanceEntity.played_by!)

@@ -48,17 +48,14 @@ struct MusicTweet: View {
     @State var height = CGFloat(180)
     @State var alignment = Alignment.center
     @State var showProfile = false
+    @State var openSongLink = false
     @EnvironmentObject var lvModel: LikeViewModel
-    
-//    @Environment(\.presentationMode) var presentationMode
     var songInstEnt: SongInstanceEntity
     var TDManager: TestDataManager
-    
     
     init(_ manager: TestDataManager, songInstEnt: SongInstanceEntity, _ alignment: Alignment = Alignment.center) {
         self.TDManager = manager
         self.songInstEnt = songInstEnt
-//        self.lvModel = LikeViewModel(self.TDManager, self.songInstEnt)
         _alignment = .init(initialValue: alignment)
         
     }
@@ -71,7 +68,7 @@ struct MusicTweet: View {
                 Button(action: {
                     self.showProfile.toggle()
                 }) {
-                    Text("\(songInst.playedBy.name)")
+                    Text("\(songInst.playedBy.name)").allowsTightening(true).minimumScaleFactor(0.7)
                 }.sheet(isPresented: $showProfile) {
                     if songInst.playedBy.id == User(userEntity: self.TDManager.fetchMainUser()!).id {
                         ProfileView(userProfile: ProfileViewModel(self.TDManager, User(userEntity: self.TDManager.fetchMainUser()!)))
@@ -100,11 +97,18 @@ struct MusicTweet: View {
                     .frame(width: 100, height: 80, alignment: .center)
                     .padding(.leading, 20)   // affected by padding with the buttons
                 VStack(alignment: .leading) {
-                    Text("\(songInst.instanceOf.name)")
-                        .foregroundColor(.black)
-                        .underline()
-                        .minimumScaleFactor(0.5)
-                        .allowsTightening(true)
+                    Button(action: {
+                        if let url = URL(string: songInst.songLink) {
+                            UIApplication.shared.open(url)
+                        }
+                    }) {
+                        Text("\(songInst.instanceOf.name)")
+                            .foregroundColor(.blue)
+                            .italic()
+                            .bold()
+                            .minimumScaleFactor(0.5)
+                            .allowsTightening(true)
+                    }
                     Text("\(songInst.instanceOf.artist ?? "Unknown")")
                         .foregroundColor(.black)
                         .italic()
@@ -154,9 +158,6 @@ struct TweetButton: View {
     var body: some View {
         Button(action: {
             print("\(self.action) clicked")  // add to stash action
-            if self.lvModel.numLikes > 0 {
-                print("\n\nShould show Likeview")
-            }
             if self.action == "Convo" {
                 self.showConvo.toggle()
             }
@@ -168,7 +169,7 @@ struct TweetButton: View {
                 .allowsTightening(true)
         }.buttonStyle(TweetButtonBackground())
          .sheet(isPresented: $showConvo) {
-            ConvoView(manager: self.TDManager, songInstEnt: self.songInstanceEntity, dismiss: self.$showConvo)
+            ConvoView(manager: self.TDManager, songInstEnt: self.songInstanceEntity, dismiss: self.$showConvo).environmentObject(self.lvModel)
         }
     }
     

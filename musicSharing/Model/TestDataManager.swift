@@ -72,7 +72,7 @@ class TestDataManager {
         }
     }
     
-    // COREDATA RETRIEVAL
+    // MARK: COREDATA RETRIEVAL
     
     func getLikesForSongInstID(songInstID: UUID) -> Int {
         let request: NSFetchRequest<SongInstanceEntity> = SongInstanceEntity.fetchRequest()
@@ -85,7 +85,7 @@ class TestDataManager {
                 return numLikes
             }
             numLikes = (songInstEnt.liked_by!.allObjects as! [UserEntity]).count
-            return numLikes            
+            return numLikes
         } catch {
             print("Couldn't load song instances for getting likes")
             return 0
@@ -303,7 +303,7 @@ class TestDataManager {
         return nil
     }
     
-    // SAVE TEST DATA
+    // MARK: SAVE TEST DATA
     
     lazy var testData = JSONTestData()
     
@@ -383,7 +383,8 @@ class TestDataManager {
          }
     }
     
-    // INITIAL RELATIONSHIPS
+    // MARK: ASSIGN INITIAL RELATIONSHIPS
+    
     func assignAllInitialRelationships() -> Bool {
         _ = self.assignInitialFriendships()
         _ = self.assignInitialFollowRequestsSentByMainUser()
@@ -468,7 +469,8 @@ class TestDataManager {
         }
     }
     
-    // CLEARING METHODS
+    // MARK: DELETE METHODS
+    
     func emptyDB() -> Bool {
         print("EMPTYING DB")
         _ = self.deleteAllSongs()
@@ -514,7 +516,7 @@ class TestDataManager {
         }
     }
     
-            // CORE DATA RELATIONSHIPS
+    // MARK: RELATIONSHIP HELPERS
     
      func userCommentsOnSong(user: UserEntity, comment: CommentEntity) {
          user.addToCommented_on(comment)
@@ -627,6 +629,8 @@ class TestDataManager {
          }
      }
 }
+
+// MARK: JSON DATA STRUCT
 
 struct JSONTestData {
     var users: [User]?

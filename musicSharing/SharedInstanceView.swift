@@ -119,13 +119,13 @@ struct SharedInstanceView: View {
     
     func addSongAndSongInstance(_ songName: String, _ songLink: String) -> SongInstanceEntity? {
         let song: Song = Song(name: "", songLength: 0.0)
-        let songInstance: SongInstance = SongInstance(songName: "", dateListened: Date(), instanceOf: song, playedBy: User(userEntity: self.TDManager.fetchMainUser()!))
+        let songInstance: SongInstance = SongInstance(songName: "", songLink: songLink, dateListened: Date(), instanceOf: song, playedBy: User(userEntity: self.TDManager.fetchMainUser()!))
         _ = TDManager.addSongEntity(song: song)
         return TDManager.addSongInstanceEntity(songInstance: songInstance)
     }
     
     func addOnlySongInstanceIfSongExists(_ song: Song, _ user: User) -> SongInstanceEntity? {
-        return TDManager.addSongInstanceEntity(songInstance: SongInstance(songName: song.name, dateListened: Date(), instanceOf: song, playedBy: user))
+        return TDManager.addSongInstanceEntity(songInstance: SongInstance(songName: song.name, songLink: songLink, dateListened: Date(), instanceOf: song, playedBy: user))
     }
     
 }

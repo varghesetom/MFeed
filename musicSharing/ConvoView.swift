@@ -15,6 +15,7 @@ struct ConvoView: View {
     @State var offset = CGFloat.zero
     @State var showActionSheet = false
     @ObservedObject var convoModel: ConvoViewModel
+    @EnvironmentObject var lvModel: LikeViewModel
     
     init(manager: TestDataManager, songInstEnt: SongInstanceEntity, dismiss: Binding<Bool>) {
         self.manager = manager

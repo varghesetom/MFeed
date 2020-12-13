@@ -45,13 +45,15 @@ struct UserBox: View {
                         .foregroundColor(.white)
                         .font(.largeTitle)
                         .bold()
+                        .allowsTightening(true)
+                        .minimumScaleFactor(0.7)
                     if self.userProfile.isMainUser || self.userProfile.isFriendOfMainUser {
                         Text("\(self.userProfile.user.user_bio!)")
                             .foregroundColor(.white)
                             .font(.subheadline)
                             .italic()
-                            .minimumScaleFactor(0.5)
                             .allowsTightening(true)
+                            .minimumScaleFactor(0.5)
                     }
                     Spacer()
                     Spacer()
@@ -112,12 +114,10 @@ struct GenreSeekingButton: View {
             if self.userProfile.isMainUser {
                 if self.didToggle {  // display effect was on when clicked so remove genre relationship
                     if self.userProfile.checkIfUserAlreadyHasGenre(genreName: self.genre) {
-                        print("User did toggle genre and now removing")
                         self.userProfile.removeGenreRelationships(genreName: self.genre)
                     }
                 } else {  // display effect was off and clicked so add the relationship
                     if !self.userProfile.checkIfUserAlreadyHasGenre(genreName: self.genre) { // check if already has genre before needing to add
-                        print("User did not toggle genre so adding relationship")
                         let userEnt = self.userProfile.TDManager.getUser(self.userProfile.user.id.uuidString)
                         let genreEnt = self.userProfile.TDManager.getGenreEntity(genre: Genre(genre: self.genre))
                         self.userProfile.TDManager.userToggleGenre(user: userEnt!, genreEntity: genreEnt!)
@@ -139,9 +139,8 @@ struct GenreSeekingButton: View {
     
 }
 
-
-// will contain the most recent music tweet (which also means including a date attribute...) and Stash, Friends, and Edit buttons
 struct BottomHalfOfProfile: View {
+    // will contain the most recent music tweet and Stash, Friends, and Edit buttons
     @State var isStashSheet = false
     @State var isFriendSheet = false
     @State var isFollowerSheet = false
@@ -184,6 +183,7 @@ struct ProfileRecentSongView: View {
     var userProfile: ProfileViewModel
     
     var body: some View {
+        
         VStack {
         Text("Recent Song")
             .foregroundColor(.white)
@@ -193,6 +193,7 @@ struct ProfileRecentSongView: View {
             Text("No recently listened to song")
         } else {
             MusicTweet(self.userProfile.TDManager, songInstEnt: self.userProfile.TDManager.getRecentlyListenedSongFromUser(self.userProfile.user.id.uuidString)![0], Alignment.bottomLeading)
+                .environmentObject(LikeViewModel(self.userProfile.TDManager, self.userProfile.TDManager.getRecentlyListenedSongFromUser(self.userProfile.user.id.uuidString)![0]))
                 .scaleEffect(0.85)
             }
         }

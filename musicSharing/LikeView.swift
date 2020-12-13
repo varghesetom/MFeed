@@ -40,7 +40,7 @@ struct NumberText: View {
     var body: some View {
         VStack(alignment: .center) {
             Text("\(numLikes)")
-                .font(.system(size: 50, weight: .bold, design: .rounded))
+                .font(.system(size: 75, weight: .bold, design: .rounded))
                 .allowsHitTesting(true)
                 .minimumScaleFactor(0.5)
                 .foregroundColor(Color(.red))
