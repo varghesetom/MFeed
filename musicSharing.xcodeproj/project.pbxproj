@@ -37,14 +37,10 @@
 		93E8D91425876777003A8558 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E8D8F625876777003A8558 /* Comment.swift */; };
 		93E8D91525876777003A8558 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E8D8F725876777003A8558 /* User.swift */; };
 		93E8D91625876777003A8558 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E8D8F725876777003A8558 /* User.swift */; };
-		93E8D91725876777003A8558 /* CoreRelationshipDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E8D8F825876777003A8558 /* CoreRelationshipDataManager.swift */; };
-		93E8D91825876777003A8558 /* CoreRelationshipDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E8D8F825876777003A8558 /* CoreRelationshipDataManager.swift */; };
-		93E8D91925876777003A8558 /* CoreDataRetrievalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E8D8F925876777003A8558 /* CoreDataRetrievalManager.swift */; };
-		93E8D91A25876777003A8558 /* CoreDataRetrievalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E8D8F925876777003A8558 /* CoreDataRetrievalManager.swift */; };
 		93E8D91B25876777003A8558 /* TestDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E8D8FA25876777003A8558 /* TestDataManager.swift */; };
 		93E8D91C25876777003A8558 /* TestDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E8D8FA25876777003A8558 /* TestDataManager.swift */; };
+		93E8D91E25880E29003A8558 /* songs.json in Resources */ = {isa = PBXBuildFile; fileRef = 93E8D91D25880E29003A8558 /* songs.json */; };
 		93F2D7802575F3DB004FDDD3 /* users.json in Resources */ = {isa = PBXBuildFile; fileRef = 93F2D77F2575F3DA004FDDD3 /* users.json */; };
-		93F2D7822575F6A1004FDDD3 /* songs.json in Resources */ = {isa = PBXBuildFile; fileRef = 93F2D7812575F6A1004FDDD3 /* songs.json */; };
 		93F2D78625761D38004FDDD3 /* song_instances.json in Resources */ = {isa = PBXBuildFile; fileRef = 93F2D78525761D38004FDDD3 /* song_instances.json */; };
 		93F2D7AD2579A5F4004FDDD3 /* musicSharingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F2D7AC2579A5F4004FDDD3 /* musicSharingTests.swift */; };
 		93F2D7B52579B6FE004FDDD3 /* CoreDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F2D7B42579B6FD004FDDD3 /* CoreDataTests.swift */; };
@@ -83,11 +79,9 @@
 		93E8D8F525876777003A8558 /* Genre.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Genre.swift; sourceTree = "<group>"; };
 		93E8D8F625876777003A8558 /* Comment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		93E8D8F725876777003A8558 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
-		93E8D8F825876777003A8558 /* CoreRelationshipDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreRelationshipDataManager.swift; sourceTree = "<group>"; };
-		93E8D8F925876777003A8558 /* CoreDataRetrievalManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataRetrievalManager.swift; sourceTree = "<group>"; };
 		93E8D8FA25876777003A8558 /* TestDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestDataManager.swift; sourceTree = "<group>"; };
+		93E8D91D25880E29003A8558 /* songs.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = songs.json; sourceTree = "<group>"; };
 		93F2D77F2575F3DA004FDDD3 /* users.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = users.json; sourceTree = "<group>"; };
-		93F2D7812575F6A1004FDDD3 /* songs.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = songs.json; sourceTree = SOURCE_ROOT; };
 		93F2D78525761D38004FDDD3 /* song_instances.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = song_instances.json; sourceTree = "<group>"; };
 		93F2D789257731C9004FDDD3 /* schoolProject v2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "schoolProject v2.xcdatamodel"; sourceTree = "<group>"; };
 		93F2D79025799F97004FDDD3 /* musicSharingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = musicSharingTests.swift; sourceTree = "<group>"; };
@@ -157,8 +151,6 @@
 				93E8D8F525876777003A8558 /* Genre.swift */,
 				93E8D8F625876777003A8558 /* Comment.swift */,
 				93E8D8F725876777003A8558 /* User.swift */,
-				93E8D8F825876777003A8558 /* CoreRelationshipDataManager.swift */,
-				93E8D8F925876777003A8558 /* CoreDataRetrievalManager.swift */,
 				93E8D8FA25876777003A8558 /* TestDataManager.swift */,
 			);
 			name = Models;
@@ -168,8 +160,8 @@
 		93F2D77E2575F39E004FDDD3 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				93E8D91D25880E29003A8558 /* songs.json */,
 				93F2D77F2575F3DA004FDDD3 /* users.json */,
-				93F2D7812575F6A1004FDDD3 /* songs.json */,
 				93F2D78525761D38004FDDD3 /* song_instances.json */,
 			);
 			path = Resources;
@@ -329,11 +321,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93E8D91E25880E29003A8558 /* songs.json in Resources */,
 				93F2D7802575F3DB004FDDD3 /* users.json in Resources */,
 				93FE781325666A69009D8C4F /* LaunchScreen.storyboard in Resources */,
 				93FE781025666A69009D8C4F /* Preview Assets.xcassets in Resources */,
 				93FE780D25666A69009D8C4F /* Assets.xcassets in Resources */,
-				93F2D7822575F6A1004FDDD3 /* songs.json in Resources */,
 				93F2D78625761D38004FDDD3 /* song_instances.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -351,11 +343,9 @@
 				93F2D7B52579B6FE004FDDD3 /* CoreDataTests.swift in Sources */,
 				93E8D90A25876777003A8558 /* ProfileViewModels.swift in Sources */,
 				93E8D91C25876777003A8558 /* TestDataManager.swift in Sources */,
-				93E8D91A25876777003A8558 /* CoreDataRetrievalManager.swift in Sources */,
 				93E8D90425876777003A8558 /* SharedInstanceView.swift in Sources */,
 				93E8D8FE25876777003A8558 /* ProfileView.swift in Sources */,
 				93E8D91625876777003A8558 /* User.swift in Sources */,
-				93E8D91825876777003A8558 /* CoreRelationshipDataManager.swift in Sources */,
 				93E8D90025876777003A8558 /* LikeView.swift in Sources */,
 				93E8D90625876777003A8558 /* ContentView.swift in Sources */,
 				93E8D91225876777003A8558 /* Genre.swift in Sources */,
@@ -373,7 +363,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				93E8D90325876777003A8558 /* SharedInstanceView.swift in Sources */,
-				93E8D91925876777003A8558 /* CoreDataRetrievalManager.swift in Sources */,
 				93E8D8FF25876777003A8558 /* LikeView.swift in Sources */,
 				93E8D90125876777003A8558 /* NewsFeedView.swift in Sources */,
 				93E8D8FB25876777003A8558 /* ConvoView.swift in Sources */,
@@ -390,7 +379,6 @@
 				93E8D90725876777003A8558 /* MusicTweetViewModel.swift in Sources */,
 				93E8D91525876777003A8558 /* User.swift in Sources */,
 				930BCDF2257CB64B00C87185 /* Styles.swift in Sources */,
-				93E8D91725876777003A8558 /* CoreRelationshipDataManager.swift in Sources */,
 				93E8D8FD25876777003A8558 /* ProfileView.swift in Sources */,
 				93FE780625666A60009D8C4F /* SceneDelegate.swift in Sources */,
 			);
