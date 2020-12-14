@@ -16,6 +16,8 @@
 		93B8B00C257EE5FE00560061 /* SongInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B8B00B257EE5FE00560061 /* SongInstance.swift */; };
 		93B8B012257F323900560061 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B8B011257F323900560061 /* Comment.swift */; };
 		93B8B014257F76B100560061 /* LikeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B8B013257F76B100560061 /* LikeView.swift */; };
+		93CE31552585D67C0008D359 /* MusicTweetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93CE31542585D67C0008D359 /* MusicTweetViewModel.swift */; };
+		93E8D8D825875E5B003A8558 /* ConvoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E8D8D725875E5B003A8558 /* ConvoViewModel.swift */; };
 		93F2D777256F8722004FDDD3 /* CoreDataRetrievalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F2D776256F8722004FDDD3 /* CoreDataRetrievalManager.swift */; };
 		93F2D77B256F8782004FDDD3 /* TestDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F2D77A256F8782004FDDD3 /* TestDataManager.swift */; };
 		93F2D77D256F8887004FDDD3 /* CoreRelationshipDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F2D77C256F8887004FDDD3 /* CoreRelationshipDataManager.swift */; };
@@ -50,13 +52,15 @@
 /* Begin PBXFileReference section */
 		930BCDEF257C42FC00C87185 /* SharedInstanceViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedInstanceViewTests.swift; sourceTree = "<group>"; };
 		930BCDF1257CB64A00C87185 /* Styles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Styles.swift; sourceTree = "<group>"; };
-		930BCDF3257CBA5000C87185 /* ProfileViewModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProfileViewModels.swift; path = musicSharing/ProfileViewModels.swift; sourceTree = SOURCE_ROOT; };
+		930BCDF3257CBA5000C87185 /* ProfileViewModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProfileViewModels.swift; path = musicSharing/ViewModels/ProfileViewModels.swift; sourceTree = SOURCE_ROOT; };
 		93B8B005257E279400560061 /* ConvoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvoView.swift; sourceTree = "<group>"; };
 		93B8B007257EE59D00560061 /* Genre.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Genre.swift; sourceTree = "<group>"; };
 		93B8B009257EE5BD00560061 /* Song.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
 		93B8B00B257EE5FE00560061 /* SongInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongInstance.swift; sourceTree = "<group>"; };
 		93B8B011257F323900560061 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Comment.swift; path = musicSharing/Comment.swift; sourceTree = SOURCE_ROOT; };
 		93B8B013257F76B100560061 /* LikeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikeView.swift; sourceTree = "<group>"; };
+		93CE31542585D67C0008D359 /* MusicTweetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MusicTweetViewModel.swift; path = musicSharing/MusicTweetViewModel.swift; sourceTree = SOURCE_ROOT; };
+		93E8D8D725875E5B003A8558 /* ConvoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ConvoViewModel.swift; path = musicSharing/ConvoViewModel.swift; sourceTree = SOURCE_ROOT; };
 		93F2D776256F8722004FDDD3 /* CoreDataRetrievalManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataRetrievalManager.swift; sourceTree = "<group>"; };
 		93F2D77A256F8782004FDDD3 /* TestDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDataManager.swift; sourceTree = "<group>"; };
 		93F2D77C256F8887004FDDD3 /* CoreRelationshipDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreRelationshipDataManager.swift; sourceTree = "<group>"; };
@@ -103,6 +107,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		93CE31512585D5ED0008D359 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				93E8D8D725875E5B003A8558 /* ConvoViewModel.swift */,
+				93CE31542585D67C0008D359 /* MusicTweetViewModel.swift */,
+				930BCDF3257CBA5000C87185 /* ProfileViewModels.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 		93F2D77E2575F39E004FDDD3 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -156,6 +170,7 @@
 			isa = PBXGroup;
 			children = (
 				93FE781A25666C4D009D8C4F /* Model */,
+				93CE31512585D5ED0008D359 /* ViewModels */,
 				93FE780325666A60009D8C4F /* AppDelegate.swift */,
 				93FE780525666A60009D8C4F /* SceneDelegate.swift */,
 				93FE780A25666A60009D8C4F /* ContentView.swift */,
@@ -187,7 +202,6 @@
 			isa = PBXGroup;
 			children = (
 				93B8B011257F323900560061 /* Comment.swift */,
-				930BCDF3257CBA5000C87185 /* ProfileViewModels.swift */,
 				93B8B007257EE59D00560061 /* Genre.swift */,
 				93B8B009257EE5BD00560061 /* Song.swift */,
 				93B8B00B257EE5FE00560061 /* SongInstance.swift */,
@@ -315,6 +329,7 @@
 			files = (
 				93B8B006257E279400560061 /* ConvoView.swift in Sources */,
 				93B8B014257F76B100560061 /* LikeView.swift in Sources */,
+				93E8D8D825875E5B003A8558 /* ConvoViewModel.swift in Sources */,
 				93B8B00C257EE5FE00560061 /* SongInstance.swift in Sources */,
 				93F2D777256F8722004FDDD3 /* CoreDataRetrievalManager.swift in Sources */,
 				93FE78262566F51D009D8C4F /* ProfileView.swift in Sources */,
@@ -332,6 +347,7 @@
 				93B8B00A257EE5BD00560061 /* Song.swift in Sources */,
 				93F2D77B256F8782004FDDD3 /* TestDataManager.swift in Sources */,
 				93FE780625666A60009D8C4F /* SceneDelegate.swift in Sources */,
+				93CE31552585D67C0008D359 /* MusicTweetViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

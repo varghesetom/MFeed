@@ -192,8 +192,7 @@ struct ProfileRecentSongView: View {
         if self.mostRecentSong.count == 0 {
             Text("No recently listened to song")
         } else {
-            MusicTweet(self.userProfile.TDManager, songInstEnt: self.userProfile.TDManager.getRecentlyListenedSongFromUser(self.userProfile.user.id.uuidString)![0], Alignment.bottomLeading)
-                .environmentObject(LikeViewModel(self.userProfile.TDManager, self.userProfile.TDManager.getRecentlyListenedSongFromUser(self.userProfile.user.id.uuidString)![0]))
+            MusicTweet(MusicTweetViewModel(self.userProfile.TDManager, self.userProfile.TDManager.getRecentlyListenedSongFromUser(self.userProfile.user.id.uuidString)![0]), Alignment.bottomLeading)
                 .scaleEffect(0.85)
             }
         }

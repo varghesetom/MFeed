@@ -25,7 +25,7 @@ struct ScrollTweets: View {
                 ScrollView(.vertical) {
                     VStack(spacing: 50) {
                         ForEach(songInstanceEntities, id: \.self) {
-                            MusicTweet(self.TDManager, songInstEnt: $0).environmentObject(LikeViewModel(self.TDManager, $0))
+                            MusicTweet(MusicTweetViewModel(self.TDManager, $0))
                         }
                     }
                 }
@@ -49,19 +49,15 @@ struct MusicTweet: View {
     @State var alignment = Alignment.center
     @State var showProfile = false
     @State var openSongLink = false
-    @EnvironmentObject var lvModel: LikeViewModel
-    var songInstEnt: SongInstanceEntity
-    var TDManager: TestDataManager
+    @ObservedObject var mtModel: MusicTweetViewModel
     
-    init(_ manager: TestDataManager, songInstEnt: SongInstanceEntity, _ alignment: Alignment = Alignment.center) {
-        self.TDManager = manager
-        self.songInstEnt = songInstEnt
-        _alignment = .init(initialValue: alignment)
-        
+    init(_ mtModel: MusicTweetViewModel, _ alignment: Alignment = Alignment.center) {
+        self.mtModel = mtModel
+        _alignment = .init(initialValue: alignment)        
     }
     
     var body: some View {
-        let songInst = SongInstance(instanceEntity: songInstEnt)
+        let songInst = SongInstance(instanceEntity: self.mtModel.songInstEnt)
         return VStack(alignment: .center, spacing: 0) {
             HStack() {
                 Spacer()
@@ -70,10 +66,10 @@ struct MusicTweet: View {
                 }) {
                     Text("\(songInst.playedBy.name)").allowsTightening(true).minimumScaleFactor(0.7)
                 }.sheet(isPresented: $showProfile) {
-                    if songInst.playedBy.id == User(userEntity: self.TDManager.fetchMainUser()!).id {
-                        ProfileView(userProfile: ProfileViewModel(self.TDManager, User(userEntity: self.TDManager.fetchMainUser()!)))
+                    if songInst.playedBy.id == User(userEntity: self.mtModel.TDManager.fetchMainUser()!).id {
+                        ProfileView(userProfile: ProfileViewModel(self.mtModel.TDManager, User(userEntity: self.mtModel.TDManager.fetchMainUser()!)))
                     } else {
-                        ProfileView(userProfile: ProfileViewModel(self.TDManager, songInst.playedBy))
+                        ProfileView(userProfile: ProfileViewModel(self.mtModel.TDManager, songInst.playedBy))
                     }
                 }
                 Spacer()
@@ -84,113 +80,139 @@ struct MusicTweet: View {
                     .alignmentGuide(.center) { d in d[.trailing]}
                 Spacer()
                 Spacer()
-                if self.lvModel.numLikes > 0 {
-                    LikeView(numLikes: self.lvModel.numLikes)
+                if self.mtModel.numLikes > 0 {
+                    LikeView(numLikes: self.mtModel.numLikes)
+                }
+                if songInst.playedBy.id == User(userEntity: self.mtModel.TDManager.fetchMainUser()!).id {
+                    DeleteMusicTweet(songInst: songInst)
                 }
             }
-            .frame(width: 370, height: 50, alignment: .center) // red rectangle gets its own frame -- easier than ZStack
+            .frame(width: 370, height: 50, alignment: .center)
             .background(Color.red)
-            HStack(alignment: .center, spacing: 15) {
-                Image("\(songInst.playedBy.avatar!)")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 100, height: 80, alignment: .center)
-                    .padding(.leading, 20)   // affected by padding with the buttons
-                VStack(alignment: .leading) {
-                    Button(action: {
-                        if let url = URL(string: songInst.songLink) {
-                            UIApplication.shared.open(url)
-                        }
-                    }) {
-                        Text("\(songInst.instanceOf.name)")
-                            .foregroundColor(.blue)
-                            .italic()
-                            .bold()
-                            .minimumScaleFactor(0.5)
-                            .allowsTightening(true)
-                    }
-                    Text("\(songInst.instanceOf.artist ?? "Unknown")")
-                        .foregroundColor(.black)
-                        .italic()
-                        .bold()
-                        .minimumScaleFactor(0.5)
-                        .allowsTightening(true)
-                    Text("\(songInst.instanceOf.genre ?? "Unknown")")
-                        .foregroundColor(.black)
-                        .fontWeight(.medium)
-                        .italic()
-                        .minimumScaleFactor(0.5)
-                        .allowsTightening(true)
-                }.padding(.leading, 30)
-            }
-            .frame(width: width, height: height, alignment: alignment)  // the orange rectangle will have its own frame to avoid ZStack
-            .background(Color.orange)
+            MusicTweetBodyView(width: width, height: height, alignment: alignment).environmentObject(self.mtModel)
             HStack(spacing: 10) {
                 Spacer()
-                TweetButton(self.TDManager, "Stash", songInstEnt).environmentObject(self.lvModel)
+                TweetButton(actionName: "Stash", actionFunction: self.mtModel.stashCurrentTweet).environmentObject(self.mtModel)
                 Spacer()
-                TweetButton(self.TDManager, "Convo", songInstEnt).environmentObject(self.lvModel)
+                TweetButton(actionName: "Convo").environmentObject(self.mtModel)
                 Spacer()
-                TweetButton(self.TDManager, "Like", songInstEnt).environmentObject(self.lvModel)
+                TweetButton(actionName: "Like", actionFunction: self.mtModel.addLikeAndUpdate).environmentObject(self.mtModel)
                 Spacer()
             }
             .frame(width: width, height: 70, alignment: alignment)
             .background(Color.orange)
         }.onAppear {
-            self.lvModel.getLikes()
+            self.mtModel.getLikes()
         }
     }
 }
 
-struct TweetButton: View {
-    var action: String
-    var songInstanceEntity: SongInstanceEntity
-    var TDManager: TestDataManager
-    @State var showConvo = false
-    @EnvironmentObject var lvModel: LikeViewModel
+struct MusicTweetBodyView: View {
+    @State var width = CGFloat(370)
+    @State var height = CGFloat(180)
+    @State var alignment = Alignment.center
+    @EnvironmentObject var mtModel: MusicTweetViewModel
     
-    init(_ manager: TestDataManager, _ action: String, _ songInstanceEntity: SongInstanceEntity) {
-        self.TDManager = manager
-        self.action = action
-        self.songInstanceEntity = songInstanceEntity
+    var body: some View {
+        let songInst = SongInstance(instanceEntity: self.mtModel.songInstEnt)
+        return HStack(alignment: .center, spacing: 15) {
+            Image("\(songInst.playedBy.avatar!)")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 100, height: 80, alignment: .center)
+                .padding(.leading, 20)   // affected by padding with the buttons
+            VStack(alignment: .leading) {
+                Button(action: {
+                    if let url = URL(string: songInst.songLink) {
+                        UIApplication.shared.open(url)
+                    }
+                }) {
+                    Text("\(songInst.instanceOf.name)")
+                        .foregroundColor(.blue)
+                        .italic()
+                        .bold()
+                        .minimumScaleFactor(0.5)
+                        .allowsTightening(true)
+                }
+                Text("\(songInst.instanceOf.artist ?? "Unknown")")
+                    .foregroundColor(.black)
+                    .italic()
+                    .bold()
+                    .minimumScaleFactor(0.5)
+                    .allowsTightening(true)
+                Text("\(songInst.instanceOf.genre ?? "Unknown")")
+                    .foregroundColor(.black)
+                    .fontWeight(.medium)
+                    .italic()
+                    .minimumScaleFactor(0.5)
+                    .allowsTightening(true)
+            }.padding(.leading, 30)
+        }
+        .frame(width: width, height: height, alignment: alignment)  // the orange rectangle will have its own frame to avoid ZStack
+        .background(Color.orange)
     }
+}
+
+struct TweetButton: View {
+    var actionName: String
+    var actionFunction: (() -> Void)? = nil
+    @EnvironmentObject var mtModel: MusicTweetViewModel
+    @State var showConvo = false
     
     var body: some View {
         Button(action: {
-            print("\(self.action) clicked")  // add to stash action
-            if self.action == "Convo" {
+            print("\(self.actionName) clicked")  // add to stash action
+            if self.actionName == "Convo" {
                 self.showConvo.toggle()
             }
-            self.buttonFunctionality()
+            if let function = self.actionFunction {
+                function()
+                print("function: \(String(describing: function))")
+            }
         }) {
-            Text("\(action)")
+            Text("\(actionName)")
                 .font(.caption)
                 .minimumScaleFactor(0.7)
                 .allowsTightening(true)
         }.buttonStyle(TweetButtonBackground())
          .sheet(isPresented: $showConvo) {
-            ConvoView(manager: self.TDManager, songInstEnt: self.songInstanceEntity, dismiss: self.$showConvo).environmentObject(self.lvModel)
+            ConvoView(self.mtModel.TDManager, self.mtModel.songInstEnt, dismiss: self.$showConvo).environmentObject(self.mtModel)
         }
     }
     
-    func buttonFunctionality() -> Void {
-        switch self.action {
-        case "Stash":
-            print("Stashed")
-            self.TDManager.userStashesSong(user: self.TDManager.fetchMainUser()!, songInstance: songInstanceEntity)
-        case "Convo":
-            print("Convoed")
-        case "Like":
-            print("Before adding like relationship: \(self.lvModel.numLikes)")
-            self.TDManager.userLikesSong(user: self.TDManager.fetchMainUser()!, songInstance: songInstanceEntity)
-            self.lvModel.getLikes()
-            print("Current # of likes: \(self.lvModel.numLikes)")
-        default:
-            fatalError("Need proper action argument for TweetButton functionality")
-        }
-    }
+//    func buttonFunctionality() -> Void {
+//        switch self.actionName {
+//        case "Stash":
+//            self.mtModel.stashCurrentTweet()
+//            print("Stashed")
+//        case "Convo":
+//            print("Convoed")
+//        case "Like":
+//            print("Before adding like relationship: \(self.mtModel.lvModel.numLikes)")
+//            self.mtModel.addLikeAndUpdate()
+//            print("Current # of likes: \(self.mtModel.lvModel.numLikes)")
+//        default:
+//            fatalError("Need proper action argument for TweetButton functionality")
+//        }
+//    }
 }
 
+struct DeleteMusicTweet: View {
+    @State var songInst: SongInstance
+    @State var promptDelete = false
+    
+    var body: some View {
+        Button(action: {
+            self.promptDelete.toggle()
+        }) {
+            Image(systemName: "trash")
+        }.alert(isPresented: $promptDelete) {
+            Alert(title: Text("Delete"), message: Text("Are you sure you want to delete your song?"), primaryButton: .cancel(), secondaryButton: .destructive(Text("Delete"), action: {
+                    
+            }))
+        }.padding(.leading)
+    }
+}
 
 
 // helper function for formatting dates

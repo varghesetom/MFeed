@@ -516,6 +516,20 @@ class TestDataManager {
         }
     }
     
+    func deleteSongInstance(songInstID: UUID) -> Bool {
+        let request: NSFetchRequest<SongInstanceEntity> = SongInstanceEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "instance_id == %@", songInstID as CVarArg)
+        request.sortDescriptors = [NSSortDescriptor(key: "song_name", ascending: true)]
+        do {
+            let songInst = try self.context!.fetch(request)
+            songInst.forEach { self.context!.delete($0) }
+            return true
+        } catch {
+            print("Error deleting specific song instance \(songInstID). Error: \(error.localizedDescription)")
+            return false
+        }
+    }
+    
     // MARK: RELATIONSHIP HELPERS
     
      func userCommentsOnSong(user: UserEntity, comment: CommentEntity) {

@@ -2,9 +2,7 @@
 //  Profile.swift
 //  musicSharing
 //
-//  Created by Varghese Thomas on 06/12/2020.
-//  Copyright © 2020 Varghese Thomas. All rights reserved.
-//
+
 
 import Foundation
 import SwiftUI
@@ -99,8 +97,7 @@ class ProfileViewModel: ObservableObject {
                 print("\nUnknown genre\n")
             }
         }
-//        print("User: \(self.user.name)'s genres: \(self.toggledGenres)")
-//        print("TOGGLED: \(toggleRock), \(toggleClassical), \(toggleTechno), \(toggleHipHop), \(toggleCountry), \(toggleReligious)")
+
     }
     
     func nonMainUserDidInitialToggle() {

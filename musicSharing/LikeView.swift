@@ -6,34 +6,19 @@
 
 import SwiftUI
 
-class LikeViewModel: ObservableObject {
-    var manager: TestDataManager
-    var songInstEnt: SongInstanceEntity
-    @Published var numLikes = 0
-    
-    init(_ manager: TestDataManager, _ songInstEnt: SongInstanceEntity) {
-        self.manager = manager
-        self.songInstEnt = songInstEnt
-    }
-    
-    func getLikes() {
-        self.numLikes = self.manager.getLikesForSongInstID(songInstID: songInstEnt.instance_id! )
-    }
-}
-
 struct LikeView: View {
     
     @State var numLikes: Int
     
     var body: some View {
         Heart()
-            .overlay(NumberText(numLikes: numLikes))
+            .overlay(LikeNumberText(numLikes: numLikes))
             .scaleEffect(0.25)
     }
 }
 
 
-struct NumberText: View {
+struct LikeNumberText: View {
     
     @State var numLikes: Int
     
