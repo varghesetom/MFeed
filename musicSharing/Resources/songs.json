@@ -1,0 +1,41 @@
+[
+    {
+        "id": "eddcae71-bd1e-4c7a-bd65-8ae821d2d66e",
+        "name": "Adagio for Strings",
+        "artist" : "Samuel Barber",
+        "genre" : "Classical",
+        "image" : "northern_lights",
+        "songLength" : 4.23
+    },
+    {
+        "id": "07bb2696-c31c-421d-a8ad-deeb55fe2f56",
+        "name": "You're the Best Around",
+        "artist" : "Joe Esposito",
+        "genre" : "Rock",
+        "image" : "northern_lights",
+        "songLength" : 3.14
+    },
+    {
+        "id": "6948835d-9e48-4b23-9716-be803c68d6d2",
+        "name": "Tyler Herro",
+        "genre" : "HipHop",
+        "image" : "northern_lights",
+        "songLength" : 2.36
+    },
+    {
+        "id": "cbc93f50-a6ef-4f4e-bc85-7139fa72e767",
+        "name": "The Devil Went Down to Georgia",
+        "artist" : "The Charlie Daniels Band",
+        "genre" : "Country",
+        "image" : "northern_lights",
+        "songLength" : 3.34
+    },
+    {
+        "id": "ce3b22a4-cb15-4c3f-bef9-2b422492caf2",
+        "name": "Son of Fjord",
+        "artist" : "Jesper Kyd",
+        "genre" : "Classical",
+        "image" : "northern_lights",
+        "songLength" : 4.15
+    }
+]
