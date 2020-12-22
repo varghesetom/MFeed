@@ -22,13 +22,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         
         let context = CoreDataStoreContainer.shared?.backgroundContext
-//        context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         context?.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
 
         // Create the SwiftUI view and set the context as the value for the managedObjectContext environment keyPath.
-        // Add `@Environment(\.managedObjectContext)` in the views that will need the context.
-        let contentView = ContentView().environment(\.managedObjectContext, context!)
 
+//        let contentView = ContentView().environment(\.managedObjectContext, context!)
+        let contentView = LoginView()
+            .environmentObject(UserAuth())
+            .environment(\.managedObjectContext, context!)
+        
         // Use a UIHostingController as window root view controller.
         if let windowScene = scene as? UIWindowScene {
             let window = UIWindow(windowScene: windowScene)
@@ -66,13 +68,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // to restore the scene back to its current state.
 
         // Save changes in the application's managed object context when the application transitions to the background.
-//        (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
         do {
             try CoreDataStoreContainer.shared?.backgroundContext.save()
         } catch {
             print("Couldn't handle saving when changing scenes")
         }
-//        CoreDataStoreContainer().saveContext()
     }
 
 

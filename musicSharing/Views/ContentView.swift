@@ -50,6 +50,7 @@ struct ContentView: View {
 //        self.user = User(userEntity: TDManager.getUser("93d95053-e625-4e60-a48c-fb04421f0d9f")!)
 //    }
     @State var selection = 1
+    @Environment(\.managedObjectContext) var context
     var body: some View {
         AppView(selection: $selection)
 //        Text("f")
@@ -92,32 +93,3 @@ struct AppView: View {
     }
 }
     
-// HACK with SWIFT example of orienting views
-struct ExampleOrientationView: View {
-    
-    @State private var layoutVertically = false
-    
-    var body: some View {
-        Group {
-            if layoutVertically {
-                VStack {
-                    Group {
-                        Text("Name: Paul")
-                        Text("Country: England")
-                        Text("Pets: Luna, Arya, and Toby")
-                    }
-                }
-            } else {
-                HStack {
-                    Group {
-                        Text("Name: Paul")
-                        Text("Country: England")
-                        Text("Pets: Luna, Arya, and Toby")
-                    }
-                }
-            }
-        }.onTapGesture {
-            self.layoutVertically.toggle()
-        }
-    }
-}

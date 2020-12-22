@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		930BCDF0257C42FD00C87185 /* SharedInstanceViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 930BCDEF257C42FC00C87185 /* SharedInstanceViewTests.swift */; };
 		930BCDF2257CB64B00C87185 /* Styles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 930BCDF1257CB64A00C87185 /* Styles.swift */; };
+		93A8F2872591BC2300639FC4 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A8F2862591BC2300639FC4 /* LoginView.swift */; };
 		93E8D8FB25876777003A8558 /* ConvoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E8D8E825876776003A8558 /* ConvoView.swift */; };
 		93E8D8FC25876777003A8558 /* ConvoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E8D8E825876776003A8558 /* ConvoView.swift */; };
 		93E8D8FD25876777003A8558 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E8D8E925876776003A8558 /* ProfileView.swift */; };
@@ -65,6 +66,7 @@
 /* Begin PBXFileReference section */
 		930BCDEF257C42FC00C87185 /* SharedInstanceViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedInstanceViewTests.swift; sourceTree = "<group>"; };
 		930BCDF1257CB64A00C87185 /* Styles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Styles.swift; sourceTree = "<group>"; };
+		93A8F2862591BC2300639FC4 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		93E8D8E825876776003A8558 /* ConvoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConvoView.swift; sourceTree = "<group>"; };
 		93E8D8E925876776003A8558 /* ProfileView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		93E8D8EA25876776003A8558 /* LikeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LikeView.swift; sourceTree = "<group>"; };
@@ -127,6 +129,7 @@
 				93E8D8EB25876776003A8558 /* NewsFeedView.swift */,
 				93E8D8EC25876776003A8558 /* SharedInstanceView.swift */,
 				93E8D8ED25876776003A8558 /* ContentView.swift */,
+				93A8F2862591BC2300639FC4 /* LoginView.swift */,
 			);
 			name = Views;
 			path = musicSharing/Views;
@@ -380,6 +383,7 @@
 				93E8D91525876777003A8558 /* User.swift in Sources */,
 				930BCDF2257CB64B00C87185 /* Styles.swift in Sources */,
 				93E8D8FD25876777003A8558 /* ProfileView.swift in Sources */,
+				93A8F2872591BC2300639FC4 /* LoginView.swift in Sources */,
 				93FE780625666A60009D8C4F /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
