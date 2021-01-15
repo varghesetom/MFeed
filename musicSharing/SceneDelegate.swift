@@ -22,11 +22,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         
         let context = CoreDataStoreContainer.shared?.backgroundContext
-        context?.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+//        context?.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
 
         // Create the SwiftUI view and set the context as the value for the managedObjectContext environment keyPath.
 
-//        let contentView = ContentView().environment(\.managedObjectContext, context!)
         let contentView = LoginView()
             .environmentObject(UserAuth())
             .environment(\.managedObjectContext, context!)

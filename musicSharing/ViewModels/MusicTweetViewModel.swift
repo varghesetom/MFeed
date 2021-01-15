@@ -31,7 +31,7 @@ class MusicTweetViewModel: ObservableObject {
     }
     
     func stashCurrentTweet() -> Void{
-        self.TDManager.userStashesSong(user: self.TDManager.fetchMainUser()!, songInstance: songInstEnt)
+        self.TDManager.userStashesSong(user: self.TDManager.fetchMainUser()!, songInstEnt: songInstEnt)
     }
     
     func addLikeAndUpdate() -> Void {

@@ -84,7 +84,8 @@ struct MusicTweet: View {
                     LikeView(numLikes: self.mtModel.numLikes)
                 }
                 if songInst.playedBy.id == User(userEntity: self.mtModel.TDManager.fetchMainUser()!).id {
-                    DeleteMusicTweet(songInst: songInst)
+                    DeleteMusicTweet(songInst: songInst).environmentObject(self.mtModel)
+                        .padding(.trailing, 10)
                 }
             }
             .frame(width: 370, height: 50, alignment: .center)
@@ -116,11 +117,13 @@ struct MusicTweetBodyView: View {
     var body: some View {
         let songInst = SongInstance(instanceEntity: self.mtModel.songInstEnt)
         return HStack(alignment: .center, spacing: 15) {
+            Spacer()
             Image("\(songInst.playedBy.avatar!)")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width: 100, height: 80, alignment: .center)
+                .frame(width: 80, height: 100, alignment: .center)
                 .padding(.leading, 20)   // affected by padding with the buttons
+            Spacer()
             VStack(alignment: .leading) {
                 Button(action: {
                     if let url = URL(string: songInst.songLink) {
@@ -147,6 +150,8 @@ struct MusicTweetBodyView: View {
                     .minimumScaleFactor(0.5)
                     .allowsTightening(true)
             }.padding(.leading, 30)
+            .frame(width: 120, height: 100, alignment: .center)
+            Spacer()
         }
         .frame(width: width, height: height, alignment: alignment)  // the orange rectangle will have its own frame to avoid ZStack
         .background(Color.orange)
@@ -179,28 +184,12 @@ struct TweetButton: View {
             ConvoView(self.mtModel.TDManager, self.mtModel.songInstEnt, dismiss: self.$showConvo).environmentObject(self.mtModel)
         }
     }
-    
-//    func buttonFunctionality() -> Void {
-//        switch self.actionName {
-//        case "Stash":
-//            self.mtModel.stashCurrentTweet()
-//            print("Stashed")
-//        case "Convo":
-//            print("Convoed")
-//        case "Like":
-//            print("Before adding like relationship: \(self.mtModel.lvModel.numLikes)")
-//            self.mtModel.addLikeAndUpdate()
-//            print("Current # of likes: \(self.mtModel.lvModel.numLikes)")
-//        default:
-//            fatalError("Need proper action argument for TweetButton functionality")
-//        }
-//    }
 }
 
 struct DeleteMusicTweet: View {
     @State var songInst: SongInstance
     @State var promptDelete = false
-    
+    @EnvironmentObject var mtModel: MusicTweetViewModel
     var body: some View {
         Button(action: {
             self.promptDelete.toggle()
@@ -208,7 +197,7 @@ struct DeleteMusicTweet: View {
             Image(systemName: "trash")
         }.alert(isPresented: $promptDelete) {
             Alert(title: Text("Delete"), message: Text("Are you sure you want to delete your song?"), primaryButton: .cancel(), secondaryButton: .destructive(Text("Delete"), action: {
-                    
+                self.mtModel.deleteSongInstance()
             }))
         }.padding(.leading)
     }

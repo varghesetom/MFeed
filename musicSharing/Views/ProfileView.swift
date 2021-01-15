@@ -216,12 +216,35 @@ struct ProfileStashButtonView: View {
         }) {
             Text("Stash")
         }.sheet(isPresented: $isStashSheet) {
-            List {
-                ForEach(self.profileButtons.stashedSongInstances, id: \.self) {
-                    Text("Song: \($0.songName)")
+            NavigationView {
+                List {
+                    ForEach(self.profileButtons.stashedSongInstances, id: \.self) { songInst in
+                        Text("\(songInst.songName)")
+                            .foregroundColor(.blue)
+                            .minimumScaleFactor(0.5)
+                            .allowsTightening(true)
+                            .onTapGesture {
+                                if let url = URL(string: songInst.songLink) {
+                                    UIApplication.shared.open(url)
+                            }
+                        }
+                    }
+                    .onDelete(perform: self.deleteStashedSong)
                 }
             }
         }
+    }
+    
+    func deleteStashedSong(at offsets: IndexSet) {
+        if let elem = offsets.first {
+            print("elem: \(elem)")
+        }
+        print(offsets.first!)
+        let songInstAtIndex = self.profileButtons.stashedSongInstances[offsets.first!]
+        self.profileButtons.removeStashedSong(songInstToBeRemoved: songInstAtIndex)
+        self.profileButtons.stashedSongInstances.remove(atOffsets: offsets)
+        self.profileButtons.updateStashedSongs()
+
     }
 }
 

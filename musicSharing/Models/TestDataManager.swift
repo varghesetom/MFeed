@@ -568,14 +568,24 @@ class TestDataManager {
         }
     }
     
-    func userStashesSong(user: UserEntity, songInstance: SongInstanceEntity) {
-         user.addToStashes_this(songInstance)
+    func userStashesSong(user: UserEntity, songInstEnt: SongInstanceEntity) {
+         user.addToStashes_this(songInstEnt)
          do {
              try self.context!.save()
          } catch {
              print("Error adding stashed song relationship for user")
          }
      }
+    
+    func userRemovesStashedSong(user: UserEntity, songInstEnt: SongInstanceEntity) {
+        user.removeFromStashes_this(songInstEnt)
+        do {
+            try self.context!.save()
+            print("removed!")
+        } catch {
+            print("Error removing stashed song for user")
+        }
+    }
      
      func userListenedToSong(user: UserEntity, songInstance: SongInstanceEntity) {
          user.addToListened_to(songInstance)
@@ -595,7 +605,6 @@ class TestDataManager {
          }
      }
     
-     
      func userIsFriends(user: UserEntity, friend: UserEntity) {
          user.addToIs_friends_with(friend)
          do {

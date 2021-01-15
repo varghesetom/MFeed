@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		930BCDF0257C42FD00C87185 /* SharedInstanceViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 930BCDEF257C42FC00C87185 /* SharedInstanceViewTests.swift */; };
 		930BCDF2257CB64B00C87185 /* Styles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 930BCDF1257CB64A00C87185 /* Styles.swift */; };
+		9318CCBD25A7F7E000C3CAF5 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9318CCBC25A7F7E000C3CAF5 /* CloudKit.framework */; };
 		93A8F2872591BC2300639FC4 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A8F2862591BC2300639FC4 /* LoginView.swift */; };
 		93E8D8FB25876777003A8558 /* ConvoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E8D8E825876776003A8558 /* ConvoView.swift */; };
 		93E8D8FC25876777003A8558 /* ConvoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E8D8E825876776003A8558 /* ConvoView.swift */; };
@@ -66,6 +67,7 @@
 /* Begin PBXFileReference section */
 		930BCDEF257C42FC00C87185 /* SharedInstanceViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedInstanceViewTests.swift; sourceTree = "<group>"; };
 		930BCDF1257CB64A00C87185 /* Styles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Styles.swift; sourceTree = "<group>"; };
+		9318CCBC25A7F7E000C3CAF5 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		93A8F2862591BC2300639FC4 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		93E8D8E825876776003A8558 /* ConvoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConvoView.swift; sourceTree = "<group>"; };
 		93E8D8E925876776003A8558 /* ProfileView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
@@ -83,6 +85,7 @@
 		93E8D8F725876777003A8558 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		93E8D8FA25876777003A8558 /* TestDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestDataManager.swift; sourceTree = "<group>"; };
 		93E8D91D25880E29003A8558 /* songs.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = songs.json; sourceTree = "<group>"; };
+		93F18C9425A7ED4100316A98 /* musicSharing.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = musicSharing.entitlements; sourceTree = "<group>"; };
 		93F2D77F2575F3DA004FDDD3 /* users.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = users.json; sourceTree = "<group>"; };
 		93F2D78525761D38004FDDD3 /* song_instances.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = song_instances.json; sourceTree = "<group>"; };
 		93F2D789257731C9004FDDD3 /* schoolProject v2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "schoolProject v2.xcdatamodel"; sourceTree = "<group>"; };
@@ -114,12 +117,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9318CCBD25A7F7E000C3CAF5 /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9318CCBB25A7F7E000C3CAF5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9318CCBC25A7F7E000C3CAF5 /* CloudKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		93E8D8E725876776003A8558 /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -200,6 +212,7 @@
 				93F2D78F25799F97004FDDD3 /* musicSharingTests */,
 				93F2D7AB2579A5F4004FDDD3 /* musicSharingTests */,
 				93FE780125666A60009D8C4F /* Products */,
+				9318CCBB25A7F7E000C3CAF5 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -215,6 +228,7 @@
 		93FE780225666A60009D8C4F /* musicSharing */ = {
 			isa = PBXGroup;
 			children = (
+				93F18C9425A7ED4100316A98 /* musicSharing.entitlements */,
 				93FE780325666A60009D8C4F /* AppDelegate.swift */,
 				93FE780525666A60009D8C4F /* SceneDelegate.swift */,
 				930BCDF1257CB64A00C87185 /* Styles.swift */,
@@ -566,6 +580,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = musicSharing/musicSharing.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"musicSharing/Preview Content\"";
 				DEVELOPMENT_TEAM = TQ7AR27YAG;
@@ -575,7 +590,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.musicSharing;
+				PRODUCT_BUNDLE_IDENTIFIER = com.MFeed.musicSharing;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -586,6 +601,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = musicSharing/musicSharing.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"musicSharing/Preview Content\"";
 				DEVELOPMENT_TEAM = TQ7AR27YAG;
@@ -595,7 +611,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.musicSharing;
+				PRODUCT_BUNDLE_IDENTIFIER = com.MFeed.musicSharing;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
