@@ -208,7 +208,7 @@ struct ProfileRecentSongView: View {
 
 struct ProfileStashButtonView: View {
     @Binding var isStashSheet: Bool
-    var profileButtons: ProfileButtonsViewModel
+    @ObservedObject var profileButtons: ProfileButtonsViewModel
     var body: some View {
         Button(action: {
             self.isStashSheet.toggle()
@@ -236,15 +236,11 @@ struct ProfileStashButtonView: View {
     }
     
     func deleteStashedSong(at offsets: IndexSet) {
-        if let elem = offsets.first {
-            print("elem: \(elem)")
-        }
-        print(offsets.first!)
+        print("before deleting stashed: \(self.profileButtons.stashedSongInstances)")
         let songInstAtIndex = self.profileButtons.stashedSongInstances[offsets.first!]
-        self.profileButtons.removeStashedSong(songInstToBeRemoved: songInstAtIndex)
         self.profileButtons.stashedSongInstances.remove(atOffsets: offsets)
-        self.profileButtons.updateStashedSongs()
-
+        print("Song instance to be removed: \(songInstAtIndex)")
+        self.profileButtons.removeStashedSong(songInstToBeRemoved: songInstAtIndex)
     }
 }
 

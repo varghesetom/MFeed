@@ -154,7 +154,7 @@ class ProfileButtonsViewModel: ObservableObject {
     
     func updateStashedSongs() {
         if let userStashedSongEntities = self.userProfile.TDManager.getStashFromUser(self.userProfile.user.id.uuidString) {
-            self.stashedSongInstances.removeAll()
+//            self.stashedSongInstances.removeAll()
             self.stashedSongInstances = userStashedSongEntities.map {
                 SongInstance(instanceEntity: $0)
             }
@@ -186,13 +186,10 @@ class ProfileButtonsViewModel: ObservableObject {
     }
     
     func removeStashedSong(songInstToBeRemoved: SongInstance) {
-        // remove from stashed song arr displayed in UI
-        if let index = stashedSongInstances.firstIndex(of: songInstToBeRemoved) {
-            stashedSongInstances.remove(at: index)
-        }
         // remove stashed song from database
-        self.userProfile.TDManager.userRemovesStashedSong(user: self.userProfile.user.instantiateEntityFromExisting(), songInstEnt: songInstToBeRemoved.instantiateEntityFromExisting())
-        self.updateStashedSongs()
+        let userEnt = self.userProfile.TDManager.getUser(self.userProfile.user.id.uuidString)
+        let songInstEnt = self.userProfile.TDManager.getSongInstanceEntity(songInst: songInstToBeRemoved)
+        self.userProfile.TDManager.userRemovesStashedSong(userEnt: userEnt!, songInstEnt: songInstEnt!)
         print("current stashed songs: \(stashedSongInstances)")
     }
 }

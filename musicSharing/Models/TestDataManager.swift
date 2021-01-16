@@ -123,6 +123,19 @@ class TestDataManager {
         }
     }
     
+    func getSongInstanceEntity(songInst: SongInstance) ->SongInstanceEntity? {
+        let request: NSFetchRequest<SongInstanceEntity> = SongInstanceEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "instance_id == %@", songInst.id as CVarArg)
+        request.sortDescriptors = [NSSortDescriptor(key: "song_name", ascending: true)]
+        do {
+            let songInstEnt = try self.context!.fetch(request).first
+            return songInstEnt
+        } catch {
+            print("Couldn't get song instance entity for song inst")
+            return nil
+        }
+    }
+    
     func getAllGenreForUser(id: UUID, genreName: String) -> [Genre] {
         let genreEnts = self.getGenresForUser(id: id)
         var toggledGenres = [Genre]()
@@ -302,6 +315,8 @@ class TestDataManager {
         print("No song listens for user")
         return nil
     }
+    
+    
     
     // MARK: SAVE TEST DATA
     
@@ -559,15 +574,6 @@ class TestDataManager {
         }
     }
     
-    func userUntogglesGenre(user: UserEntity, genreEntity: GenreEntity) {
-        user.removeFromToggled_genre(genreEntity)
-        do {
-            try self.context!.save()
-        } catch {
-            print("Error unassigning genre to user")
-        }
-    }
-    
     func userStashesSong(user: UserEntity, songInstEnt: SongInstanceEntity) {
          user.addToStashes_this(songInstEnt)
          do {
@@ -577,8 +583,8 @@ class TestDataManager {
          }
      }
     
-    func userRemovesStashedSong(user: UserEntity, songInstEnt: SongInstanceEntity) {
-        user.removeFromStashes_this(songInstEnt)
+    func userRemovesStashedSong(userEnt: UserEntity, songInstEnt: SongInstanceEntity) {
+        userEnt.removeFromStashes_this(songInstEnt)
         do {
             try self.context!.save()
             print("removed!")
@@ -651,6 +657,15 @@ class TestDataManager {
              print("Error removing stashed song relationship for user")
          }
      }
+    
+    func userUntogglesGenre(user: UserEntity, genreEntity: GenreEntity) {
+        user.removeFromToggled_genre(genreEntity)
+        do {
+            try self.context!.save()
+        } catch {
+            print("Error unassigning genre to user")
+        }
+    }
 }
 
 // MARK: JSON DATA STRUCT
