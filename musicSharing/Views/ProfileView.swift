@@ -226,8 +226,8 @@ struct ProfileStashButtonView: View {
                             .onTapGesture {
                                 if let url = URL(string: songInst.songLink) {
                                     UIApplication.shared.open(url)
+                                }
                             }
-                        }
                     }
                     .onDelete(perform: self.deleteStashedSong)
                 }
@@ -236,17 +236,15 @@ struct ProfileStashButtonView: View {
     }
     
     func deleteStashedSong(at offsets: IndexSet) {
-        print("before deleting stashed: \(self.profileButtons.stashedSongInstances)")
         let songInstAtIndex = self.profileButtons.stashedSongInstances[offsets.first!]
         self.profileButtons.stashedSongInstances.remove(atOffsets: offsets)
-        print("Song instance to be removed: \(songInstAtIndex)")
         self.profileButtons.removeStashedSong(songInstToBeRemoved: songInstAtIndex)
     }
 }
 
 struct ProfileFriendsButtonView: View {
     @Binding var isFriendSheet: Bool
-    var profileButtons: ProfileButtonsViewModel
+    @ObservedObject var profileButtons: ProfileButtonsViewModel
     
     var body: some View {
         Button(action: {
@@ -255,12 +253,31 @@ struct ProfileFriendsButtonView: View {
         }) {
             Text("Friends")
         }.sheet(isPresented: $isFriendSheet) {
-            List {
-                ForEach(self.profileButtons.userFriends, id: \.self) {
-                    Text("Friend: \($0.name)")
+            NavigationView {
+                List {
+                    ForEach(self.profileButtons.userFriends, id: \.self) { friend in
+                        Text("Friend: \(friend.name)")
+                            .foregroundColor(.blue)
+                            .minimumScaleFactor(0.5)
+                            .allowsTightening(true)
+                            .onTapGesture {
+//                                Alert(title: Text("Accept Friend Request"),
+//                                      message: Text("Do you want to accept follow request? You'll both be able to see each other's profiles"),
+//                                      primaryButton: .cancel(),
+//                                      secondaryButton: .default(Text("Accept"), action: {
+//                                            // accept follow request
+//                                      })
+//                                )
+                            }
+                    }
+                    .onDelete(perform: self.deleteFriendRequest)
                 }
             }
         }
+    }
+    
+    func deleteFriendRequest(at offsets: IndexSet) {
+        
     }
 }
 
