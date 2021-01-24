@@ -227,6 +227,7 @@ struct ProfileStashButtonView: View {
                     }
                     .onDelete(perform: self.deleteStashedSong)
                 }
+                .navigationBarTitle("Stashed Songs")
             }
         }
     }
@@ -252,12 +253,12 @@ struct ProfileFriendsButtonView: View {
             NavigationView {
                 List {
                     ForEach(self.profileButtons.userFriends, id: \.self) { friend in
-                        Button(action: {
-                        }) {
-                            Text("Friend: \(friend.name)")
-                        }
+                        NavigationLink(destination: ProfileView(userProfile: ProfileViewModel(self.profileButtons.userProfile.TDManager, friend))) {
+                                Text("\(friend.name)")
+                            }
                     }
                 }
+                .navigationBarTitle("Friends")
             }
         }
     }
@@ -267,34 +268,33 @@ struct ProfileFollowRequestsButtonView: View {
     @Binding var isFollowerSheet: Bool
     @ObservedObject var profileButtons: ProfileButtonsViewModel
     @State var showAlert = false
-    @State var currentFriend: User? = nil       // track the last clicked friend from list for the alert--can't present alerts within the ForEach of the List directly
+    @State var currentRequester: User? = nil       // track the last clicked friend from list for the alert--can't present alerts within the ForEach of the List directly
     
     var body: some View {
         Button(action: {
             self.isFollowerSheet.toggle()
             self.profileButtons.updateReceived()
-            print("The other fetched result was \(self.profileButtons.usersRequestedToBeFriends)")
         }) {
             Text("Follow Requests")
         }.sheet(isPresented: $isFollowerSheet) {
             NavigationView {
                 List {
-                    ForEach(self.profileButtons.followsRequestedFrom, id: \.self) { friend in
+                    ForEach(self.profileButtons.followsRequestedFrom, id: \.self) { requester in
                         Button(action: {
-                            self.currentFriend = friend
+                            self.currentRequester = requester
                             self.showAlert = true
                         }) {
-                            Text("Friend Request: \(friend.name)")
+                            Text("\(requester.name)")
                         }
                     }
                     .onDelete(perform: self.deleteFriendRequest)
                     .alert(isPresented: self.$showAlert) {
-                        Alert(title: Text("Accept Friend Request \(self.currentFriend!.name)"),
+                        Alert(title: Text("Accept Friend Request \(self.currentRequester!.name)"),
                               message: Text("Do you want to accept? You'll both be able to see each other's profiles"),
                               primaryButton: .default(Text("Yes"), action: {
                                 self.showAlert = false
                                 
-                                self.profileButtons.acceptFriendRequest(requester: self.currentFriend!)
+                                self.profileButtons.acceptFriendRequest(requester: self.currentRequester!)
                               }),
                               secondaryButton: .cancel(Text("Never mind"), action: {
                                 self.showAlert = false
@@ -302,6 +302,7 @@ struct ProfileFollowRequestsButtonView: View {
                         )
                     }
                 }
+                .navigationBarTitle("Received Friend Requests")
             }
         }
     }
