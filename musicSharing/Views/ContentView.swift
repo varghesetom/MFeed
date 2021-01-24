@@ -31,8 +31,8 @@ struct AppView: View {
     let user: User
     
     init(selection: Binding<Int>) {
-//        _ = self.TDManager.emptyDB()
-//        self.TDManager.saveFakeData()
+        _ = self.TDManager.emptyDB()
+        self.TDManager.saveFakeData()
         _selection =  selection
         self.user = User(userEntity: TDManager.fetchMainUser()!)
     }

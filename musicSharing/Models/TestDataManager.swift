@@ -461,7 +461,7 @@ class TestDataManager {
         peterRequest.predicate = NSPredicate(format: "name == %@", "Peter Parker")
         do {
             let peter = try self.context!.fetch(peterRequest).first!
-            self.userSentFollowRequest(from: peter, to: self.fetchMainUser()!)
+            self.userSentFollowRequest(to: peter, from: self.fetchMainUser()!)
             try self.context?.save()
             return true
         } catch {
@@ -475,7 +475,7 @@ class TestDataManager {
         cousinVinnyRequest.predicate = NSPredicate(format: "name == %@", "Vinny Gambini")
         do {
             let myCousinVinny = try self.context!.fetch(cousinVinnyRequest).first!
-            self.userSentFollowRequest(from: self.fetchMainUser()!, to: myCousinVinny)
+            self.userSentFollowRequest(to: self.fetchMainUser()!, from: myCousinVinny)
             try self.context?.save()
             return true
         } catch {
@@ -620,8 +620,8 @@ class TestDataManager {
          }
      }
      
-     func userSentFollowRequest(from: UserEntity, to: UserEntity) {
-         from.addToSent_follow_request(to)
+     func userSentFollowRequest(to: UserEntity, from: UserEntity) {
+         to.addToSent_follow_request(from)
          do {
              try self.context!.save()
          } catch {
@@ -657,6 +657,15 @@ class TestDataManager {
              print("Error removing stashed song relationship for user")
          }
      }
+    
+    func userRemovesFollowRequst(to: UserEntity, from: UserEntity) {
+        to.removeFromSent_follow_request(from)
+        do {
+            try self.context!.save()
+        } catch {
+            print("Error removing friend request")
+        }
+    }
     
     func userUntogglesGenre(user: UserEntity, genreEntity: GenreEntity) {
         user.removeFromToggled_genre(genreEntity)

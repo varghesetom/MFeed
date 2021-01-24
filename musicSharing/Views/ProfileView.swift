@@ -1,9 +1,5 @@
 //
 //  ProfileView.swift
-//  schoolProject
-//
-//  Created by Varghese Thomas on 19/11/2020.
-//  Copyright © 2020 Varghese Thomas. All rights reserved.
 //
 
 import SwiftUI
@@ -256,34 +252,22 @@ struct ProfileFriendsButtonView: View {
             NavigationView {
                 List {
                     ForEach(self.profileButtons.userFriends, id: \.self) { friend in
-                        Text("Friend: \(friend.name)")
-                            .foregroundColor(.blue)
-                            .minimumScaleFactor(0.5)
-                            .allowsTightening(true)
-                            .onTapGesture {
-//                                Alert(title: Text("Accept Friend Request"),
-//                                      message: Text("Do you want to accept follow request? You'll both be able to see each other's profiles"),
-//                                      primaryButton: .cancel(),
-//                                      secondaryButton: .default(Text("Accept"), action: {
-//                                            // accept follow request
-//                                      })
-//                                )
-                            }
+                        Button(action: {
+                        }) {
+                            Text("Friend: \(friend.name)")
+                        }
                     }
-                    .onDelete(perform: self.deleteFriendRequest)
                 }
             }
         }
-    }
-    
-    func deleteFriendRequest(at offsets: IndexSet) {
-        
     }
 }
 
 struct ProfileFollowRequestsButtonView: View {
     @Binding var isFollowerSheet: Bool
-    var profileButtons: ProfileButtonsViewModel
+    @ObservedObject var profileButtons: ProfileButtonsViewModel
+    @State var showAlert = false
+    @State var currentFriend: User? = nil       // track the last clicked friend from list for the alert--can't present alerts within the ForEach of the List directly
     
     var body: some View {
         Button(action: {
@@ -293,13 +277,41 @@ struct ProfileFollowRequestsButtonView: View {
         }) {
             Text("Follow Requests")
         }.sheet(isPresented: $isFollowerSheet) {
-            List {
-                ForEach(self.profileButtons.followsRequestedFrom, id: \.self) {
-                    Text("Request from: \($0.name)")
+            NavigationView {
+                List {
+                    ForEach(self.profileButtons.followsRequestedFrom, id: \.self) { friend in
+                        Button(action: {
+                            self.currentFriend = friend
+                            self.showAlert = true
+                        }) {
+                            Text("Friend Request: \(friend.name)")
+                        }
+                    }
+                    .onDelete(perform: self.deleteFriendRequest)
+                    .alert(isPresented: self.$showAlert) {
+                        Alert(title: Text("Accept Friend Request \(self.currentFriend!.name)"),
+                              message: Text("Do you want to accept? You'll both be able to see each other's profiles"),
+                              primaryButton: .default(Text("Yes"), action: {
+                                self.showAlert = false
+                                
+                                self.profileButtons.acceptFriendRequest(requester: self.currentFriend!)
+                              }),
+                              secondaryButton: .cancel(Text("Never mind"), action: {
+                                self.showAlert = false
+                              })
+                        )
+                    }
                 }
             }
         }
     }
+    
+    func deleteFriendRequest(at offsets: IndexSet) {
+        let requester = self.profileButtons.followsRequestedFrom[offsets.first!]
+        self.profileButtons.followsRequestedFrom.remove(atOffsets: offsets)
+        self.profileButtons.removeFriendRequest(requester: requester)
+    }
+    
 }
 
 
