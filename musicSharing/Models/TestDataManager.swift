@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import SwiftUI
 import CoreData
 
 
@@ -496,10 +497,10 @@ class TestDataManager {
     }
     
     func deleteAllSongs() -> Bool {
-        let songFetchRequest: NSFetchRequest<SongEntity> = SongEntity.fetchRequest()
+        let songFetchRequest: NSFetchRequest<NSFetchRequestResult> = SongEntity.fetchRequest()
+        let deleteAllSongsRequest = NSBatchDeleteRequest(fetchRequest: songFetchRequest)
         do {
-            let songs = try self.context?.fetch(songFetchRequest)
-            songs?.forEach{ self.context?.delete($0)}
+            try self.context!.execute(deleteAllSongsRequest)
             return true
         } catch {
             print("Error deleting Songs: \(error.localizedDescription)")
@@ -508,10 +509,10 @@ class TestDataManager {
     }
     
     func deleteAllUsers() -> Bool {
-        let userFetchRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+        let userFetchRequest: NSFetchRequest<NSFetchRequestResult> = UserEntity.fetchRequest()
+        let deleteAllUsersRequest = NSBatchDeleteRequest(fetchRequest: userFetchRequest)
         do {
-            let users = try self.context?.fetch(userFetchRequest)
-            users?.forEach{ self.context?.delete($0)}
+            try self.context!.execute(deleteAllUsersRequest)
             return true
         } catch {
             print("Error deleting Users: \(error.localizedDescription)")
@@ -520,10 +521,10 @@ class TestDataManager {
     }
     
     func deleteAllSongInstances() -> Bool {
-        let songInstFetchRequest: NSFetchRequest<SongInstanceEntity> = SongInstanceEntity.fetchRequest()
+        let songInstFetchRequest: NSFetchRequest<NSFetchRequestResult> = SongInstanceEntity.fetchRequest()
+        let deleteAllSongInstRequest = NSBatchDeleteRequest(fetchRequest: songInstFetchRequest)
         do {
-            let songInsts = try self.context?.fetch(songInstFetchRequest)
-            songInsts?.forEach { self.context?.delete($0) }
+            try self.context!.execute(deleteAllSongInstRequest)
             return true
         } catch {
             print("Error deleting Song Instances: \(error.localizedDescription)")
@@ -536,8 +537,14 @@ class TestDataManager {
         request.predicate = NSPredicate(format: "instance_id == %@", songInstID as CVarArg)
         request.sortDescriptors = [NSSortDescriptor(key: "song_name", ascending: true)]
         do {
-            let songInst = try self.context!.fetch(request)
-            songInst.forEach { self.context!.delete($0) }
+            let songInsts = try self.context!.fetch(request)
+            songInsts.forEach { self.context!.delete($0) }
+            do {
+                try self.context!.save()   // persist the deletion to the data store
+            } catch {
+                print("Cannot save deletion of song instance")
+                return false
+            }
             return true
         } catch {
             print("Error deleting specific song instance \(songInstID). Error: \(error.localizedDescription)")

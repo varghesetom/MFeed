@@ -36,3 +36,16 @@ struct TweetButtonBackground: ButtonStyle {
     }
 }
 
+struct FollowRequestStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration
+            .label
+            .foregroundColor(configuration.isPressed ? .gray : .white)
+            .padding()
+            .background(Color.accentColor)
+            .opacity(configuration.isPressed ? 0.5 : 1.0)
+            .scaleEffect(configuration.isPressed ? 1.2 : 1.0)
+            .cornerRadius(8)
+    }
+}
+

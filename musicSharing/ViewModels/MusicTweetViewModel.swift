@@ -12,13 +12,11 @@ import SwiftUI
 class MusicTweetViewModel: ObservableObject {
     var TDManager: TestDataManager
     var songInstEnt: SongInstanceEntity
-//    @ObservedObject var lvModel: LikeViewModel
     @Published var numLikes = 0
     
     init(_ manager: TestDataManager, _ songInstEnt: SongInstanceEntity) {
         self.TDManager = manager
         self.songInstEnt = songInstEnt
-//        self.lvModel = LikeViewModel(self.TDManager, self.songInstEnt)
     }
     
     func belongsToMainUser() -> Bool {

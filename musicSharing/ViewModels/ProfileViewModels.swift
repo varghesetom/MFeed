@@ -72,7 +72,6 @@ class ProfileViewModel: ObservableObject {
             }
         }
         try! self.TDManager.context!.save()
-//        print("\nAfter untoggling, user's current genres are \(toggledGenres)")
     }
     
     func updateToggledGenres() {
@@ -118,6 +117,12 @@ class ProfileViewModel: ObservableObject {
                 }
             }
         }
+    }
+    
+    func receivedFollowRequestFromMainUser() {
+        let mainUserEnt = self.TDManager.fetchMainUser()
+        let stranger = self.TDManager.getUser(self.user.id.uuidString)
+        self.TDManager.userSentFollowRequest(to: stranger!, from: mainUserEnt!)
     }
 
 }
@@ -198,7 +203,7 @@ class ProfileButtonsViewModel: ObservableObject {
         let userEnt = self.userProfile.TDManager.getUser(self.userProfile.user.id.uuidString)
         let requesterEnt = self.userProfile.TDManager.getUser(requester.id.uuidString)
         self.userProfile.TDManager.userIsFriends(user: userEnt!, friend: requesterEnt!)
-        self.updateReceived()    // will now "remove" the follow request from the list -- can be optimized but right now is a fix because List view has specific ways of deleting items and need to show user that when user accepts follow request that it disappears from list. 
+        self.updateReceived()    // will now "remove" the follow request from the list -- can be optimized but right now is a fix because List view has specific ways of deleting items and need to show user that when user accepts follow request that it disappears from list.
     }
     
     func removeFriendRequest(requester: User) {

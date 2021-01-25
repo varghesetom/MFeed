@@ -60,10 +60,33 @@ struct UserBox: View {
             if self.userProfile.isMainUser || self.userProfile.isFriendOfMainUser {
                 MainUserGenres(userProfile: self.userProfile)
             }
+            else {     // not a friend or main user -> so can send a follow request
+                FollowRequestButtonView().environmentObject(self.userProfile)
+            }
         }
         .frame(width: 300, height: 300, alignment: .center)
         .padding()
         .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.blue, lineWidth: 4))
+    }
+}
+
+struct FollowRequestButtonView: View {
+    @EnvironmentObject var userProfile: ProfileViewModel
+    @State var showRequestAlert = false
+    var body: some View {
+        Button(action: {
+            self.showRequestAlert.toggle()
+        }) {
+            Text("Send Friend Request?")
+        }.alert(isPresented: $showRequestAlert) {
+            Alert(title: Text("Friend Request"),
+                  message: Text("Do you want to send a friend request to \(self.userProfile.user.name)"),
+                  primaryButton: .default(Text("Yes")) {
+                    self.userProfile.receivedFollowRequestFromMainUser()
+                  },
+                  secondaryButton: .cancel(Text("Nah")))
+        }
+        .buttonStyle(FollowRequestStyle())
     }
 }
 
@@ -92,7 +115,6 @@ struct MainUserGenres: View {
                 }
             }
         }.onAppear() {
-            print("\n\nNextUpdate")
             self.userProfile.updateToggledGenres()
         }
     }
@@ -128,9 +150,6 @@ struct GenreSeekingButton: View {
                 .allowsTightening(true)
         }
         .buttonStyle(self.didToggle ? GenreSeekingStyle(selectedColor: chosenGenre) : GenreSeekingStyle(selectedColor: unselected))
-        .onAppear() {
-            print("Did Toggle -> \(self.didToggle)")
-        }
     }
     
 }
