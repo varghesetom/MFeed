@@ -84,6 +84,7 @@ struct ConvoView: View {
                                     Text("\(self.convoModel.getEnhancedCommentFromCommentType(comment.comment))")
                                 }
                             }
+                            .frame(width: 300, height: 100, alignment: .center)
                             .padding()
                             .cornerRadius(3)
                             .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.black, lineWidth: 2))

@@ -271,6 +271,7 @@ class TestDataManager {
                request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
         do {
             let userEntities = try self.context?.fetch(request)
+            
             return userEntities
         } catch {
             print("Couldn't return main user's follower requests")

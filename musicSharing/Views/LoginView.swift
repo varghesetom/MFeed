@@ -14,6 +14,8 @@ struct LoginView: View {
     var localPassword: LocalizedStringKey = "Password"
     var localLogin: LocalizedStringKey = "Login"
     
+    // testing search bar
+    @State var query = ""
     
     var body: some View {
 //        SignInWithApple()
@@ -25,10 +27,14 @@ struct LoginView: View {
                 ContentView()
             }
             if !self.userAuth.isLoggedIn {
-                Button(action: {
-                    self.userAuth.login()
-                }) {
-                    Text("Click")
+                VStack {
+                    SearchBar(text: $query)
+                        .padding()
+                    Button(action: {
+                        self.userAuth.login()
+                    }) {
+                        Text("Click")
+                    }
                 }
             }            
         }

@@ -11,6 +11,7 @@
 		930BCDF2257CB64B00C87185 /* Styles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 930BCDF1257CB64A00C87185 /* Styles.swift */; };
 		9318CCBD25A7F7E000C3CAF5 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9318CCBC25A7F7E000C3CAF5 /* CloudKit.framework */; };
 		93A8F2872591BC2300639FC4 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A8F2862591BC2300639FC4 /* LoginView.swift */; };
+		93C3A19925C3E1450070EA28 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93C3A19825C3E1450070EA28 /* SearchBar.swift */; };
 		93E8D8FB25876777003A8558 /* ConvoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E8D8E825876776003A8558 /* ConvoView.swift */; };
 		93E8D8FC25876777003A8558 /* ConvoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E8D8E825876776003A8558 /* ConvoView.swift */; };
 		93E8D8FD25876777003A8558 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E8D8E925876776003A8558 /* ProfileView.swift */; };
@@ -69,6 +70,7 @@
 		930BCDF1257CB64A00C87185 /* Styles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Styles.swift; sourceTree = "<group>"; };
 		9318CCBC25A7F7E000C3CAF5 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		93A8F2862591BC2300639FC4 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		93C3A19825C3E1450070EA28 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		93E8D8E825876776003A8558 /* ConvoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConvoView.swift; sourceTree = "<group>"; };
 		93E8D8E925876776003A8558 /* ProfileView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		93E8D8EA25876776003A8558 /* LikeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LikeView.swift; sourceTree = "<group>"; };
@@ -136,6 +138,7 @@
 			isa = PBXGroup;
 			children = (
 				93E8D8E825876776003A8558 /* ConvoView.swift */,
+				93C3A19825C3E1450070EA28 /* SearchBar.swift */,
 				93E8D8E925876776003A8558 /* ProfileView.swift */,
 				93E8D8EA25876776003A8558 /* LikeView.swift */,
 				93E8D8EB25876776003A8558 /* NewsFeedView.swift */,
@@ -393,6 +396,7 @@
 				93E8D90925876777003A8558 /* ProfileViewModels.swift in Sources */,
 				93E8D90F25876777003A8558 /* Song.swift in Sources */,
 				93E8D90525876777003A8558 /* ContentView.swift in Sources */,
+				93C3A19925C3E1450070EA28 /* SearchBar.swift in Sources */,
 				93E8D90725876777003A8558 /* MusicTweetViewModel.swift in Sources */,
 				93E8D91525876777003A8558 /* User.swift in Sources */,
 				930BCDF2257CB64B00C87185 /* Styles.swift in Sources */,
