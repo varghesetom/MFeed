@@ -28,8 +28,6 @@ struct LoginView: View {
             }
             if !self.userAuth.isLoggedIn {
                 VStack {
-                    SearchBar(text: $query)
-                        .padding()
                     Button(action: {
                         self.userAuth.login()
                     }) {

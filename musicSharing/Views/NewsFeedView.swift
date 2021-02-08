@@ -8,6 +8,7 @@ struct ScrollTweets: View {
     @FetchRequest(entity: SongInstanceEntity.entity(), sortDescriptors: [NSSortDescriptor(key: "date_listened", ascending: false)]) var fetchedSongInstances: FetchedResults<SongInstanceEntity>
     
     @State var isShareViewShown = false
+    @State var isSearchViewShown = false
     private var TDManager: TestDataManager
     
     init(_ manager: TestDataManager) {
@@ -33,12 +34,22 @@ struct ScrollTweets: View {
             }
             .background(Color.black)
             .navigationBarTitle("MusicSharing")
-            .navigationBarItems(trailing: Button("Share") {
-                self.isShareViewShown.toggle()
-            })
+            .navigationBarItems(trailing:
+                HStack {
+                    Button("Search") {
+                        self.isSearchViewShown.toggle()
+                    }
+                    Button("Share") {
+                        self.isShareViewShown.toggle()
+                    }
+                }
+            )
         }
         .sheet(isPresented: $isShareViewShown) {
             SharedInstanceView(self.TDManager)
+        }
+        .sheet(isPresented: $isSearchViewShown) {
+            SearchBarView(self.TDManager)
         }
     }
 }

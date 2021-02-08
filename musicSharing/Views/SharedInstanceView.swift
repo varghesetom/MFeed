@@ -2,6 +2,13 @@
 //  SharedInstanceView.swift
 //  musicSharing
 
+// Defensive Programming
+// 1. Check song name is within a certain range (e.g 0 < name < 120)
+// 2. Check if song artist is within a certain range (e.g 0 < name < 120)
+// 3. Check if song length is nonsense (e.g. "Enter song length in format: X.Y where X = minutes, Y = seconds" alert )
+// 4. Check if inappropriate words are used
+
+
 
 import SwiftUI
 
@@ -130,10 +137,5 @@ struct SharedInstanceView: View {
     
 }
 
-// Defensive Programming
-// 1. Check song name is within a certain range (e.g 0 < name < 120)
-// 2. Check if song artist is within a certain range (e.g 0 < name < 120)
-// 3. Check if song length is nonsense (e.g. "Enter song length in format: X.Y where X = minutes, Y = seconds" alert )
-// 4. Check if inappropriate words are used
 
 

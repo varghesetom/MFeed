@@ -206,6 +206,28 @@ class TestDataManager {
         return nil
     }
     
+    func getAllUsers() -> [User]? {
+        // used for the Search Bar functionality
+        let userEntReq: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+        var users = [User]()
+        var seen = Set<UUID>()
+        do {
+            let userEnts = try self.context!.fetch(userEntReq)
+            if (userEnts.count > 0) {
+                for userEnt in userEnts {
+                    if userEnt.name != nil && !seen.contains(userEnt.userID!) {
+                        seen.insert(userEnt.userID!)
+                        users.append(User(userEntity: userEnt))
+                    }
+                }
+                return users
+            }
+         } catch {
+             return nil
+         }
+         return nil
+     }
+    
     func getSong(_ name: String) -> SongEntity? {
         let songRequest: NSFetchRequest<SongEntity> = SongEntity.fetchRequest()
         songRequest.predicate = NSPredicate(format: "song_name == %@", name)
@@ -309,8 +331,8 @@ class TestDataManager {
     func getSongInstancesFromUser(_ user: UserEntity) -> [SongInstance]? {
         if let songs:[SongInstanceEntity] = user.listened_to?.allObjects as? [SongInstanceEntity] {
             songs.forEach({ print("User 1 listens to -> \($0.instance_of!.song_name ?? "Unknown") by \($0.instance_of!.artist_name ?? "")")})
-            let instances = songs.map({
-                SongInstance(instanceEntity: $0)}
+            let instances = songs.map({ si in
+                SongInstance(instanceEntity: si)}
             )
             return instances
         }
@@ -520,6 +542,8 @@ class TestDataManager {
             return false
         }
     }
+    
+ 
     
     func deleteAllSongInstances() -> Bool {
         let songInstFetchRequest: NSFetchRequest<NSFetchRequestResult> = SongInstanceEntity.fetchRequest()

@@ -38,6 +38,7 @@ struct User: Codable, Identifiable, Hashable {
 
 extension User {
     init(userEntity: UserEntity) {
+        print("creating user from userEnt: \(userEntity)")
         self.id = userEntity.userID!
         self.name = userEntity.name ?? "Unknown"
         self.user_bio = userEntity.bio ?? "prefers to keep an air of mystery"
